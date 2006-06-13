@@ -46,10 +46,11 @@ public class ColorManager {
 		RGB rgb = PreferenceConverter.getColor(
 				Plugin.getDefault().getPreferenceStore(),
 				colorName);
-		return getColor(new RGB(0, 0, 0));
+		return getColor(rgb);
 	}
 
 	public Color getColor(RGB rgb) {
+		if(rgb==null) rgb = new RGB(0,0,0);
 		Color color = (Color) fColorTable.get(rgb);
 		if (color == null) {
 			color = new Color(Display.getCurrent(), rgb);
