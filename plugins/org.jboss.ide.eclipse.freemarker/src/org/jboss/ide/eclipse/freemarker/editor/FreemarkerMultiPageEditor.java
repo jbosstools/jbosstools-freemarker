@@ -75,7 +75,7 @@ import org.jboss.ide.eclipse.freemarker.dialogs.ContextValueDialog;
 public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements ITextEditor, ITextEditorExtension {
 
 	public static final String ID = "org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor";
-
+	                                 
     private Editor vEditor;
     private String text;
     private boolean readOnly = false;

@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.internal.ui.javaeditor.JarEntryEditorInput;
+import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -38,6 +39,7 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyEvent;
@@ -90,7 +92,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	public void dispose() {
 		ConfigurationManager.getInstance(getProject()).reload();
 		super.dispose();
-		matchingCharacterPainter.dispose();
+		if(matchingCharacterPainter!=null) {
+			matchingCharacterPainter.dispose();
+		}
 	}
 
 	public Object getAdapter(Class aClass) {
@@ -115,10 +119,10 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		super.createPartControl(parent);
 		 getSourceViewer().getTextWidget().addKeyListener(this);
 		 getSourceViewer().getTextWidget().addMouseListener(this);
-//		 matchingCharacterPainter = new MatchingCharacterPainter(
-//				 getSourceViewer(),
-//				 new JavaPairMatcher(BRACKETS));
-//		((SourceViewer) getSourceViewer()).addPainter(matchingCharacterPainter);
+		 //matchingCharacterPainter = new MatchingCharacterPainter(
+			//	 getSourceViewer(),
+				// new JavaPairMatcher(BRACKETS));
+		//((SourceViewer) getSourceViewer()).addPainter(matchingCharacterPainter);
 	}
 
 	protected void createActions() {
