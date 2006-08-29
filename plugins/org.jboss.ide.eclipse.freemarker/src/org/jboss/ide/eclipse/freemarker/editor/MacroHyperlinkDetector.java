@@ -78,4 +78,7 @@ public class MacroHyperlinkDetector implements IHyperlinkDetector {
 		}
 		return null;
 	}
+
+	public void init (ITextViewer viewer) {
+	}
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.jboss.ide.eclipse.freemarker;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.3
 Bundle-Activator: org.jboss.ide.eclipse.freemarker.Plugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -20,8 +20,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui
 Eclipse-AutoStart: true
-Bundle-ClassPath: freemarker-2.3.6.jar,
- freemarker-ide.jar
+Bundle-ClassPath: freemarker-ide.jar,
+ freemarker-2.3.8.jar
 Bundle-Vendor: %providerName
 Export-Package: freemarker.core,
  freemarker.template,
