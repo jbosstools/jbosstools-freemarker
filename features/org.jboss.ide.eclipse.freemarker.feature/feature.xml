@@ -3,7 +3,7 @@
       id="org.jboss.ide.eclipse.freemarker.feature"
       label="JBossIDE FreeMarker Feature"
       version="1.0.0"
-      provider-name="JBoss, Inc.">
+      provider-name="JBoss, a division of Red Hat">
 
    <description url="http://www.jboss.com/products/jbosside">
       JBossIDE&apos;s Freemarker Feature
