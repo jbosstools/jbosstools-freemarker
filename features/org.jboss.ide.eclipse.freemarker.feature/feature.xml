@@ -423,6 +423,11 @@ HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 END OF TERMS AND CONDITIONS
    </license>
 
+   <url>
+      <update label="JBossTools Update Site" url="http://download.jboss.org/jbosstools/updates/stable"/>
+      <discovery label="JBossTools Development Update Site" url="http://download.jboss.org/updates/development"/>
+   </url>
+   
    <plugin
          id="org.jboss.ide.eclipse.freemarker"
          download-size="0"
