@@ -120,7 +120,7 @@ public class ContextValueDialog extends Dialog {
                         if(objects != null && objects.length > 0)
                         {
                             IType type = (IType)objects[0];
-                            String fullyQualifiedName = JavaModelUtil.getFullyQualifiedName(type);
+                            String fullyQualifiedName = type.getFullyQualifiedName('.');
                             valueText.setText(type.getFullyQualifiedName());
                             String[] interfaces = type.getSuperInterfaceNames();
                             boolean isList = false;
