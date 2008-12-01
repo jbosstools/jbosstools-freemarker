@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.jboss.ide.eclipse.freemarker.feature"
-      label="FreeMarkerIDE Feature"
+      label="FreeMarkerIDE"
       version="1.0.0"
       provider-name="JBoss, a division of Red Hat">
 
    <description url="http://www.jboss.org/tools">
-      FreemarkerIDE Feature
+      FreeMarkerIDE provides editor for FreeMarker templates
    </description>
 
    <copyright>
