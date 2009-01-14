@@ -17,7 +17,7 @@
       <page
             class="org.jboss.ide.eclipse.freemarker.preferences.PreferencePage"
             id="org.jboss.ide.eclipse.freemarker.preferences.OutlinePreferencePage"
-            name="FreeMarker Editor"/>
+            name="%PreferencePage_FreeMarkerEditor"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -50,7 +50,7 @@
             adaptable="true"
             class="org.jboss.ide.eclipse.freemarker.preferences.ContextProperties"
             id="org.jboss.ide.eclipse.freemarker.contextPage"
-            name="FreeMarker Context"
+            name="%PropertyPage_FreeMarkerContext"
             objectClass="org.eclipse.core.resources.IResource"/>
    </extension>
    <extension
