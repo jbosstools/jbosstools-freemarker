@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.jboss.ide.eclipse.freemarker.feature"
-      label="FreeMarker IDE"
+      label="%featureName"
       version="1.0.0"
-      provider-name="JBoss, a division of Red Hat"
+      provider-name="%providerName"
       plugin="org.jboss.ide.eclipse.freemarker">
 
    <description url="http://www.jboss.org/tools">
-      FreeMarkerIDE provides editor for FreeMarker templates
+      %description
    </description>
 
    <copyright>
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="JBossTools Update Site" url="http://download.jboss.org/jbosstools/updates/stable"/>
+      <update label="%updateSiteName" url="http://download.jboss.org/jbosstools/updates/stable"/>
    </url>
 
    <plugin
