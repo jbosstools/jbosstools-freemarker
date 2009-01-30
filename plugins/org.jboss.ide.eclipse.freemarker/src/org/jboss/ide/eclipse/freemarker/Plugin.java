@@ -23,16 +23,27 @@ package org.jboss.ide.eclipse.freemarker;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -114,14 +125,46 @@ public class Plugin extends AbstractUIPlugin {
 	}
 
 	public static void log (Throwable t) {
-		log("Error: " + t.getMessage() + "\n");
-		StringWriter sw = new StringWriter();
-		t.printStackTrace(new PrintWriter(sw));
-		log("Trace: " + sw.toString());
-		
+		IStatus status = new Status(IStatus.ERROR,ID,t.getMessage(),t);
+		Plugin.getDefault().getLog().log(status);
 	}
 
 	public static void log (String s) {
-		// TODO figure out a good place to log messages
+		IStatus status = new Status(IStatus.ERROR,ID,s);
+		Plugin.getDefault().getLog().log(status);
+	}
+	
+	public Image getImage(String key) {
+		ImageRegistry imageRegistry = getImageRegistry();
+		Image image = imageRegistry.get(key);
+		if (image == null || image.isDisposed()) {
+			ImageDescriptor descriptor = getImageDescriptor(key);
+			if (descriptor != null) {
+				image = descriptor.createImage();
+				imageRegistry.put(key, image);
+			}
+		}
+		return image;
+	}
+
+	public ImageDescriptor getImageDescriptor(String key) {
+		ImageDescriptor imageDescriptor = null;
+		URL gifImageURL = getImageURL(key);
+		if (gifImageURL != null)
+			imageDescriptor = ImageDescriptor.createFromURL(gifImageURL);
+		return imageDescriptor;
+	}
+
+	private URL getImageURL(String key) {
+		Bundle bundle = getBundle();
+		IPath path = new Path("icons").append(key);
+		if (FileLocator.find(bundle,path,null) == null)
+			return null;
+		try {
+			return new URL( bundle.getEntry("/"), path.toString()); //$NON-NLS-1$ 
+		} catch (MalformedURLException exception) {
+			log(exception);
+		}
+		return null;
 	}
 }

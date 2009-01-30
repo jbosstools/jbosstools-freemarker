@@ -21,10 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -39,24 +35,7 @@ public class ImageManager {
 	
 
 	public static Image getImage(String filename) {
-		if (null == filename) return null;
-		ImageDescriptor temp = getImageDescriptor(filename);
-		if(null!=temp) {
-			return temp.createImage();
-		} else {
-			return null;
-		}
+		return Plugin.getDefault().getImage(filename);
 	}
 	
-	public static ImageDescriptor getImageDescriptor(String filename) {
-		if (null == filename) return null;
-		try {
-		URL url = new URL(Plugin.getInstance().getDescriptor().getInstallURL(),
-                  "icons/" + filename);
-                  return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException mue) {
-			
-		}
-		return null;
-	}
 }
