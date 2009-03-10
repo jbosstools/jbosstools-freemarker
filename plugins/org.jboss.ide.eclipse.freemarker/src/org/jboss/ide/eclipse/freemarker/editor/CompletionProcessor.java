@@ -106,9 +106,9 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 										Item stackItem = editor.getItemSet().getPreviousStartItem(offset);
 										StringBuffer value = new StringBuffer();
 										if (null != stackItem && stackItem instanceof MacroInstance)
-											value.append("@");
+											value.append("@"); //$NON-NLS-1$
 										else
-											value.append("#");
+											value.append("#"); //$NON-NLS-1$
 										String name = null;
 										if (null != stackItem) name = stackItem.getFirstToken();
 										if (null != name)

@@ -25,6 +25,7 @@ package org.jboss.ide.eclipse.freemarker.configuration;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +44,7 @@ import org.eclipse.jdt.internal.core.JarEntryFile;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -86,11 +88,13 @@ public class ConfigurationManager {
 			if (obj instanceof IFile) {
 				IFile file = (IFile) obj;
 				String namespace = file.getName();
-				int index = namespace.indexOf(".");
+				int index = namespace.indexOf("."); //$NON-NLS-1$
 				if (index >= 0) namespace = namespace.substring(0, index);
 				InputDialog inputDialog = new InputDialog(
-						shell, "Choose Macro Library Namespace",
-						"Please choose the namespace for '" + file.getName() + "'",
+						shell, Messages.ConfigurationManager_TITLE_CHOOSE_NAMESPACE,
+						MessageFormat.format(
+								Messages.ConfigurationManager_CHOOSE_NAMESPACE_FOR, file
+										.getName()),
 						namespace, null);
 				int rtn = inputDialog.open();
 				if (rtn == IDialogConstants.OK_ID) {
@@ -109,11 +113,13 @@ public class ConfigurationManager {
 			else if (obj instanceof JarEntryFile) {
 				JarEntryFile jef = (JarEntryFile) obj;
 				String namespace = jef.getName();
-				int index = namespace.indexOf(".");
+				int index = namespace.indexOf("."); //$NON-NLS-1$
 				if (index >= 0) namespace = namespace.substring(0, index);
 				InputDialog inputDialog = new InputDialog(
-						shell, "Choose Macro Library Namespace",
-						"Please choose the namespace for '" + jef.getName() + "'",
+						shell, Messages.ConfigurationManager_TITLE_CHOOSE_NAMESPACE,
+						MessageFormat.format(
+								Messages.ConfigurationManager_CHOOSE_NAMESPACE_FOR, jef
+										.getName()),
 						namespace, null);
 				int rtn = inputDialog.open();
 				if (rtn == IDialogConstants.OK_ID) {
@@ -146,7 +152,7 @@ public class ConfigurationManager {
 	private void writeMacroLibrary(StringBuffer sb) {
 		for (Iterator i=macroLibrary.values().iterator(); i.hasNext(); ) {
 			MacroLibrary macroLibrary = (MacroLibrary) i.next();
-			sb.append("\t\t" + macroLibrary.toXML() + "\n");
+			sb.append("\t\t" + macroLibrary.toXML() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -154,7 +160,7 @@ public class ConfigurationManager {
 		Map map = new HashMap();
         try {
             NodeList nl = element
-                    .getElementsByTagName("entry");
+                    .getElementsByTagName("entry"); //$NON-NLS-1$
             for (int i = 0; i < nl.getLength(); i++) {
                 try {
                     Node n = nl.item(i);
@@ -186,21 +192,21 @@ public class ConfigurationManager {
 		Map map = new HashMap();
         try {
             NodeList nl = element
-                    .getElementsByTagName("resource");
+                    .getElementsByTagName("resource"); //$NON-NLS-1$
             for (int i = 0; i < nl.getLength(); i++) {
                 try {
                     Node n = nl.item(i);
-                    String path = ((Element) n).getAttribute("path");
+                    String path = ((Element) n).getAttribute("path"); //$NON-NLS-1$
                     List contextValues = new ArrayList();
                     NodeList nl2 = ((Element) n)
-                            .getElementsByTagName("value");
+                            .getElementsByTagName("value"); //$NON-NLS-1$
                     for (int j = 0; j < nl2.getLength(); j++) {
                         Node n2 = nl2.item(j);
-                        String key = ((Element) n2).getAttribute("key");
+                        String key = ((Element) n2).getAttribute("key"); //$NON-NLS-1$
                         Class value = getClass(((Element) n2)
-                                .getAttribute("object-class"));
+                                .getAttribute("object-class")); //$NON-NLS-1$
                         String singularName = ((Element) n2)
-                                .getAttribute("item-class");
+                                .getAttribute("item-class"); //$NON-NLS-1$
                         Class singularClass = null;
                         if (null != singularName && singularName.trim().length()>0)
                             singularClass = getClass(singularName);
@@ -235,15 +241,15 @@ public class ConfigurationManager {
     
     private void save() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<config>\n");
-        sb.append("\t<context-values>\n");
+        sb.append("<config>\n"); //$NON-NLS-1$
+		sb.append("\t<context-values>\n"); //$NON-NLS-1$
         writeContextValues(sb);
-        sb.append("\t</context-values>\n");
-        sb.append("\t<macro-library>\n");
+        sb.append("\t</context-values>\n"); //$NON-NLS-1$
+		sb.append("\t<macro-library>\n"); //$NON-NLS-1$
         writeMacroLibrary(sb);
-        sb.append("\t</macro-library>\n");
-        sb.append("</config>");
-        IFile file = project.getFile(".freemarker-ide.xml");
+        sb.append("\t</macro-library>\n"); //$NON-NLS-1$
+		sb.append("</config>"); //$NON-NLS-1$
+		IFile file = project.getFile(".freemarker-ide.xml"); //$NON-NLS-1$
         try {
             if (file.exists())
                 file.setContents(new ByteArrayInputStream(sb.toString()
@@ -259,7 +265,7 @@ public class ConfigurationManager {
 
     public void reload() {
     	this.projectClassLoader = null;
-        IFile file = project.getFile(".freemarker-ide.xml");
+        IFile file = project.getFile(".freemarker-ide.xml"); //$NON-NLS-1$
         if (file.exists()) {
         	try { file.refreshLocal(1, null); } catch (CoreException e) {}
             Map map = new HashMap();
@@ -267,13 +273,14 @@ public class ConfigurationManager {
                 Document document = DocumentBuilderFactory.newInstance()
                         .newDocumentBuilder().parse(file.getContents());
                 NodeList nl = document.getDocumentElement()
-                        .getElementsByTagName("context-values");
+                        .getElementsByTagName("context-values"); //$NON-NLS-1$
                 if (nl.getLength() > 0)
                     this.contextValues = loadContextValues((Element) nl.item(0));
                 else
                     this.contextValues = new HashMap();
                 nl = document.getDocumentElement()
-                	.getElementsByTagName("macro-library");
+                	.getElementsByTagName(
+						"macro-library"); //$NON-NLS-1$
                 List libraries = new ArrayList();
                 if (nl.getLength() > 0) {
                 	this.macroLibrary = loadMacroTemplates((Element) nl.item(0));
@@ -296,17 +303,18 @@ public class ConfigurationManager {
             String fileName = (String) entry.getKey();
             ContextValue[] values = (ContextValue[]) entry.getValue();
             if (null != values && values.length > 0) {
-                sb.append("\t\t<resource path=\"" + fileName + "\">\n");
+                sb.append("\t\t<resource path=\"" + fileName + "\">\n");  //$NON-NLS-1$//$NON-NLS-2$
                 for (int j = 0; j < values.length; j++) {
-                    sb.append("\t\t\t<value key=\"" + values[j].name
-                            + "\" object-class=\"" + values[j].objClass.getName()
-                            + "\"");
+                    sb
+							.append("\t\t\t<value key=\"" + values[j].name //$NON-NLS-1$
+									+ "\" object-class=\"" + values[j].objClass.getName() //$NON-NLS-1$
+									+ "\""); //$NON-NLS-1$
                     if (null != values[j].singularClass)
-                        sb.append(" item-class=\""
-                                + values[j].singularClass.getName() + "\"");
-                    sb.append("/>\n");
+                        sb.append(" item-class=\"" //$NON-NLS-1$
+								+ values[j].singularClass.getName() + "\""); //$NON-NLS-1$
+					sb.append("/>\n"); //$NON-NLS-1$
                 }
-                sb.append("\t\t</resource>\n");
+                sb.append("\t\t</resource>\n"); //$NON-NLS-1$
             }
         }
     }
@@ -323,7 +331,8 @@ public class ConfigurationManager {
             key = resource.getProjectRelativePath().toString();
             if (recurse) addRootContextValues(resource.getParent(), newValues, true);
         }
-        else key = "";
+        else
+			key = ""; //$NON-NLS-1$
         if (null != resource.getProject()) {
 	        ContextValue[] values = (ContextValue[]) contextValues.get(key);
 	        if (null != values) {

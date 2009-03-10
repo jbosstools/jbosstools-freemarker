@@ -23,13 +23,13 @@ package org.jboss.ide.eclipse.freemarker;
 
 public class Constants {
 
-	public static final String COLOR_DIRECTIVE = "color.directive";
-	public static final String COLOR_INTERPOLATION = "color.interpolation";
-	public static final String COLOR_COMMENT = "color.comment";
-	public static final String COLOR_TEXT = "color.text";
-	public static final String COLOR_STRING = "color.string";
-    public static final String COLOR_XML_TAG = "color.xmlTag";
-    public static final String COLOR_XML_COMMENT = "color.xmlComment";
-    public static final String COLOR_RELATED_ITEM = "color.oppositeRegion";
-	public static final String HIGHLIGHT_RELATED_ITEMS = "boolean.highlightRelatedItems";
+	public static final String COLOR_DIRECTIVE = "color.directive"; //$NON-NLS-1$
+	public static final String COLOR_INTERPOLATION = "color.interpolation"; //$NON-NLS-1$
+	public static final String COLOR_COMMENT = "color.comment"; //$NON-NLS-1$
+	public static final String COLOR_TEXT = "color.text"; //$NON-NLS-1$
+	public static final String COLOR_STRING = "color.string"; //$NON-NLS-1$
+    public static final String COLOR_XML_TAG = "color.xmlTag"; //$NON-NLS-1$
+    public static final String COLOR_XML_COMMENT = "color.xmlComment"; //$NON-NLS-1$
+    public static final String COLOR_RELATED_ITEM = "color.oppositeRegion"; //$NON-NLS-1$
+	public static final String HIGHLIGHT_RELATED_ITEMS = "boolean.highlightRelatedItems"; //$NON-NLS-1$
 }

@@ -54,6 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.jboss.ide.eclipse.freemarker.Constants;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.model.Item;
@@ -130,9 +131,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		// Add content assist propsal action
 		ContentAssistAction action = new ContentAssistAction(
 				Plugin.getDefault().getResourceBundle(),
-				"FreemarkerEditor.ContentAssist", this);
+				"FreemarkerEditor.ContentAssist", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("FreemarkerEditor.ContentAssist", action);
+		setAction("FreemarkerEditor.ContentAssist", action); //$NON-NLS-1$
 		action.setEnabled(true);
 	}
 
@@ -289,7 +290,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				char c = getDocument().getChar(getCaretOffset());
 				if (c == ']') {
 					// remove this
-					getDocument().replace(getCaretOffset(), 1, "");
+					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
 				}
 			}
 			catch (BadLocationException e1) {}
@@ -299,7 +300,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				char c = getDocument().getChar(getCaretOffset());
 				if (c == '}') {
 					// remove this
-					getDocument().replace(getCaretOffset(), 1, "}");
+					getDocument().replace(getCaretOffset(), 1, "}"); //$NON-NLS-1$
 				}
 			}
 			catch (BadLocationException e1) {}
@@ -348,11 +349,11 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 								if (i == '}') return;
 								else if (i == '\n') break;
 							}
-							getSourceViewer().getDocument().replace(offset, 0, "}");
+							getSourceViewer().getDocument().replace(offset, 0, "}"); //$NON-NLS-1$
 						}
 					}
 					else {
-						getSourceViewer().getDocument().replace(offset, 0, "}");
+						getSourceViewer().getDocument().replace(offset, 0, "}"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -400,13 +401,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		}
 	}
 
-	private void showMessage (String text) {
-		MessageDialog.openError(
-				getSourceViewer().getTextWidget().getShell(),
-				"message",
-				text);
-	}
-
 	public static Validator VALIDATOR;
 	public synchronized void validateContents () {
 		if (null == VALIDATOR) {
@@ -452,10 +446,10 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 						errorLine = e.getLineNumber();
 						if (errorLine == 0) {
 							// sometimes they forget to put it in
-							int index = e.getMessage().indexOf("line: ");
+							int index = e.getMessage().indexOf("line: "); //$NON-NLS-1$
 							if (index > 0) {
-								int index2 = e.getMessage().indexOf(" ", index+6);
-								int index3 = e.getMessage().indexOf(",", index+6);
+								int index2 = e.getMessage().indexOf(" ", index+6); //$NON-NLS-1$
+								int index3 = e.getMessage().indexOf(",", index+6); //$NON-NLS-1$
 								if (index3 < index2 && index3 > 0) index2 = index3;
 								String s = e.getMessage().substring(index+6, index2);
 								try {

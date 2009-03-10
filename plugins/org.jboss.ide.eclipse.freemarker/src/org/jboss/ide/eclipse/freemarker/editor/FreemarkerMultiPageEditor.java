@@ -64,6 +64,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IStatusField;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
@@ -74,7 +75,7 @@ import org.jboss.ide.eclipse.freemarker.dialogs.ContextValueDialog;
  */
 public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements ITextEditor, ITextEditorExtension {
 
-	public static final String ID = "org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor";
+	public static final String ID = "org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor"; //$NON-NLS-1$
 	                                 
     private Editor vEditor;
     private String text;
@@ -98,11 +99,11 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
             vEditor.init(getEditorSite(), getEditorInput());
             if (readOnly) vEditor.setReadOnly(readOnly);
             int index = addPage(vEditor, getEditorInput());
-            setPageText(index, "Source");
+            setPageText(index, Messages.FreemarkerMultiPageEditor_PAGE_TEXT_SOURCE);
             setPartName(vEditor.getTitle());
         }
         catch (PartInitException e) {
-            ErrorDialog.openError(getSite().getShell(), "Error creating nested text vEditor", null, e.getStatus());
+            ErrorDialog.openError(getSite().getShell(), Messages.FreemarkerMultiPageEditor_ERROR_CREATING_VEDITOR, null, e.getStatus());
         }
     }
 
@@ -143,8 +144,8 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		// create the columns
 		TableColumn keyColumn = new TableColumn(contextValuesTable, SWT.LEFT);
 		TableColumn valueColumn = new TableColumn(contextValuesTable, SWT.LEFT);
-		keyColumn.setText("Name");
-		valueColumn.setText("Type");
+		keyColumn.setText(Messages.FreemarkerMultiPageEditor_COLUMN_NAME);
+		valueColumn.setText(Messages.FreemarkerMultiPageEditor_COLUMN_TYPE);
 		ColumnLayoutData keyColumnLayout = new ColumnWeightData(30, false);
 		ColumnLayoutData valueColumnLayout = new ColumnWeightData(70, false);
 
@@ -169,7 +170,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		buttonComposite.setLayout(gl);
 		buttonComposite.setVisible(true);
 		addContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-		addContextValueButton.setText("New");
+		addContextValueButton.setText(Messages.FreemarkerMultiPageEditor_BUTTON_NEW);
 		addContextValueButton.setVisible(true);
 		addContextValueButton.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 		addContextValueButton.addSelectionListener(new AddContextValueButtonListener());
@@ -178,7 +179,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		data.grabExcessHorizontalSpace = true;
 		addContextValueButton.setLayoutData(data);
 		editContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-		editContextValueButton.setText("Edit");
+		editContextValueButton.setText(Messages.FreemarkerMultiPageEditor_BUTTON_EDIT);
 		editContextValueButton.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 		editContextValueButton.addSelectionListener(new EditContextValueButtonListener());
 		data = new GridData();
@@ -186,7 +187,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		data.grabExcessHorizontalSpace = true;
 		editContextValueButton.setLayoutData(data);
 		deleteContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-		deleteContextValueButton.setText("Delete");
+		deleteContextValueButton.setText(Messages.FreemarkerMultiPageEditor_BUTTON_DELETE);
 		deleteContextValueButton.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 		deleteContextValueButton.addSelectionListener(new ContextValueDeleteKeyListener());
 		data = new GridData();
@@ -196,7 +197,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		
 		reloadContextValues();
         int index = addPage(composite);
-        setPageText(index, "Context");
+        setPageText(index, Messages.FreemarkerMultiPageEditor_PAGE_TEXT_CONTEXT);
     }
 
 
@@ -278,7 +279,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 			int index = contextValuesTable.getSelectionIndex();
 			if (index >= 0) {
 				try {
-					boolean confirm = MessageDialog.openConfirm(new Shell(), "Confirmation", "Are you sure you want to delete this context value?");
+					boolean confirm = MessageDialog.openConfirm(new Shell(), Messages.FreemarkerMultiPageEditor_CONFIRMATION_TITLE, Messages.FreemarkerMultiPageEditor_CONFIRMATION_TO_DELETE_MESSAGE);
 					if (confirm) {
 						String key = contextValuesTable.getSelection()[0].getText(0);
 						ContextValue value = ConfigurationManager.getInstance(vEditor.getFile().getProject()).getContextValue(key, vEditor.getFile(), false);

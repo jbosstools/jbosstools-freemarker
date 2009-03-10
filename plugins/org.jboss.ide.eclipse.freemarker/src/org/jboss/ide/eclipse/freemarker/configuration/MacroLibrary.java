@@ -43,8 +43,8 @@ import org.w3c.dom.Element;
  */
 public class MacroLibrary {
 
-	public static final String TYPE_FILE = "file";
-	public static final String TYPE_JAR_ENTRY = "jarEntry";
+	public static final String TYPE_FILE = "file"; //$NON-NLS-1$
+	public static final String TYPE_JAR_ENTRY = "jarEntry"; //$NON-NLS-1$
 	
 	private long lastUpdatedTime;
 	private IFile file;
@@ -88,7 +88,7 @@ public class MacroLibrary {
 	private void load () {
 		try {
 			List macros = new ArrayList();
-			String search = "#macro ";
+			String search = "#macro "; //$NON-NLS-1$
 			int index = content.indexOf(search);
 			int startIndex = index;
 			char startChar = content.charAt(index-1);
@@ -157,12 +157,12 @@ public class MacroLibrary {
 
 	public String toXML () {
 		StringBuffer sb = new StringBuffer();
-		sb.append("<entry namespace=\"" + getNamespace() + "\" ");
-		sb.append("path=\"" + getPath() + "\" ");
+		sb.append("<entry namespace=\"" + getNamespace() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append("path=\"" + getPath() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (null != file) {
-			sb.append("project=\"" + file.getProject().getName() + "\" ");
+			sb.append("project=\"" + file.getProject().getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		sb.append("type=\"" + getType() + "\"/>");
+		sb.append("type=\"" + getType() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 		return sb.toString();
 	}
 
@@ -174,10 +174,10 @@ public class MacroLibrary {
 	}
 
 	public static MacroLibrary fromXML (IProject project, Element node, ClassLoader classLoader) throws CoreException, IOException {
-        String namespace = node.getAttribute("namespace");
-        String path = node.getAttribute("path");
-        String projectName = node.getAttribute("project");
-        String type = node.getAttribute("type");
+        String namespace = node.getAttribute("namespace"); //$NON-NLS-1$
+		String path = node.getAttribute("path"); //$NON-NLS-1$
+		String projectName = node.getAttribute("project"); //$NON-NLS-1$
+		String type = node.getAttribute("type"); //$NON-NLS-1$
         if (null == type || type.length() == 0 || type.equals(TYPE_FILE)) {
         	if (null != projectName && projectName.length() > 0)
         		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);

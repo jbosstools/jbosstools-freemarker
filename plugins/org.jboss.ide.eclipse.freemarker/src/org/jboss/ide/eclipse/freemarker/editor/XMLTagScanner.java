@@ -64,12 +64,12 @@ public class XMLTagScanner extends RuleBasedScanner {
 
 		List l = new ArrayList();
 
-		l.add(new StringSubRule("\"", "${", 2, string));
+		l.add(new StringSubRule("\"", "${", 2, string)); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new InterpolationRule('$', interpolation));
 		l.add(new InterpolationRule('#', interpolation));
 
-		l.add(new SingleLineRule("\"", "\"", string, '\\'));
-		l.add(new SingleLineRule("'", "'", string, '\\'));
+		l.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		l.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new WhitespaceRule(new WhitespaceDetector()));
 		
 		setRules((IRule[]) l.toArray(new IRule[l.size()]));

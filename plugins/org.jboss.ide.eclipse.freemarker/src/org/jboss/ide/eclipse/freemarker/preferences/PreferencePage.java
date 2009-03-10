@@ -28,6 +28,7 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.jboss.ide.eclipse.freemarker.Constants;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 
 /**
@@ -40,28 +41,28 @@ public class PreferencePage
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
-		setDescription("FreeMarker Settings");
+		setDescription(Messages.PreferencePage_DESCRIPTION_FREEMARKER_SETTINGS);
 	}
 
 	public void createFieldEditors() {
 		addField(new ColorFieldEditor(Constants.COLOR_DIRECTIVE,
-				"Directive:", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_DIRECTIVE, getFieldEditorParent()));
         addField(new ColorFieldEditor(Constants.COLOR_RELATED_ITEM,
-                "Related Directives:", getFieldEditorParent()));
+                Messages.PreferencePage_FIELD_RELATED_DIRECTIVES, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(Constants.HIGHLIGHT_RELATED_ITEMS,
-				"Highlight Related Directives", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_HIGHLIGHT_RELATED_DIRECTIVES, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_INTERPOLATION,
-				"Interpolation:", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_INTERPOLATION, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_TEXT,
-				"Text:", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_TEXT, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_COMMENT,
-				"Comment:", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_COMMENT, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_STRING,
-				"String:", getFieldEditorParent()));
+				Messages.PreferencePage_FIELD_STRING, getFieldEditorParent()));
         addField(new ColorFieldEditor(Constants.COLOR_XML_TAG,
-                "HTML/XML Tag:", getFieldEditorParent()));
+                Messages.PreferencePage_FIELD_HTML_XML_TAG, getFieldEditorParent()));
         addField(new ColorFieldEditor(Constants.COLOR_XML_COMMENT,
-                "HTML/XML Comment:", getFieldEditorParent()));
+                Messages.PreferencePage_FIELD_HTML_XML_COMMENT, getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench) {

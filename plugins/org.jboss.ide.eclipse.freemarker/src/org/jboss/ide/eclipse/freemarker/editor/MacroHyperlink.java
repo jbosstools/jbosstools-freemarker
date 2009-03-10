@@ -28,6 +28,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
 
@@ -67,6 +68,6 @@ public class MacroHyperlink  implements IHyperlink {
 	}
 
 	public String getTypeLabel() {
-		return "Macro Definition";
+		return Messages.MacroHyperlink_TYPELABEL_MACRO_DEFINITION;
 	}
 }

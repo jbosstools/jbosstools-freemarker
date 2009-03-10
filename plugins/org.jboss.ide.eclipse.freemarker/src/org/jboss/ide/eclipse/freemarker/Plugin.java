@@ -50,7 +50,7 @@ import org.osgi.framework.Bundle;
  */
 public class Plugin extends AbstractUIPlugin {
 
-	public static final String ID = "org.jboss.ide.eclipse.freemarker";
+	public static final String ID = "org.jboss.ide.eclipse.freemarker"; //$NON-NLS-1$
 	
 	//The shared instance.
 	private static Plugin plugin;
@@ -61,7 +61,7 @@ public class Plugin extends AbstractUIPlugin {
 		super();
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("org.jboss.ide.eclipse.freemarker.resources");
+			resourceBundle = ResourceBundle.getBundle("org.jboss.ide.eclipse.freemarker.resources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -107,14 +107,14 @@ public class Plugin extends AbstractUIPlugin {
 	protected void initializeDefaultPluginPreferences() {
 		Preferences prefs = getPluginPreferences();
 		prefs.setDefault(Constants.HIGHLIGHT_RELATED_ITEMS, true);
-		prefs.setDefault(Constants.COLOR_COMMENT, "170,0,0");
-		prefs.setDefault(Constants.COLOR_TEXT, "0,0,0");
-		prefs.setDefault(Constants.COLOR_INTERPOLATION, "255,0,128");
-		prefs.setDefault(Constants.COLOR_DIRECTIVE, "0,0,255");
-		prefs.setDefault(Constants.COLOR_STRING, "0,128,128");
-		prefs.setDefault(Constants.COLOR_XML_COMMENT, "128,128,128");
-		prefs.setDefault(Constants.COLOR_XML_TAG, "0,0,128");
-		prefs.setDefault(Constants.COLOR_RELATED_ITEM, "255,255,128");
+		prefs.setDefault(Constants.COLOR_COMMENT, "170,0,0"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_TEXT, "0,0,0"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_INTERPOLATION, "255,0,128"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_DIRECTIVE, "0,0,255"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_STRING, "0,128,128"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_XML_COMMENT, "128,128,128"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_XML_TAG, "0,0,128"); //$NON-NLS-1$
+		prefs.setDefault(Constants.COLOR_RELATED_ITEM, "255,255,128"); //$NON-NLS-1$
 	}
 
 	public static void error (Throwable t) {

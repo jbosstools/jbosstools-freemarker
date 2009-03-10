@@ -60,7 +60,7 @@ public class ProjectClassLoader extends URLClassLoader {
 		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 		String installLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath();
 		installLoc = installLoc.replace('\\', '/');
-		if (installLoc.endsWith("/")) installLoc = installLoc.substring(0, installLoc.length()-1);
+		if (installLoc.endsWith("/")) installLoc = installLoc.substring(0, installLoc.length()-1); //$NON-NLS-1$
 
 		for (int i=0; i<roots.length; i++) {
 			try {
@@ -71,18 +71,18 @@ public class ProjectClassLoader extends URLClassLoader {
 					}
 					else {
 						String s = roots[i].getPath().toOSString().replace('\\', '/');
-						if (!s.startsWith("/")) s = "/" + s;
+						if (!s.startsWith("/")) s = "/" + s; //$NON-NLS-1$ //$NON-NLS-2$
 						f = new File(installLoc + s);
 						if (f.exists()) {
 							list.add(f.toURL());
 						}
 						else {
-							f = new File("c:" + installLoc + s);
+							f = new File("c:" + installLoc + s); //$NON-NLS-1$
 							if (f.exists()) {
 								list.add(f.toURL());
 							}
 							else {
-								f = new File("d:" + installLoc + s);
+								f = new File("d:" + installLoc + s); //$NON-NLS-1$
 								if (f.exists()) {
 									list.add(f.toURL());
 								}

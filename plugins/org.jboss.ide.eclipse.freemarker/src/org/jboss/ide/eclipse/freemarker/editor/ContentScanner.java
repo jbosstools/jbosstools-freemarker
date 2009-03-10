@@ -72,10 +72,10 @@ public class ContentScanner implements ITokenScanner {
 		this.tokens.clear();
 	}
 
-	private static String TYPE_UNKNOWN = "UNKNOWN";
-	private static String TYPE_INTERPOLATION = "INTERPOLATION";
-	private static String TYPE_DIRECTIVE = "DIRECTIVE";
-	private static String TYPE_STRING = "STRING";
+	private static String TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
+	private static String TYPE_INTERPOLATION = "INTERPOLATION"; //$NON-NLS-1$
+	private static String TYPE_DIRECTIVE = "DIRECTIVE"; //$NON-NLS-1$
+	private static String TYPE_STRING = "STRING"; //$NON-NLS-1$
 
 	private static IToken STRING_TOKEN;
 	private static IToken INTERPOLATION_TOKEN;
@@ -150,11 +150,11 @@ public class ContentScanner implements ITokenScanner {
 					}
 					else if (c == '(') {
 						if (type.equals(TYPE_INTERPOLATION)) {
-							push("(");
+							push("("); //$NON-NLS-1$
 						}
 					}
 					else if (c == ')') {
-						if (type.equals("(")) {
+						if (type.equals("(")) { //$NON-NLS-1$
 							pop();
 						}
 					}
@@ -244,7 +244,7 @@ public class ContentScanner implements ITokenScanner {
 
 	private IToken getToken (String type) {
 		if (type.equals(TYPE_DIRECTIVE)) return DIRECTIVE_TOKEN;
-		else if (type.equals(TYPE_INTERPOLATION) || type.equals("(")) return INTERPOLATION_TOKEN;
+		else if (type.equals(TYPE_INTERPOLATION) || type.equals("(")) return INTERPOLATION_TOKEN; //$NON-NLS-1$
 		else if (type.equals(TYPE_STRING)) return STRING_TOKEN;
 		else return defaultToken;
 	}

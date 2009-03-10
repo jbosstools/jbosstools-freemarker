@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
 
@@ -74,7 +75,7 @@ public class ContextValueDialog extends Dialog {
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
-		newShell.setText("Context Value Configuration");
+		newShell.setText(Messages.ContextValueDialog_SHELL_CONTEXT_VALUE_CONFIG);
 		super.configureShell(newShell);
 	}
 
@@ -84,7 +85,7 @@ public class ContextValueDialog extends Dialog {
 		composite.setLayout(new GridLayout(3, false));
 
 		Label label = new Label(composite, SWT.NULL);
-		label.setText("Name:");
+		label.setText(Messages.ContextValueDialog_LABEL_NAME);
 		keyText = new Text(composite, SWT.BORDER);
 		if (null != contextValue) {
 			keyText.setText(contextValue.name);
@@ -96,7 +97,7 @@ public class ContextValueDialog extends Dialog {
 		keyText.setLayoutData(gd);
 
 		label = new Label(composite, SWT.NULL);
-		label.setText("Type:");
+		label.setText(Messages.ContextValueDialog_LABEL_TYPE);
 		valueText = new Text(composite, SWT.BORDER);
 		valueText.setEnabled(false);
 		valueText.setBackground(new Color(null, 255, 255, 255));
@@ -105,7 +106,7 @@ public class ContextValueDialog extends Dialog {
 		valueText.setLayoutData(gd);
 		if (null != contextValue && null != contextValue.objClass) valueText.setText(contextValue.objClass.getName());
         Button browse = new Button(composite, 8);
-        browse.setText("Browse");
+        browse.setText(Messages.ContextValueDialog_BUTTON_BROWSE);
         browse.addMouseListener(new MouseListener() {
             public void mouseDown(MouseEvent e)
             {
@@ -124,10 +125,10 @@ public class ContextValueDialog extends Dialog {
                             valueText.setText(type.getFullyQualifiedName());
                             String[] interfaces = type.getSuperInterfaceNames();
                             boolean isList = false;
-                            if ("java.lang.Object".equals(fullyQualifiedName)) isList = true;
+                            if ("java.lang.Object".equals(fullyQualifiedName)) isList = true; //$NON-NLS-1$
                             else {
 	                            for (int i=0; i<interfaces.length; i++) {
-	                                if (interfaces[i].equals("java.util.Collection") || interfaces[i].equals("java.util.List") || interfaces[i].equals("java.util.Set")) {
+	                                if (interfaces[i].equals("java.util.Collection") || interfaces[i].equals("java.util.List") || interfaces[i].equals("java.util.Set")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	                                    isList = true;
 	                                    break;
 	                                }
@@ -142,12 +143,12 @@ public class ContextValueDialog extends Dialog {
                                 singleBrowse.setEnabled(false);
                                 singleLabel.setEnabled(false);
                                 singleValueText.setEnabled(false);
-                                singleValueText.setText("");
+                                singleValueText.setText(""); //$NON-NLS-1$
                             }
                         }
                     }
                     else {
-                        MessageDialog.openError(getShell(), "Java Project Error", "The project must be a java project.");
+                        MessageDialog.openError(getShell(), Messages.ContextValueDialog_JAVA_PROJECT_ERROR, Messages.ContextValueDialog_MUST_BE_JAVA_PROJECT);
                     }
                 }
                 catch(JavaModelException _ex) { }
@@ -167,7 +168,7 @@ public class ContextValueDialog extends Dialog {
         if (null != contextValue && null != contextValue.singularClass) enabled = true;
 		singleLabel = new Label(composite, SWT.NULL);
 		singleLabel.setEnabled(enabled);
-		singleLabel.setText("List Entry Type:");
+		singleLabel.setText(Messages.ContextValueDialog_LABEL_LIST_ENTRY_TYPE);
 		singleValueText = new Text(composite, SWT.BORDER);
 		singleValueText.setEnabled(enabled);
 		singleValueText.setBackground(new Color(null, 255, 255, 255));
@@ -177,7 +178,7 @@ public class ContextValueDialog extends Dialog {
 		if (enabled) singleValueText.setText(contextValue.singularClass.getName());
         singleBrowse = new Button(composite, 8);
         singleBrowse.setEnabled(enabled);
-        singleBrowse.setText("Browse");
+        singleBrowse.setText(Messages.ContextValueDialog_BUTTON_BROWSE);
         singleBrowse.addMouseListener(new MouseListener() {
             public void mouseDown(MouseEvent e)
             {
@@ -196,7 +197,7 @@ public class ContextValueDialog extends Dialog {
                         }
                     }
                     else {
-                        MessageDialog.openError(getShell(), "Java Project Error", "The project must be a java project.");
+                        MessageDialog.openError(getShell(), Messages.ContextValueDialog_JAVA_PROJECT_ERROR, Messages.ContextValueDialog_MUST_BE_JAVA_PROJECT);
                     }
                 }
                 catch(JavaModelException _ex) { }
@@ -217,10 +218,10 @@ public class ContextValueDialog extends Dialog {
 	protected void okPressed() {
 	    try {
 		    String name = keyText.getText().trim();
-		    while (name.startsWith("$")) name = name.substring(1, name.length());
-		    if (name.length() == 0) MessageDialog.openError(getShell(), "Error", "You must choose the reference name");
+		    while (name.startsWith("$")) name = name.substring(1, name.length()); //$NON-NLS-1$
+		    if (name.length() == 0) MessageDialog.openError(getShell(), Messages.ContextValueDialog_ERROR, Messages.ContextValueDialog_MUST_CHOOSE_REFERENCE);
 		    String className = valueText.getText().trim();
-		    if (className.length() == 0) MessageDialog.openError(getShell(), "Error", "You must choose the class name");
+		    if (className.length() == 0) MessageDialog.openError(getShell(), Messages.ContextValueDialog_ERROR, Messages.ContextValueDialog_MUST_CHOOSE_CLASS);
 		    String singularClassName = singleValueText.getText().trim();
 		    Class singularClass = null;
 		    if (null != singularClassName && singularClassName.trim().length() > 0) singularClass = ConfigurationManager.getInstance(resource.getProject()).getClass(singularClassName);
@@ -232,7 +233,7 @@ public class ContextValueDialog extends Dialog {
 	        ConfigurationManager.getInstance(resource.getProject()).addContextValue(contextValue, resource);
 	    }
 	    catch (Exception e) {
-	        MessageDialog.openError(getShell(), "Error", e.getMessage());
+	        MessageDialog.openError(getShell(), Messages.ContextValueDialog_ERROR, e.getMessage());
 	    }
 		super.okPressed();
 	}

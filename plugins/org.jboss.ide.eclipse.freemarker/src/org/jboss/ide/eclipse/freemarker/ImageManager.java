@@ -28,10 +28,10 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ImageManager {
 
-	public static final String IMG_MACRO = "icons/userdefined_directive_call.gif";
-	public static final String IMG_IMPORT = "icons/import.gif";
-	public static final String IMG_IMPORT_COLLECTION = "icons/import_collection.gif";
-	public static final String IMG_FUNCTION = "icons/function.gif";
+	public static final String IMG_MACRO = "icons/userdefined_directive_call.gif"; //$NON-NLS-1$
+	public static final String IMG_IMPORT = "icons/import.gif"; //$NON-NLS-1$
+	public static final String IMG_IMPORT_COLLECTION = "icons/import_collection.gif"; //$NON-NLS-1$
+	public static final String IMG_FUNCTION = "icons/function.gif"; //$NON-NLS-1$
 	
 
 	public static Image getImage(String filename) {
