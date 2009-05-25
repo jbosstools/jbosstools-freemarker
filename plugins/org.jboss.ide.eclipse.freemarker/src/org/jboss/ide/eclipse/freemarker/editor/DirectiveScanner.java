@@ -45,9 +45,9 @@ public class DirectiveScanner extends RuleBasedScanner {
 
 		Vector rules = new Vector();
 		// Add rule for double quotes
-		rules.add(new SingleLineRule("\"", "\"", string,'\\'));
+		rules.add(new SingleLineRule("\"", "\"", string,'\\')); //$NON-NLS-1$ //$NON-NLS-2$
 	    // Add rule for single quotes
-	    rules.add(new SingleLineRule("'", "'", string,'\\'));
+	    rules.add(new SingleLineRule("'", "'", string,'\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new WhitespaceDetector()));
 	

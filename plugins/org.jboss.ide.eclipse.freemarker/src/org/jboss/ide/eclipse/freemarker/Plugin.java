@@ -157,7 +157,7 @@ public class Plugin extends AbstractUIPlugin {
 
 	private URL getImageURL(String key) {
 		Bundle bundle = getBundle();
-		IPath path = new Path("icons").append(key);
+		IPath path = new Path("icons").append(key); //$NON-NLS-1$
 		if (FileLocator.find(bundle,path,null) == null)
 			return null;
 		try {

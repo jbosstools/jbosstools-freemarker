@@ -69,7 +69,7 @@ public class IfElseDirective extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "else.png";
+		return "else.png"; //$NON-NLS-1$
 	}
 
 	public boolean isStartAndEndItem() {

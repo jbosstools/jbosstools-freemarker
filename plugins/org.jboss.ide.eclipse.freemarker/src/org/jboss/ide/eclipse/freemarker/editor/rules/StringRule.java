@@ -33,7 +33,7 @@ public class StringRule extends SingleLineRule {
 	private String rule;
 	
 	public StringRule(String rule, IToken token) {
-		super(rule, "", token);
+		super(rule, "", token); //$NON-NLS-1$
 		this.rule = rule;
 	}
 

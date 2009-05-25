@@ -62,7 +62,7 @@ public class ListDirective extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "list.png";
+		return "list.png"; //$NON-NLS-1$
 	}
 
 	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
@@ -71,11 +71,11 @@ public class ListDirective extends AbstractDirective {
 			ContentWithOffset contentWithOffset = splitContents(offset);
 			int index = contentWithOffset.getIndex();
 			if (index == 1 || (index == 0 && contentWithOffset.wasLastCharSpace())) {
-				String value = "";
+				String value = ""; //$NON-NLS-1$
 				if (contentWithOffset.getContents().length >= 2)
 					value = contentWithOffset.getContents()[1];
 				CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-							"${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource());
+							"${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
 				proposals = completionInterpolation.getCompletionProposals(offset, context);
 			}
 		}
@@ -86,7 +86,7 @@ public class ListDirective extends AbstractDirective {
 		String[] contents = splitContents();
 		if (contents.length == 4) {
 			String key = contents[3];
-			CompletionInterpolation completionInterpolation = new CompletionInterpolation("${" + contents[1], 0, getItemSet(), getResource());
+			CompletionInterpolation completionInterpolation = new CompletionInterpolation("${" + contents[1], 0, getItemSet(), getResource()); //$NON-NLS-1$
 			context.put(key, completionInterpolation.getSingularReturnClass(context));
 		}
 	}

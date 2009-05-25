@@ -85,7 +85,7 @@ public class NameFragment extends AbstractFragment {
 				}
 				else {
 					content = Character.toUpperCase(content.charAt(1)) + content.substring(2, getContent().length());
-					String getcontent = "get" + content;
+					String getcontent = "get" + content; //$NON-NLS-1$
 					for (int i=0; i<parentClass.getMethods().length; i++) {
 						Method m = parentClass.getMethods()[i];
 						if (m.getName().equals(content) || m.getName().equals(getcontent)) {
@@ -116,7 +116,7 @@ public class NameFragment extends AbstractFragment {
 				}
 				else {
 					content = Character.toUpperCase(content.charAt(1)) + content.substring(2, getContent().length());
-					String getcontent = "get" + content;
+					String getcontent = "get" + content; //$NON-NLS-1$
 					for (int i=0; i<parentClass.getMethods().length; i++) {
 						Method m = parentClass.getMethods()[i];
 						if (m.getName().equals(content) || m.getName().equals(getcontent)) {
@@ -139,11 +139,11 @@ public class NameFragment extends AbstractFragment {
 	}
 
 	public boolean isStartFragment () {
-		return !getContent().startsWith(".");
+		return !getContent().startsWith("."); //$NON-NLS-1$
 	}
 
 	public static final String[] invalidMethods = {
-		"clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait"};
+		"clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	public ICompletionProposal[] getMethodCompletionProposals (int subOffset, int offset, Class parentClass, IResource file) {
 		if (instanceOf(parentClass, String.class)
 				|| instanceOf(parentClass, Number.class)
@@ -161,33 +161,33 @@ public class NameFragment extends AbstractFragment {
 			for (int i=0; i<pds.length; i++) {
 				PropertyDescriptor pd = pds[i];
 				String propertyName = pd.getName();
-				if (!propertyName.equals("class") && propertyName.toUpperCase().startsWith(pUpper)) {
+				if (!propertyName.equals("class") && propertyName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
 					proposals.add(new CompletionProposal(
 							propertyName,
 							offset - subOffset + 1,
 							getContent().length()-1,
 							propertyName.length(),
-							null, propertyName + " - " + pd.getReadMethod().getReturnType().getName(), null, null));
+							null, propertyName + " - " + pd.getReadMethod().getReturnType().getName(), null, null)); //$NON-NLS-1$
 				}
 			}
 			for (int i=0; i<parentClass.getMethods().length; i++) {
 				Method m = parentClass.getMethods()[i];
 				String mName = m.getName();
-				if (m.getParameterTypes().length > 0 && mName.startsWith("get") && mName.toUpperCase().startsWith(pUpper)) {
+				if (m.getParameterTypes().length > 0 && mName.startsWith("get") && mName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
 					StringBuffer display = new StringBuffer();
 					display.append(mName);
-					display.append("(");
+					display.append("("); //$NON-NLS-1$
 					for (int j=0; j<m.getParameterTypes().length; j++) {
-						if (j > 0) display.append(", ");
+						if (j > 0) display.append(", "); //$NON-NLS-1$
 						display.append(m.getParameterTypes()[j].getName());
 					}
-					display.append(")");
-					String actual = mName + "()";
+					display.append(")"); //$NON-NLS-1$
+					String actual = mName + "()"; //$NON-NLS-1$
 					int tLength = actual.length();
 					if (m.getParameterTypes().length > 0) tLength--;
 					proposals.add(new CompletionProposal(actual,
 							offset - subOffset + 1, getContent().length()-1, tLength,
-							null, display.toString() + " - " + m.getReturnType().getName(), null, null));
+							null, display.toString() + " - " + m.getReturnType().getName(), null, null)); //$NON-NLS-1$
 				}
 			}
 			return completionProposals(proposals);

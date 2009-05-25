@@ -57,7 +57,7 @@ public class FunctionDirective extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "element.png";
+		return "element.png"; //$NON-NLS-1$
 	}
 
 	public void addToContext(Map context) {

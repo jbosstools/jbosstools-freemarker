@@ -47,7 +47,7 @@ public class CaseDefaultDirective extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "default.png";
+		return "default.png"; //$NON-NLS-1$
 	}
 
 	public void relateItem(Item directive) {

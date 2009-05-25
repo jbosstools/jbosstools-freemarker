@@ -79,7 +79,7 @@ public class MacroInstance extends AbstractDirective {
 	private Item[] relatedItems;
 
 	public String getTreeImage() {
-		return "macro_instance.png";
+		return "macro_instance.png"; //$NON-NLS-1$
 	}
 
 	public String getName() {
@@ -116,7 +116,7 @@ public class MacroInstance extends AbstractDirective {
 			return completionProposals(l);
 		}
 		else if ((contentWithOffset.wasLastCharSpace())
-				|| !contents[index-1].equals("=")) {
+				|| !contents[index-1].equals("=")) { //$NON-NLS-1$
 			String name = contents[0];
 			// see if we can find a macro match
 			MacroDirective match = null;
@@ -143,14 +143,14 @@ public class MacroInstance extends AbstractDirective {
 			if (null != match) {
 				String prefix = null;
 				if (contentWithOffset.wasLastCharSpace() || contents.length < index+1)
-					prefix = "";
+					prefix = ""; //$NON-NLS-1$
 				else
 					prefix = contents[index].substring(0, subOffset);
 				List l = new ArrayList();
 				for (int i=0; i<match.getAttributes().length; i++) {
 					if (match.getAttributes()[i].startsWith(prefix)) {
 						l.add(getCompletionProposal(offset, subOffset,
-								match.getAttributes()[i], (contentWithOffset.isNextCharSpace() || contents.length < index+1) ? "" : contents[index]));
+								match.getAttributes()[i], (contentWithOffset.isNextCharSpace() || contents.length < index+1) ? "" : contents[index])); //$NON-NLS-1$
 					}
 				}
 				return completionProposals(l);

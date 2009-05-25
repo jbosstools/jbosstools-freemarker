@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 
@@ -91,15 +92,15 @@ public class AddMacroLibrary implements IObjectActionDelegate {
                     		projects.add(p[i]);
                     	}
                     	ProjectSelectionDialog dialog = new ProjectSelectionDialog(Display.getCurrent().getActiveShell(), projects);
-                    	dialog.setTitle("Please choose the associated Java project");
-                    	dialog.setMessage("Please choose the Java project that will use the FreeMarker libraries");
+                    	dialog.setTitle(Messages.AddMacroLibrary_Title);
+                    	dialog.setMessage(Messages.AddMacroLibrary_Message);
                     	int rtn = dialog.open();
                     	if (rtn == IDialogConstants.OK_ID) {
                     		if (dialog.getFirstResult() instanceof IJavaProject) {
                     			project = ((IJavaProject) dialog.getFirstResult()).getProject();
                     		}
                     		else {
-                    			MessageDialog.openError(Display.getCurrent().getActiveShell(), "Java Project Required", "You must choose a Java project");
+                    			MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.AddMacroLibrary_Error, Messages.AddMacroLibrary_ErrorDesc);
                     		}
                     	}
                     }

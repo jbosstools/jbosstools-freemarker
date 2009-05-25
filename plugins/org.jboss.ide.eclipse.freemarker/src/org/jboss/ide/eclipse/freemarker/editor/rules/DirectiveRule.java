@@ -50,7 +50,7 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	public DirectiveRule(String name, IToken token, boolean nameOnly) {
-		super("!", "!", token);
+		super("!", "!", token); //$NON-NLS-1$ //$NON-NLS-2$
 		this.sequence = name.toCharArray();
 		this.nameOnly = nameOnly;
 	}
@@ -110,26 +110,26 @@ public class DirectiveRule extends MultiLineRule {
 				}
 			}
 			else if (c == '\"') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) {
+				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
 					keyStack.pop();
 				}
 				else {
-					keyStack.push("\"");
+					keyStack.push("\""); //$NON-NLS-1$
 				}
 			}
 			else if (c == '(') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) {
+				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
 					// string... don't add to stack
 				}
 				else {
-					keyStack.push("(");
+					keyStack.push("("); //$NON-NLS-1$
 				}
 			}
 			else if (c == ')') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) {
+				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
 					// string... don't add to stack
 				}
-				else if (keyStack.size() > 0 && keyStack.peek().equals("(")) {
+				else if (keyStack.size() > 0 && keyStack.peek().equals("(")) { //$NON-NLS-1$
 					keyStack.pop();
 				}
 			}

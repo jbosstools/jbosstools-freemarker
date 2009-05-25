@@ -33,7 +33,7 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 public class XmlRule extends MultiLineRule {
 
 	public XmlRule(IToken token) {
-		super("<", ">", token);
+		super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	protected boolean sequenceDetected(
 		ICharacterScanner scanner,
@@ -88,7 +88,7 @@ public class XmlRule extends MultiLineRule {
 				}
 			}
 			else if (c == '\"') {
-				if (stack.size() > 0 && stack.peek().equals("\""))
+				if (stack.size() > 0 && stack.peek().equals("\"")) //$NON-NLS-1$
 					stack.pop();
 			}
 			else if (c == LT || c == LB) {
@@ -104,7 +104,7 @@ public class XmlRule extends MultiLineRule {
 				if (stack.size() == 0) break;
 			}
 			else if (c == '}') {
-				if (stack.size() > 0 && stack.peek().equals("{"))
+				if (stack.size() > 0 && stack.peek().equals("{")) //$NON-NLS-1$
 					stack.pop();
 			}
 			previousWasEscapeCharacter = (c == fEscapeCharacter);

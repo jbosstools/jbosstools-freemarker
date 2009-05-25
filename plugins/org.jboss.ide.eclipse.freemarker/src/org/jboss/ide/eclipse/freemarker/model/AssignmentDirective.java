@@ -54,7 +54,7 @@ public class AssignmentDirective extends AbstractDirective {
 	}
 
 	public boolean isNestable() {
-		return (null != getContents() && !getContents().endsWith("/"));
+		return (null != getContents() && !getContents().endsWith("/")); //$NON-NLS-1$
 	}
 
 	public AssignmentEndDirective getEndDirective() {
@@ -73,7 +73,7 @@ public class AssignmentDirective extends AbstractDirective {
 	private Item[] relatedItems;
 
 	public String getTreeImage() {
-		return "assign.png";
+		return "assign.png"; //$NON-NLS-1$
 	}
 
 	Map contextValues;
@@ -90,7 +90,7 @@ public class AssignmentDirective extends AbstractDirective {
 				else if (Character.isDigit(value.charAt(0))) valueClass = Number.class;
 				else {
 					CompletionInterpolation completionInterpolation =
-						new CompletionInterpolation("${" + value, 2, getItemSet(), getResource());
+						new CompletionInterpolation("${" + value, 2, getItemSet(), getResource()); //$NON-NLS-1$
 					valueClass = completionInterpolation.getReturnClass(context);
 				}
 			}

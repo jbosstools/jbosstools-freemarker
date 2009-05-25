@@ -76,7 +76,7 @@ public abstract class AbstractItem implements Item {
 	}
 
 	public boolean isNestable() {
-		return (null != getContents() && !getContents().endsWith("/"));
+		return (null != getContents() && !getContents().endsWith("/")); //$NON-NLS-1$
 	}
 
 	public ITypedRegion getRegion() {
@@ -172,7 +172,7 @@ public abstract class AbstractItem implements Item {
 						current = new StringBuffer();
 						offsetCount = 0;
 						if (c == '=') {
-							arr.add("=");
+							arr.add("="); //$NON-NLS-1$
 							current = new StringBuffer();
 						}
 						else {
@@ -190,27 +190,27 @@ public abstract class AbstractItem implements Item {
 			if (!escape) {
 				if (c == '\"') {
 					if (currentStack.size() > 0) {
-						if (currentStack.peek() == "\"")
+						if (currentStack.peek() == "\"") //$NON-NLS-1$
 							currentStack.pop();
 						else
-							currentStack.push("\"");
+							currentStack.push("\""); //$NON-NLS-1$
 					}
 					else
-						currentStack.push("\"");
+						currentStack.push("\""); //$NON-NLS-1$
 					
 				}
 				else if (c == '(') {
-					currentStack.push("(");
+					currentStack.push("("); //$NON-NLS-1$
 				}
 				else if (c == ')') {
-					if (currentStack.size() > 0 && currentStack.peek().equals(")"))
+					if (currentStack.size() > 0 && currentStack.peek().equals(")")) //$NON-NLS-1$
 						currentStack.pop();
 				}
 				else if (c == '{') {
-					currentStack.push("{");
+					currentStack.push("{"); //$NON-NLS-1$
 				}
 				else if (c == '}') {
-					if (currentStack.size() > 0 && currentStack.peek().equals("}"))
+					if (currentStack.size() > 0 && currentStack.peek().equals("}")) //$NON-NLS-1$
 						currentStack.pop();
 				}
 				else if (c == '\\') {
@@ -242,7 +242,7 @@ public abstract class AbstractItem implements Item {
 			}
 		}
 		else if (arr.size() == 0) {
-			arr.add("");
+			arr.add(""); //$NON-NLS-1$
 		}
 		if (totalOffsetCount == cursorPos) {
 			actualIndex = arr.size()-1;
@@ -363,7 +363,7 @@ public abstract class AbstractItem implements Item {
 	public String getTreeDisplay() {
 		if (null == treeDisplay) {
 			treeDisplay = getContents();
-			if (null != treeDisplay && treeDisplay.endsWith("/"))
+			if (null != treeDisplay && treeDisplay.endsWith("/")) //$NON-NLS-1$
 				treeDisplay = treeDisplay.substring(0, treeDisplay.length()-1);
 		}
 		return treeDisplay;

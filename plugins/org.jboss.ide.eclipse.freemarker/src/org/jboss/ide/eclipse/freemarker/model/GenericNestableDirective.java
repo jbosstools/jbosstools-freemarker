@@ -48,7 +48,7 @@ public class GenericNestableDirective extends AbstractDirective {
 	}
 
 	public boolean isNestable() {
-		return !getContents().trim().endsWith("/");
+		return !getContents().trim().endsWith("/"); //$NON-NLS-1$
 	}
 
 	public boolean isStartItem() {

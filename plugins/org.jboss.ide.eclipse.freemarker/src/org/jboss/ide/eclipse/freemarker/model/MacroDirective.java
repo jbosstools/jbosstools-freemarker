@@ -76,7 +76,7 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 	private Item[] relatedItems;
 
 	public String getTreeImage() {
-		return "macro.png";
+		return "macro.png"; //$NON-NLS-1$
 	}
 
 	public String getTreeDisplay() {
@@ -91,10 +91,10 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 			int i = 2;
 			while (i<contents.length) {
 				String att = contents[i];
-				int index = att.indexOf("=");
+				int index = att.indexOf("="); //$NON-NLS-1$
 				if (index < 0) {
 					att = att.trim();
-					if (att.endsWith("]") || att.endsWith(">")) att = att.substring(0, att.length()-1);
+					if (att.endsWith("]") || att.endsWith(">")) att = att.substring(0, att.length()-1); //$NON-NLS-1$ //$NON-NLS-2$
 					l.add(att);
 					i++;
 				}

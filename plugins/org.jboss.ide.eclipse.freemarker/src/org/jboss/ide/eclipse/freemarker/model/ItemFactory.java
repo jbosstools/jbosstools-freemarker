@@ -60,9 +60,9 @@ public class ItemFactory {
 			else if (region.getType().equals(PartitionScanner.FTL_MACRO_INSTANCE_END))
 				directive = new MacroEndInstance();
 			else if (region.getType().equals(PartitionScanner.FTL_INCLUDE))
-				directive = new GenericDirective("include.png");
+				directive = new GenericDirective("include.png"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_IMPORT))
-				directive = new GenericDirective("import.png");
+				directive = new GenericDirective("import.png"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_ASSIGN)
 					|| region.getType().equals(PartitionScanner.FTL_LOCAL)
 					|| region.getType().equals(PartitionScanner.FTL_GLOBAL))
@@ -72,15 +72,15 @@ public class ItemFactory {
 					|| region.getType().equals(PartitionScanner.FTL_GLOBAL_END))
 				directive = new AssignmentEndDirective(region.getType());
 			else if (region.getType().equals(PartitionScanner.FTL_BREAK))
-				directive = new GenericDirective("break.png");
+				directive = new GenericDirective("break.png"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_STOP))
-				directive = new GenericDirective("stop.png");
+				directive = new GenericDirective("stop.png"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_RETURN))
-				directive = new GenericDirective("return.png");
+				directive = new GenericDirective("return.png"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_SWITCH_DIRECTIVE_START))
-				directive = new GenericNestableDirective("switch", "switch.png");
+				directive = new GenericNestableDirective("switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$
 			else if (region.getType().equals(PartitionScanner.FTL_SWITCH_DIRECTIVE_END))
-				directive = new GenericNestableEndDirective("switch");
+				directive = new GenericNestableEndDirective("switch"); //$NON-NLS-1$
 			else if (region.getType().equals(PartitionScanner.FTL_CASE_DIRECTIVE_START))
 				directive = new CaseDirective();
 			else if (region.getType().equals(PartitionScanner.FTL_CASE_DEFAULT_START))
@@ -91,7 +91,7 @@ public class ItemFactory {
 				directive = new FtlDirective();
 			else if (region.getType().equals(PartitionScanner.FTL_DIRECTIVE)) {
 				String name = getDirectiveName(region, viewer);
-				directive = new GenericNestableDirective(name, "element.png");
+				directive = new GenericNestableDirective(name, "element.png"); //$NON-NLS-1$
 			}
 			else if (region.getType().equals(PartitionScanner.FTL_DIRECTIVE_END)) {
 				String name = getDirectiveName(region, viewer);

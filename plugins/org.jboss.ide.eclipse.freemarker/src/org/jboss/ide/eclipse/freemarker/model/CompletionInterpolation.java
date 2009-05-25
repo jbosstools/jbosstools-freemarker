@@ -29,7 +29,7 @@ public class CompletionInterpolation extends Interpolation {
 	private int offset;
 
 	public CompletionInterpolation (String contents, int offset, ItemSet itemSet, IResource resource) {
-		this.contents = contents + "}";
+		this.contents = contents + "}"; //$NON-NLS-1$
 		this.offset = offset;
 		setItemSet(itemSet);
 		setResource(resource);

@@ -46,11 +46,12 @@ import org.eclipse.jface.text.IRegion;
 public class ConsoleLineTracker implements IConsoleLineTracker {
 
 	private IConsole console;
-	private static final String CHECK = "freemarker";
-	private static final String CHECK_LINE = "line:";
-	private static final String CHECK_LINE2 = "on line ";
-	private static final String CHECK_TEMPLATE = "template:";
-	private static final String CHECK_TEMPLATE2 = " in ";
+	// This assumes console parsing in English only
+	private static final String CHECK = "freemarker"; //$NON-NLS-1$
+	private static final String CHECK_LINE = "line:"; //$NON-NLS-1$
+	private static final String CHECK_LINE2 = "on line "; //$NON-NLS-1$
+	private static final String CHECK_TEMPLATE = "template:"; //$NON-NLS-1$
+	private static final String CHECK_TEMPLATE2 = " in "; //$NON-NLS-1$
 	
 	public void init(IConsole console) {
 		this.console = console;
@@ -74,13 +75,13 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 					int linkOffset = i1 + 10;
 					int linkLength = text.length() - linkOffset;
 					String fileName = text.substring(linkOffset, text.length()).trim();
-					if (fileName.endsWith(".")) fileName = fileName.substring(0, fileName.length()-1);
+					if (fileName.endsWith(".")) fileName = fileName.substring(0, fileName.length()-1); //$NON-NLS-1$
 					int lineNumber = -1;
 					try {
 						int i2 = text.lastIndexOf(CHECK_LINE);
 						if (i2 > 0) {
 							i2 += CHECK_LINE.length();
-							int i3 = text.indexOf(",", i2);
+							int i3 = text.indexOf(",", i2); //$NON-NLS-1$
 							if (i3 > 0) {
 								lineNumber = Integer.parseInt(text.substring(i2, i3).trim());
 							}
@@ -89,7 +90,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 							i2 = text.lastIndexOf(CHECK_LINE2);
 							if (i2 > 0) {
 								i2 += CHECK_LINE2.length();
-								int i3 = text.indexOf(",", i2);
+								int i3 = text.indexOf(",", i2); //$NON-NLS-1$
 								if (i3 > 0) {
 									lineNumber = Integer.parseInt(text.substring(i2, i3).trim());
 								}
@@ -109,7 +110,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 						IJavaProject javaProject = JavaCore.create(project);
 						fileName = fileName.replace('\\', '/');
 						try {
-							populateMatchingFiles(project, files, fileName.split("/"));
+							populateMatchingFiles(project, files, fileName.split("/")); //$NON-NLS-1$
 						}
 						catch (CoreException e) {
 							// TODO log this exception

@@ -31,10 +31,10 @@ public class LibraryMacroDirective extends MacroDirective {
 
 	public static void main (String[] args) {
 		try {
-			String content = "#macro entries startIndex=1\r\n" +
-			"data=\"data\" headerUrls=[] sortIndex=-1";
+			String content = "#macro entries startIndex=1\r\n" + //$NON-NLS-1$
+			"data=\"data\" headerUrls=[] sortIndex=-1"; //$NON-NLS-1$
 			
-			LibraryMacroDirective lmd = new LibraryMacroDirective("lib", content, 0, content.length());
+			LibraryMacroDirective lmd = new LibraryMacroDirective("lib", content, 0, content.length()); //$NON-NLS-1$
 			String[] attributes = lmd.getAttributes();
 			for (int i=0; i<attributes.length; i++) {
 				System.out.println(attributes[i]);
@@ -55,7 +55,7 @@ public class LibraryMacroDirective extends MacroDirective {
 	private String name;
 	public String getName() {
 		if (null == name)
-			name = namespace + "." + super.getName();
+			name = namespace + "." + super.getName(); //$NON-NLS-1$
 		return name;
 	}
 

@@ -40,6 +40,6 @@ public class FtlDirective extends AbstractDirective {
 	private Item[] relatedItems = new Item[0];
 
 	public String getTreeImage() {
-		return "element.png";
+		return "element.png"; //$NON-NLS-1$
 	}
 }

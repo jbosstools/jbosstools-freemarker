@@ -66,7 +66,7 @@ public class ElseIfDirective extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "elseif.png";
+		return "elseif.png"; //$NON-NLS-1$
 	}
 
 	public boolean isStartAndEndItem() {

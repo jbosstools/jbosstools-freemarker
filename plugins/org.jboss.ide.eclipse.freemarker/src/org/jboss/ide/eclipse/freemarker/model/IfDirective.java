@@ -89,7 +89,7 @@ public class IfDirective extends AbstractDirective {
 	private Item[] relatedItems;
 
 	public String getTreeImage() {
-		return "if.png";
+		return "if.png"; //$NON-NLS-1$
 	}
 
 	public Item getEndItem() {

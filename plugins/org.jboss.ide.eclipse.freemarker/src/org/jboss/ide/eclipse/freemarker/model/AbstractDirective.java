@@ -50,11 +50,11 @@ public abstract class AbstractDirective extends AbstractItem {
 	}
 
 	public static String[] directives = new String[] {
-		"if", "else", "elseif", "switch", "case", "default", "break", "list",
-		"break", "include", "import", "noparse", "compress", "escape", "noescape",
-		"assign", "global", "local", "setting", "macro", "nested", "return", "flush", "function",
-		"stop", "ftl", "t", "lt", "rt", "nt", "attempt", "recover", "visit", "recurse",
-		"fallback"
+		"if", "else", "elseif", "switch", "case", "default", "break", "list", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		"break", "include", "import", "noparse", "compress", "escape", "noescape", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		"assign", "global", "local", "setting", "macro", "nested", "return", "flush", "function", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+		"stop", "ftl", "t", "lt", "rt", "nt", "attempt", "recover", "visit", "recurse", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+		"fallback" //$NON-NLS-1$
 	};
 	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
 		if (offset < 2) return null;
@@ -69,7 +69,7 @@ public abstract class AbstractDirective extends AbstractItem {
 				if (contents.length == 1) {
 					// first param
 					CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-							"${" , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource());
+							"${" , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
 					return completionInterpolation.getCompletionProposals(offset, context);
 				}
 				else {
@@ -88,13 +88,13 @@ public abstract class AbstractDirective extends AbstractItem {
 			return completionProposals(l);
 		}
 		else if (index == 1 && !contentWithOffset.wasLastCharSpace()) {
-			String value = "";
+			String value = ""; //$NON-NLS-1$
 			try {
 				value = contentWithOffset.getContents()[index].substring(0, contentWithOffset.getOffsetInIndex());
 			}
 			catch (Exception e) {}
 			CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-					"${" + value , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource());
+					"${" + value , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
 			return completionInterpolation.getCompletionProposals(offset, context);
 		}
 		return null;

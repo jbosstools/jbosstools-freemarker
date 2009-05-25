@@ -48,7 +48,7 @@ public class Interpolation extends AbstractDirective {
 	}
 
 	public String getTreeImage() {
-		return "interpolation.png";
+		return "interpolation.png"; //$NON-NLS-1$
 	}
 
 	public synchronized ICompletionProposal[] getCompletionProposals(int offset, Map context) {

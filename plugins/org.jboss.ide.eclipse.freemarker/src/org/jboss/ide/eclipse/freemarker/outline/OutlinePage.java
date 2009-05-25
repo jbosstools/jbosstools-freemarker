@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
@@ -161,7 +162,7 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 
 		public SetContextEntryAction (OutlinePage outlinePage) {
 			this.outlinePage = outlinePage;
-			this.setText("Set context class entry");
+			this.setText(Messages.OutlinePage_SetContextClassEntryAction);
 			this.setEnabled(true);
 		}
 

@@ -29,7 +29,7 @@ import org.eclipse.jface.text.rules.IToken;
 public class MacroInstanceRuleEnd extends DirectiveRuleEnd {
 
 	public MacroInstanceRuleEnd(IToken token) {
-		super("", token, false);
+		super("", token, false); //$NON-NLS-1$
 	}
 
 	protected char getIdentifierChar() {

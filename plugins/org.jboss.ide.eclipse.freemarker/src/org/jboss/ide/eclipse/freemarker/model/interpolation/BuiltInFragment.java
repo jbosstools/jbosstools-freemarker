@@ -49,99 +49,99 @@ public class BuiltInFragment extends AbstractFragment {
 	static {
 		addToMap (OBJECT_BUILT_INS,
 				new Object[]{
-					"is_collection", Boolean.class, null,
-					"is_macro", Boolean.class, null,
-					"is_transform", Boolean.class, null,
-					"string", String.class, null,			
-					"namespace", String.class, null,
-					"default", String.class, new String[]{"value "},
-					"is_number", Boolean.class, null,
-					"is_directive", String.class, null,
-					"is_boolean", Boolean.class, null,
-					"is_hash_ex", Boolean.class, null,
-					"is_enumerable", Boolean.class, null,
-					"is_date", Boolean.class, null,
-					"is_node", Boolean.class, null,
-					"exists", Boolean.class, null,
-					"is_indexable", Boolean.class, null,
-					"is_string", Boolean.class, null,
-					"is_hash", Boolean.class, null,
-					"is_sequence", Boolean.class, null,
-					"if_exists", Boolean.class, null,
-					"has_content", Boolean.class, null,
-					"is_method", Boolean.class, null,
+					"is_collection", Boolean.class, null, //$NON-NLS-1$
+					"is_macro", Boolean.class, null, //$NON-NLS-1$
+					"is_transform", Boolean.class, null, //$NON-NLS-1$
+					"string", String.class, null,			 //$NON-NLS-1$
+					"namespace", String.class, null, //$NON-NLS-1$
+					"default", String.class, new String[]{"value "}, //$NON-NLS-1$ //$NON-NLS-2$
+					"is_number", Boolean.class, null, //$NON-NLS-1$
+					"is_directive", String.class, null, //$NON-NLS-1$
+					"is_boolean", Boolean.class, null, //$NON-NLS-1$
+					"is_hash_ex", Boolean.class, null, //$NON-NLS-1$
+					"is_enumerable", Boolean.class, null, //$NON-NLS-1$
+					"is_date", Boolean.class, null, //$NON-NLS-1$
+					"is_node", Boolean.class, null, //$NON-NLS-1$
+					"exists", Boolean.class, null, //$NON-NLS-1$
+					"is_indexable", Boolean.class, null, //$NON-NLS-1$
+					"is_string", Boolean.class, null, //$NON-NLS-1$
+					"is_hash", Boolean.class, null, //$NON-NLS-1$
+					"is_sequence", Boolean.class, null, //$NON-NLS-1$
+					"if_exists", Boolean.class, null, //$NON-NLS-1$
+					"has_content", Boolean.class, null, //$NON-NLS-1$
+					"is_method", Boolean.class, null, //$NON-NLS-1$
 		});
 		addToMap (STRING_BUILT_INS,
 				new Object[]{
-					"interpret", String.class, null,
-					"matches", Boolean.class, new String[]{"expression"},
-					"html", String.class, null,
-					"index_of", Number.class, new String[]{"substr"},
-					"right_pad", String.class, new String[]{"padAmount"},
-					"xml", String.class, null,
-					"web_safe", String.class, null,
-					"eval", null, null,
-					"size", Number.class, null,
-					"cap_first", String.class, null,					
-					"j_string", String.class, null,
-					"first", String.class, null,
-					"split", Collection.class, null,
-					"upper_case", String.class, null,
-					"last_index_of", String.class, null,
-					"long", Number.class, null,
-					"last", String.class, null,
-					"starts_with", Boolean.class, null,
-					"capitalize", String.class, null,
-					"short", String.class, null,
-					"ends_with", String.class, null,
-					"chunk", Collection.class, null,
-					"byte", String.class, null,
-					"trim", String.class, null,
-					"c", String.class, null,
-					"chop_linebreak", String.class, null,
-					"double", Number.class, null,
-					"url", String.class, null,
-					"replace", String.class, null,
-					"uncap_first", String.class, null,
-					"contains", Boolean.class, null,
-					"left_pad", String.class, new String[]{"param"},
-					"length", Number.class, null,
-					"rtf", String.class, null,
-					"lower_case", String.class, null,
-					"js_string", String.class, null,
-					"word_list", String.class, null,
+					"interpret", String.class, null, //$NON-NLS-1$
+					"matches", Boolean.class, new String[]{"expression"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"html", String.class, null, //$NON-NLS-1$
+					"index_of", Number.class, new String[]{"substr"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"right_pad", String.class, new String[]{"padAmount"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"xml", String.class, null, //$NON-NLS-1$
+					"web_safe", String.class, null, //$NON-NLS-1$
+					"eval", null, null, //$NON-NLS-1$
+					"size", Number.class, null, //$NON-NLS-1$
+					"cap_first", String.class, null,					 //$NON-NLS-1$
+					"j_string", String.class, null, //$NON-NLS-1$
+					"first", String.class, null, //$NON-NLS-1$
+					"split", Collection.class, null, //$NON-NLS-1$
+					"upper_case", String.class, null, //$NON-NLS-1$
+					"last_index_of", String.class, null, //$NON-NLS-1$
+					"long", Number.class, null, //$NON-NLS-1$
+					"last", String.class, null, //$NON-NLS-1$
+					"starts_with", Boolean.class, null, //$NON-NLS-1$
+					"capitalize", String.class, null, //$NON-NLS-1$
+					"short", String.class, null, //$NON-NLS-1$
+					"ends_with", String.class, null, //$NON-NLS-1$
+					"chunk", Collection.class, null, //$NON-NLS-1$
+					"byte", String.class, null, //$NON-NLS-1$
+					"trim", String.class, null, //$NON-NLS-1$
+					"c", String.class, null, //$NON-NLS-1$
+					"chop_linebreak", String.class, null, //$NON-NLS-1$
+					"double", Number.class, null, //$NON-NLS-1$
+					"url", String.class, null, //$NON-NLS-1$
+					"replace", String.class, null, //$NON-NLS-1$
+					"uncap_first", String.class, null, //$NON-NLS-1$
+					"contains", Boolean.class, null, //$NON-NLS-1$
+					"left_pad", String.class, new String[]{"param"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"length", Number.class, null, //$NON-NLS-1$
+					"rtf", String.class, null, //$NON-NLS-1$
+					"lower_case", String.class, null, //$NON-NLS-1$
+					"js_string", String.class, null, //$NON-NLS-1$
+					"word_list", String.class, null, //$NON-NLS-1$
 		});
 		addToMap (NUMBER_BUILT_INS,
 				new Object[]{
-					"string.currency", Boolean.class, new String[]{"format"},
-					"string", String.class, null,			
-					"number", Number.class, null,
-					"new", String.class, null,
-					"long", Number.class, null,
-					"short", String.class, null,
-					"double", Number.class, null,
-					"int", Number.class, null,
+					"string.currency", Boolean.class, new String[]{"format"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"string", String.class, null,			 //$NON-NLS-1$
+					"number", Number.class, null, //$NON-NLS-1$
+					"new", String.class, null, //$NON-NLS-1$
+					"long", Number.class, null, //$NON-NLS-1$
+					"short", String.class, null, //$NON-NLS-1$
+					"double", Number.class, null, //$NON-NLS-1$
+					"int", Number.class, null, //$NON-NLS-1$
 		});
 		addToMap (DATE_BUILT_INS,
 				new Object[]{
-					"date", Date.class, null,
-					"time", Date.class, null,
-					"datetime", Date.class, null,
-					"string", String.class, new String[]{"format"},
-					"string.short", String.class, null,
-					"string.medium", String.class, null,
-					"string.long", String.class, null,
+					"date", Date.class, null, //$NON-NLS-1$
+					"time", Date.class, null, //$NON-NLS-1$
+					"datetime", Date.class, null, //$NON-NLS-1$
+					"string", String.class, new String[]{"format"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"string.short", String.class, null, //$NON-NLS-1$
+					"string.medium", String.class, null, //$NON-NLS-1$
+					"string.long", String.class, null, //$NON-NLS-1$
 		});
 		addToMap (LIST_BUILT_INS,
 				new Object[]{
-					"seq_contains", Boolean.class, new String[]{"value"},
-					"reverse", Collection.class, null,
-					"size", Number.class, null,
-					"last", Object.class, null,
+					"seq_contains", Boolean.class, new String[]{"value"}, //$NON-NLS-1$ //$NON-NLS-2$
+					"reverse", Collection.class, null, //$NON-NLS-1$
+					"size", Number.class, null, //$NON-NLS-1$
+					"last", Object.class, null, //$NON-NLS-1$
 		});
 		addToMap (MAP_BUILT_INS,
 				new Object[]{
-					"keys", Collection.class, null,
+					"keys", Collection.class, null, //$NON-NLS-1$
 		});
 	}
 	
@@ -164,7 +164,7 @@ public class BuiltInFragment extends AbstractFragment {
 	public Class getReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project) {
 		if (null == subContent) {
 			subContent = getContent();
-			int index = subContent.indexOf("(");
+			int index = subContent.indexOf("("); //$NON-NLS-1$
 			if (index > 0) subContent = subContent.substring(0, index);
 		}
 		ParameterSet parameterSet = (ParameterSet) STRING_BUILT_INS.get(subContent);
@@ -231,7 +231,7 @@ public class BuiltInFragment extends AbstractFragment {
 					key, getContent());
 		}
 		else {
-			String replacementString = key + "()";
+			String replacementString = key + "()"; //$NON-NLS-1$
 			return new CompletionProposal (
 					replacementString, offset-subOffset+1,
 					getContent().length(), replacementString.length()-1);
@@ -245,12 +245,12 @@ public class BuiltInFragment extends AbstractFragment {
 		else {
 			StringBuffer sb = new StringBuffer();
 			sb.append(key);
-			sb.append("(");
+			sb.append("("); //$NON-NLS-1$
 //			for (int i=0; i<values.getParameters().length; i++) {
 //				if (i > 0) sb.append(", ");
 //				sb.append(values.getParameters()[i]);
 //			}
-			sb.append(")");
+			sb.append(")"); //$NON-NLS-1$
 			return sb.toString();
 		}
 	}

@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
@@ -57,7 +58,7 @@ public class ContextProperties extends PropertyPage {
 
 	public ContextProperties() {
 		super();
-		setDescription("Create pre-determined Velocity context variables for all files under this resource");
+		setDescription(Messages.ContextProperties_Description);
 	}
 	
     protected Control createContents(Composite parent) {
@@ -112,8 +113,8 @@ public class ContextProperties extends PropertyPage {
         // create the columns
         TableColumn keyColumn = new TableColumn(contextValuesTable, SWT.LEFT);
         TableColumn valueColumn = new TableColumn(contextValuesTable, SWT.LEFT);
-        keyColumn.setText("Name");
-        valueColumn.setText("Type");
+        keyColumn.setText(Messages.ContextProperties_KeyColumn);
+        valueColumn.setText(Messages.ContextProperties_ValueColumn);
         ColumnLayoutData keyColumnLayout = new ColumnWeightData(30, false);
         ColumnLayoutData valueColumnLayout = new ColumnWeightData(70, false);
 
@@ -138,7 +139,7 @@ public class ContextProperties extends PropertyPage {
         buttonComposite.setLayout(gl);
         buttonComposite.setVisible(true);
         addContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-        addContextValueButton.setText("New");
+        addContextValueButton.setText(Messages.ContextProperties_NewButton);
         addContextValueButton.setVisible(true);
         addContextValueButton
                 .addSelectionListener(new AddContextValueButtonListener());
@@ -147,7 +148,7 @@ public class ContextProperties extends PropertyPage {
         data.grabExcessHorizontalSpace = true;
         addContextValueButton.setLayoutData(data);
         editContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-        editContextValueButton.setText("Edit");
+        editContextValueButton.setText(Messages.ContextProperties_EditButton);
         editContextValueButton
                 .addSelectionListener(new EditContextValueButtonListener());
         data = new GridData();
@@ -155,7 +156,7 @@ public class ContextProperties extends PropertyPage {
         data.grabExcessHorizontalSpace = true;
         editContextValueButton.setLayoutData(data);
         deleteContextValueButton = new Button(buttonComposite, SWT.NATIVE);
-        deleteContextValueButton.setText("Delete");
+        deleteContextValueButton.setText(Messages.ContextProperties_DeleteButton);
         deleteContextValueButton
                 .addSelectionListener(new ContextValueDeleteKeyListener());
         data = new GridData();
@@ -269,8 +270,8 @@ public class ContextProperties extends PropertyPage {
             if (index >= 0) {
                 try {
                     boolean confirm = MessageDialog
-                            .openConfirm(new Shell(), "Confirmation",
-                                    "Are you sure you want to delete this context value?");
+                            .openConfirm(new Shell(), Messages.ContextProperties_ConfirmationTitle,
+                                    Messages.ContextProperties_DeleteValueConfirmation);
                     if (confirm) {
                         String key = contextValuesTable.getSelection()[0]
                                 .getText(0);

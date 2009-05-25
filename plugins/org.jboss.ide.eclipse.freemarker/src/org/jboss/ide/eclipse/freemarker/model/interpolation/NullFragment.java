@@ -28,7 +28,7 @@ package org.jboss.ide.eclipse.freemarker.model.interpolation;
 public class NullFragment extends NameFragment {
 
 	public NullFragment() {
-		super(0, "");
+		super(0, ""); //$NON-NLS-1$
 	}
 
 	public boolean isStartFragment() {
