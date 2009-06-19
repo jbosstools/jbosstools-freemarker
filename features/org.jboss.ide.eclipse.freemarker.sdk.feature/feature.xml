@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.jboss.ide.eclipse.freemarker.sdk.feature"
+      label="%featureName"
+      version="1.0.1.qualifier"
+      provider-name="%featureProvider">
+
+   <description>
+      %description
+   </description>
+
+   <copyright>
+      JBoss, Home of Professional Open Source
+Copyright 2006-2009, JBoss by Red Hat, and individual contributors as indicated
+by the @authors tag. See the copyright.txt in the distribution
+for a full listing of individual contributors.
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://download.jboss.org/jbosstools/updates/stable/"/>
+   </url>
+
+   <includes
+         id="org.jboss.ide.eclipse.freemarker.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.jboss.ide.eclipse.freemarker.source.feature"
+         version="0.0.0"/>
+
+</feature>
