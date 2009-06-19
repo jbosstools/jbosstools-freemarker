@@ -18,19 +18,20 @@ mainFeatureToBuildID=org.jboss.ide.eclipse.freemarker.sdk.feature
 build.steps=buildUpdate,publish,cleanup
 
 # Re-use local sources?
-localSourceCheckoutDir=/home/nboldt/eclipse/workspace-jboss/jbosstools-trunk/freemarker
-relengBuilderDir=/home/nboldt/eclipse/workspace-jboss/jbosstools-trunk/freemarker/releng
-relengBaseBuilderDir=/home/nboldt/eclipse/workspace-jboss/org.eclipse.releng.basebuilder
-relengCommonBuilderDir=/home/nboldt/eclipse/workspace-jboss/org.eclipse.dash.common.releng
+localSourceCheckoutDir=C:/workspace2
+# For windows, must be explicitA about paths using correct slashes (/); dirs with spaces should be avoided
+writableBuildRoot=C:/tmp/build
+relengBuilderDir=C:/workspace2/org.jboss.tools.freemarker.releng
+relengBaseBuilderDir=C:/workspace2/org.eclipse.releng.basebuilder
+relengCommonBuilderDir=C:/workspace2/org.eclipse.dash.common.releng
 
-JAVA_HOME=/usr/lib/jvm/java
-JAVA14_HOME=/usr/lib/jvm/java
-JAVA50_HOME=/usr/lib/jvm/java
-JAVA60_HOME=/usr/lib/jvm/java
+JAVA_HOME=C:/Progra~1/Java/jdk1.6.0_11
+JAVA50_HOME=C:/Progra~1/Java/jdk1.6.0_11
+JAVA60_HOME=C:/Progra~1/Java/jdk1.6.0_11
 
 dependencyURLs=\
-http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-3.5M7-linux-gtk.tar.gz
-#http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-3.5M7-win32.zip,\
+http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-SDK-3.5M7-win32.zip
+#http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-3.5M7-linux-gtk.tar.gz,\
 #http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-3.5M7-linux-gtk-x86_64.tar.gz,\
 #http://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops/S-3.5M7-200904302300/eclipse-SDK-3.5M7-macosx-carbon.tar.gz,\
 #http://www.eclipse.org/downloads/download.php?r=1&file=/tools/gef/downloads/drops/3.5.0/S200905011522/GEF-runtime-3.5.0M7.zip,\
