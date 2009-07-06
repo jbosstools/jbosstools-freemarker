@@ -30,3 +30,4 @@ Export-Package: freemarker.core,
  org.jboss.ide.eclipse.freemarker.model,
  org.jboss.ide.eclipse.freemarker.outline,
  org.jboss.ide.eclipse.freemarker.preferences
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
