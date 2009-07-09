@@ -20,7 +20,7 @@
 
 		<!-- 
 			can build in /tmp, eg., in /tmp/build, or in workspace, eg.,
-			${relengBuilderDir}/build
+			${WORKSPACE}/build
 		-->
 		<property name="writableBuildRoot" value="/tmp/build" />
 
