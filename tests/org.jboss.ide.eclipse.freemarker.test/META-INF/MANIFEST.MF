@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Freemarker Tests
+Bundle-SymbolicName: org.jboss.ide.eclipse.freemarker.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.jboss.ide.eclipse.freemarker.test.Activator
+Bundle-Vendor: JBoss by RedHat
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit,
+ org.jboss.tools.tests;bundle-version="2.0.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
