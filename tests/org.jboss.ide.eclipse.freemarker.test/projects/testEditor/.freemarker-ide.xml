@@ -1,0 +1,14 @@
+<config>
+	<context-values>
+		<resource path="edit.xhtml.ftl">
+			<value key="a" object-class="java.lang.String"/>
+			<value key="b" object-class="java.util.ArrayList" item-class="java.lang.String"/>
+		</resource>
+		<resource path="editproperty.xhtml.ftl">
+			<value key="a" object-class="java.lang.String"/>
+			<value key="b" object-class="java.util.ArrayList" item-class="java.lang.String"/>
+		</resource>
+	</context-values>
+	<macro-library>
+	</macro-library>
+</config>

@@ -54,6 +54,7 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 
 	private Editor editor;
 	
+	private static final ICompletionProposal[] NO_COMPLETIONS = new ICompletionProposal[0];
 	
 	public CompletionProcessor (Editor editor) {
 		this.editor = editor;
@@ -123,14 +124,14 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 									}
 								}
 								else {
-									return null;
+									return NO_COMPLETIONS;
 								}
 							}
 						}
 					}
 				}
 				catch (BadLocationException e) {
-					return null;
+					return NO_COMPLETIONS;
 				}
 				// check for interpolations
 				try {
@@ -160,14 +161,14 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 					}
 				}
 				catch (BadLocationException e) {
-					return null;
+					return NO_COMPLETIONS;
 				}
 			}
 		}
 		catch (Exception e) {
 			Plugin.log(e);
 		}
-		return null;
+		return NO_COMPLETIONS;
 	}
 
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {

@@ -38,6 +38,8 @@ public class PreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
 	
+	public static final String ID = "org.jboss.ide.eclipse.freemarker.preferences.OutlinePreferencePage";
+	
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());

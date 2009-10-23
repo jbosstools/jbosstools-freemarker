@@ -4,6 +4,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.jboss.ide.eclipse.freemarker.editor.test.FreemarkerEditorTest;
+import org.jboss.ide.eclipse.freemarker.preferences.test.FreemarkerPreferencePageTest;
 import org.jboss.tools.tests.AbstractPluginsLoadTest;
 
 public class FreemarkerAllTests extends TestCase {
@@ -12,6 +14,8 @@ public class FreemarkerAllTests extends TestCase {
 	{
 		TestSuite suite = new TestSuite(FreemarkerAllTests.class.getName());
 		suite.addTestSuite(FreemarkerPluginsLoadTest.class);
+		suite.addTestSuite(FreemarkerPreferencePageTest.class);
+		suite.addTestSuite(FreemarkerEditorTest.class);		
 		return suite;
 	}
 	
@@ -20,7 +24,7 @@ public class FreemarkerAllTests extends TestCase {
 		
 		public FreemarkerPluginsLoadTest() {}
 		
-		public void testBirtPluginsAreResolvedAndActivated() {
+		public void testFreemarkerPluginsAreResolvedAndActivated() {
 			testBundlesAreLoadedFor("org.jboss.ide.eclipse.freemarker.feature");
 		}
 	}

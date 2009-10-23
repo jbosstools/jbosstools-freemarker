@@ -35,6 +35,7 @@ import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -181,6 +182,10 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		return null;
 	}
 
+	public ITextViewer getTextViewer() {
+		return getSourceViewer();
+	}
+	
 	public void addProblemMarker(String aMessage, int aLine) {
 		IFile file = ((IFileEditorInput)getEditorInput()).getFile(); 
 		try {
