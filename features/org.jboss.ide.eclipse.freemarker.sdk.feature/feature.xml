@@ -3,7 +3,8 @@
       id="org.jboss.ide.eclipse.freemarker.sdk.feature"
       label="%featureName"
       version="1.0.1.qualifier"
-      provider-name="%featureProvider">
+      provider-name="%featureProvider"
+      plugin="org.jboss.ide.eclipse.freemarker">
 
    <description>
       %description
