@@ -18,9 +18,9 @@
       %license
    </license>
 
-   <url>
-      <update label="%updateSiteName" url="http://download.jboss.org/jbosstools/updates/stable"/>
-   </url>
+   <!-- <url>
+      <update label="%updateSiteName" url="http://download.jboss.org/jbosstools/updates/stable/galileo/"/>
+   </url> -->
 
    <plugin
          id="org.jboss.ide.eclipse.freemarker"
