@@ -2,7 +2,7 @@
 <feature
       id="org.jboss.ide.eclipse.freemarker.test.feature"
       label="Freemarker Tests"
-      version="1.0.0"
+      version="1.1.0.qualifier"
       provider-name="JBoss by RedHat">
 
    <description url="http://www.example.com/description">
