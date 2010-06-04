@@ -13,7 +13,6 @@ public class FreemarkerAllTests extends TestCase {
 	public static Test suite ()
 	{
 		TestSuite suite = new TestSuite(FreemarkerAllTests.class.getName());
-		suite.addTestSuite(FreemarkerPluginsLoadTest.class);
 		suite.addTestSuite(FreemarkerPreferencePageTest.class);
 		suite.addTestSuite(FreemarkerEditorTest.class);		
 		return suite;
