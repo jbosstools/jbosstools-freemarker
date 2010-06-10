@@ -15,6 +15,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<module>features</module>
 		<module>plugins</module>
 		<module>tests</module>
-	</modules>
+                <module>site</module>
+        </modules>
 </project>
 	
