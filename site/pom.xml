@@ -7,8 +7,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jboss.tools.freemarker</groupId>
-	<artifactId>site</artifactId> 
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>freemarker.site</artifactId> 
 	<name>freemarker.site</name>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>eclipse-update-site</packaging>
 </project>
