@@ -70,6 +70,9 @@ public class BuiltInFragment extends AbstractFragment {
 					"if_exists", Boolean.class, null, //$NON-NLS-1$
 					"has_content", Boolean.class, null, //$NON-NLS-1$
 					"is_method", Boolean.class, null, //$NON-NLS-1$
+					"round", String.class, null, //$NON-NLS-1$
+					"floor", String.class, null, //$NON-NLS-1$
+					"ceiling", String.class, null, //$NON-NLS-1$
 		});
 		addToMap (STRING_BUILT_INS,
 				new Object[]{
