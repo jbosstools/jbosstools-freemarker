@@ -38,21 +38,22 @@ public class OutlineLabelProvider
 	}
 
 	public Image getImage(Object anElement) {
-		if (null == anElement)
-			return null;
+		Image result = null;
 		if (anElement instanceof Item) {
-			return ImageManager.getImage(((Item) anElement).getTreeImage());
+			String imageName = ((Item) anElement).getTreeImage();
+			if(imageName != null) {
+				result = ImageManager.getImage(imageName);
+			}
 		}
-		else {
-			return null;
-		}
+		return result;
 	}
 
 	public String getText(Object anElement) {
-		if (anElement instanceof Item)
-			return ((Item) anElement).getTreeDisplay();
-		else
-			return null;
+		String text = null;
+		if (anElement instanceof Item) {
+			text = ((Item) anElement).getTreeDisplay();
+		}
+		return text;
 	}
 
 	public void dispose() {
