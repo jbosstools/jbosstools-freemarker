@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.jboss.ide.eclipse.freemarker.test.feature" label="Freemarker Tests" version="1.2.0.qualifier" provider-name="JBoss by RedHat">
+<feature id="org.jboss.ide.eclipse.freemarker.test.feature" label="JBoss Tools - Tests - Freemarker" version="1.2.0.qualifier" provider-name="JBoss by RedHat">
 
 	<description url="http://www.example.com/description">
       [Enter Feature Description here.]
