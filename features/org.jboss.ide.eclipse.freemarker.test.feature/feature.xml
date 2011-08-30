@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature id="org.jboss.ide.eclipse.freemarker.test.feature" label="JBoss Tools - Tests - Freemarker" version="1.2.0.qualifier" provider-name="JBoss by RedHat">
+<feature
+      id="org.jboss.ide.eclipse.freemarker.test.feature"
+      label="JBoss Tools - Tests - Freemarker"
+      version="1.2.0.qualifier"
+      provider-name="JBoss by RedHat">
 
-	<description url="http://www.example.com/description">
+   <description url="http://www.jboss.org/tools">
       [Enter Feature Description here.]
    </description>
 
-	<copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      %copyright
    </copyright>
 
-	<license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
-	<plugin id="org.jboss.ide.eclipse.freemarker.test" download-size="0" install-size="0" version="0.0.0" />
+   <plugin
+         id="org.jboss.ide.eclipse.freemarker.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
