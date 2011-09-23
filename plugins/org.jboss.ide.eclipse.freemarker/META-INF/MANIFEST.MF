@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.jboss.tools.usage;bundle-version="1.0.0";resolution:=optional
+ org.jboss.tools.usage;bundle-version="1.0.0";resolution:=optional;x-installation:=greedy
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: freemarker-ide.jar,
  freemarker-2.3.18.jar
