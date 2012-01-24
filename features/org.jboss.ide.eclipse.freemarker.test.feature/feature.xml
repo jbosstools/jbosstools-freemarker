@@ -6,7 +6,7 @@
       provider-name="JBoss by RedHat">
 
    <description url="http://www.jboss.org/tools">
-      [Enter Feature Description here.]
+      %description
    </description>
 
    <copyright>
