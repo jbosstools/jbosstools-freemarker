@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Freemarker UI Bot Test
+Bundle-SymbolicName: org.jboss.tools.freemarker.ui.bot.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.jboss.tools.freemarker.ui.bot.test.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.swtbot.go;bundle-version="2.0.5",
+ org.jboss.ide.eclipse.freemarker;bundle-version="1.2.0",
+ org.jboss.tools.ui.bot.ext;bundle-version="3.2.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
