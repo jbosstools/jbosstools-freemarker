@@ -11,5 +11,11 @@
 	<feature url="features/org.jboss.ide.eclipse.freemarker.test.feature_0.0.0.jar" id="org.jboss.ide.eclipse.freemarker.test.feature" version="0.0.0">
 		<category name="JBoss Tools freemarker Nightly Build Update Site"/>
 	</feature>
-
+	<!-- Sources -->
+	<feature url="features/org.jboss.ide.eclipse.freemarker.feature.source_0.0.0.jar" id="org.jboss.ide.eclipse.freemarker.feature.source" version="0.0.0">
+		<category name="JBoss Tools freemarker Nightly Build Update Site"/>
+	</feature>
+	<feature url="features/org.jboss.ide.eclipse.freemarker.test.feature.source_0.0.0.jar" id="org.jboss.ide.eclipse.freemarker.test.feature.source" version="0.0.0">
+		<category name="JBoss Tools freemarker Nightly Build Update Site"/>
+	</feature>
 </site>
