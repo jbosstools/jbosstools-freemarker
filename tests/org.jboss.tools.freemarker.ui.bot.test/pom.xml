@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion> 
+	<parent>
+		<groupId>org.jboss.tools.freemarker</groupId>
+		<artifactId>tests</artifactId>
+		<version>1.2.0-SNAPSHOT</version>	
+	</parent>
+	<groupId>org.jboss.tools.freemarker.tests</groupId>
+	<artifactId>org.jboss.tools.freemarker.ui.bot.test</artifactId> 
+	<version>1.0.0-SNAPSHOT</version>
+	
+	<packaging>eclipse-test-plugin</packaging>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<configuration>
+					<useUIThread>false</useUIThread>
+					<skip>${swtbot.test.skip}</skip>
+					<dependencies>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.eclipse.platform</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency> 
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.ide.eclipse.freemarker.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+					</dependencies>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
