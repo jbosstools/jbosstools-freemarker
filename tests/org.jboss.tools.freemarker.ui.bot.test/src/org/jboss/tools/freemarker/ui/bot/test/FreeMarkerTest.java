@@ -14,7 +14,6 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
 import org.jboss.tools.ui.bot.ext.gen.ActionItem;
@@ -53,7 +52,7 @@ public class FreeMarkerTest extends SWTTestExt {
 	}
 
 	@Test
-	public void FreeMarkerTest() {
+	public void freeMarkerTest() {
 		emptyErrorLog();
 		importTestProject();
 		openFTLFileInEditor();
@@ -79,8 +78,7 @@ public class FreeMarkerTest extends SWTTestExt {
 	private void openFTLFileInEditor() {
 		SWTBotView viewOpen = open
 				.viewOpen(ActionItem.View.GeneralProjectExplorer.LABEL);
-		
-		SWTBotTree tree = viewOpen.bot().tree();
+				
 		Tree.open(viewOpen.bot(),prj, "ftl", "welcome.ftl" );
 		SWTBotEditor editor = bot.editorByTitle("welcome.ftl");
 		editor.setFocus();
@@ -130,25 +128,24 @@ public class FreeMarkerTest extends SWTTestExt {
 			new RuntimeException("Unable to read from resource");
 		}
 
-		SWTBotView viewConsole = open.viewOpen(ActionItem.View.GeneralConsole.LABEL);
+		open.viewOpen(ActionItem.View.GeneralConsole.LABEL);
 		ConsoleView cv = new ConsoleView();
 		cv.clearConsole();
 		
 		SWTBotView viewOpen = open
 				.viewOpen(ActionItem.View.GeneralProjectExplorer.LABEL);
 		
-		SWTBotTreeItem item = Tree.select(viewOpen.bot(), prj,"src","org.jboss.tools.freemarker.testprj","FMTest.java");
+		Tree.select(viewOpen.bot(), prj,"src","org.jboss.tools.freemarker.testprj","FMTest.java");
 		ContextMenuHelper.clickContextMenu(viewOpen.bot().tree(),"Run As","2 Java Application");
 		SWTBotShell s = bot.shell("Progress Information");
 		bot.waitUntil(shellCloses(s));
 						
-		SWTBotView consoleView = open.viewOpen(ActionItem.View.GeneralConsole.LABEL);
+		open.viewOpen(ActionItem.View.GeneralConsole.LABEL);
 		String consoleText = cv.getConsoleText(TIME_1S, TIME_10S, true);
 				
 		bot.waitUntil(shellCloses(s));
 		
 		assertTrue("Output equal check",consoleText.equals(outputExpected));
-		bot.sleep(TIME_10S);
 	}
 
 	private String readTextFileToString(String filePath) throws IOException {
