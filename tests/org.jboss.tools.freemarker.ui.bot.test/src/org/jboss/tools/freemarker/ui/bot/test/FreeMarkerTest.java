@@ -17,7 +17,6 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
 import org.jboss.tools.ui.bot.ext.gen.ActionItem;
-import org.jboss.tools.ui.bot.ext.helper.ContextMenuHelper;
 import org.jboss.tools.ui.bot.ext.helper.FileHelper;
 import org.jboss.tools.ui.bot.ext.helper.ImportHelper;
 import org.jboss.tools.ui.bot.ext.helper.ResourceHelper;
@@ -44,6 +43,8 @@ public class FreeMarkerTest extends SWTTestExt {
 		eclipse.closeView(IDELabel.View.WELCOME);
 		eclipse.closeView(IDELabel.View.JBOSS_CENTRAL);
 		eclipse.closeAllEditors();
+		util.waitForAll();
+		open.perspective(ActionItem.Perspective.JAVA.LABEL);
 	}
 
 	@Test
@@ -75,7 +76,7 @@ public class FreeMarkerTest extends SWTTestExt {
 		util.waitForNonIgnoredJobs();
 	}
 
-	private void openFTLFileInEditor() {
+	private void openFTLFileInEditor() {		
 		SWTBotView viewOpen = open
 				.viewOpen(ActionItem.View.GeneralProjectExplorer.LABEL);
 				
@@ -136,7 +137,8 @@ public class FreeMarkerTest extends SWTTestExt {
 				.viewOpen(ActionItem.View.GeneralProjectExplorer.LABEL);
 		
 		Tree.select(viewOpen.bot(), prj,"src","org.jboss.tools.freemarker.testprj","FMTest.java");
-		ContextMenuHelper.clickContextMenu(viewOpen.bot().tree(),"Run As","2 Java Application");
+		RunAs.click("Java Application");
+
 		SWTBotShell s = bot.shell("Progress Information");
 		bot.waitUntil(shellCloses(s));
 						
