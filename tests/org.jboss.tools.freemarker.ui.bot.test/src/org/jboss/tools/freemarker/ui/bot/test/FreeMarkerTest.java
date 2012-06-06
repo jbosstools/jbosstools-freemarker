@@ -20,6 +20,7 @@ import org.jboss.tools.ui.bot.ext.gen.ActionItem;
 import org.jboss.tools.ui.bot.ext.helper.FileHelper;
 import org.jboss.tools.ui.bot.ext.helper.ImportHelper;
 import org.jboss.tools.ui.bot.ext.helper.ResourceHelper;
+import org.jboss.tools.ui.bot.ext.helper.SubversiveHelper;
 import org.jboss.tools.ui.bot.ext.types.IDELabel;
 import org.jboss.tools.ui.bot.ext.view.ConsoleView;
 import org.jboss.tools.ui.bot.ext.view.ErrorLogView;
@@ -45,6 +46,8 @@ public class FreeMarkerTest extends SWTTestExt {
 		eclipse.closeAllEditors();
 		util.waitForAll();
 		open.perspective(ActionItem.Perspective.JAVA.LABEL);
+		
+		SubversiveHelper.disableSVNDecoration();
 	}
 
 	@Test
