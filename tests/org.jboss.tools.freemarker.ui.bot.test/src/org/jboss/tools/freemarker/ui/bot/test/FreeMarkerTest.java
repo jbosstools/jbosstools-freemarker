@@ -46,8 +46,11 @@ public class FreeMarkerTest extends SWTTestExt {
 		eclipse.closeAllEditors();
 
 		util.waitForAll();
-		bot.shells()[0].activate();
-		bot.shells()[0].setFocus();
+		String title = "Resource - Eclipse Platform";
+		bot.waitForShell(title);
+		SWTBotShell shell = bot.shell(title);
+		shell.activate();
+		shell.setFocus();
 		open.perspective(ActionItem.Perspective.JAVA.LABEL);
 		
 		SubversiveHelper.disableSVNDecoration();
