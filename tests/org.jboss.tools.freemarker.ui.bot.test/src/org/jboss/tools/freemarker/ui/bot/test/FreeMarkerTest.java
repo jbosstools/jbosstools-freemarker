@@ -12,10 +12,10 @@ import java.util.List;
 
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEditor;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.jboss.tools.ui.bot.ext.SWTTestExt;
+import org.jboss.tools.ui.bot.ext.config.Annotations.Require;
 import org.jboss.tools.ui.bot.ext.gen.ActionItem;
 import org.jboss.tools.ui.bot.ext.helper.FileHelper;
 import org.jboss.tools.ui.bot.ext.helper.ImportHelper;
@@ -27,14 +27,13 @@ import org.jboss.tools.ui.bot.ext.view.ErrorLogView;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /**
  * Freemarker ui bot test
  * @author jpeterka
  *
  */
-@RunWith(SWTBotJunit4ClassRunner.class)
+@Require(perspective="Java")
 public class FreeMarkerTest extends SWTTestExt {
 
 	private String prj = "org.jboss.tools.freemarker.testprj";
@@ -46,9 +45,9 @@ public class FreeMarkerTest extends SWTTestExt {
 		eclipse.closeAllEditors();
 
 		util.waitForAll();
-		String title = "Resource - Eclipse Platform";
-		bot.waitForShell(title);
-		SWTBotShell shell = bot.shell(title);
+		List<SWTBotShell> shells = bot.waitForNumberOfShells(1);
+		SWTBotShell shell = bot.shell(shells.get(0).getText());
+		log.info(shell.getText());
 		shell.activate();
 		shell.setFocus();
 		open.perspective(ActionItem.Perspective.JAVA.LABEL);
