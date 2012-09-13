@@ -33,7 +33,7 @@
 				</property>
 			</activation>
 			<properties>
-				<applejdkProperties>-Dawt.toolkit=sun.lwawt.macosx.LWCToolkit</applejdkProperties>
+				<systemProperties>-Dawt.toolkit=sun.lwawt.macosx.LWCToolkit</systemProperties>								
 			</properties>
 		</profile>		
 	</profiles>
