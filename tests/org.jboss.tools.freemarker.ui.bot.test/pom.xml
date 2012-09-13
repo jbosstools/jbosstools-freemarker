@@ -13,7 +13,7 @@
 
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
-		<vendor-os>${java.vendor.url}-${os.name}</vendor-os>
+		<vendor-os>ok</vendor-os>
 	</properties>
 
 	<profiles>
@@ -29,7 +29,7 @@
 			<activation>
 				<property>
 					<name>vendor-os</name>
-					<value>http://java.oracle.com/-Mac OS X</value>
+					<value>ok</value>
 				</property>
 			</activation>
 			<properties>
