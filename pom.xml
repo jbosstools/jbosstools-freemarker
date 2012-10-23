@@ -9,8 +9,9 @@
 		<relativePath>../build/parent/pom.xml</relativePath>
 	</parent>
 	<groupId>org.jboss.tools</groupId>
-	<artifactId>freemarker.all</artifactId>
+	<artifactId>freemarker</artifactId>
 	<version>1.3.0-SNAPSHOT</version>
+	<name>freemarker.all</name>
 	<packaging>pom</packaging>
 	<modules>
 		<module>plugins</module>
