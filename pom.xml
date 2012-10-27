@@ -6,7 +6,7 @@
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
 		<version>4.0.0.Beta2-SNAPSHOT</version>
-		<relativePath>../build/parent/pom.xml</relativePath>
+		<relativePath>../jbosstools-build/parent/pom.xml</relativePath>
 	</parent>
 	<groupId>org.jboss.tools</groupId>
 	<artifactId>freemarker</artifactId>
