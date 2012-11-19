@@ -23,7 +23,7 @@
 		<profile>
 			<id>bootstrap</id>
 			<modules>
-				<module>../base</module>
+				<module>../jbosstools-base</module>
 			</modules>
 		</profile>
 	</profiles>
