@@ -12,6 +12,9 @@
 	<version>1.3.200-SNAPSHOT</version>
 	<name>freemarker.all</name>
 	<packaging>pom</packaging>
+	<properties>
+ 		<tycho.scmUrl>scm:git:https://github.com/jbosstools/jbosstools-freemarker.git</tycho.scmUrl>
+ 	</properties>
 	<modules>
 		<module>plugins</module>
 		<module>tests</module>
