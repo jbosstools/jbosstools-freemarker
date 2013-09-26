@@ -53,7 +53,7 @@
             name="%PropertyPage_FreeMarkerContext"
             objectClass="org.eclipse.core.resources.IResource"/>
    </extension>
-   <extension>
+   <extension
          point="org.eclipse.debug.ui.consoleLineTrackers">
       <consoleLineTracker
             class="org.jboss.ide.eclipse.freemarker.linetracker.ConsoleLineTracker"
