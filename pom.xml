@@ -22,18 +22,24 @@
 		<module>site</module>
 	</modules>
 	<repositories>
-		<!-- To resolve parent artifact -->
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Repository Group</name>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+                <repository>
+                        <id>jbosstools-base</id>
+                        <layout>p2</layout>
+                        <url>${jbosstools-base-site}</url>
+                </repository>
+
+                <!-- To resolve parent artifact -->
+                <repository>
+                        <id>jboss-public-repository-group</id>
+                        <name>JBoss Public Repository Group</name>
+                        <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                        </snapshots>
+                </repository>
+        </repositories>
 </project>
 	
