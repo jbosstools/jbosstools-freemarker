@@ -125,9 +125,13 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof MacroDirective)
-			return (getName().compareTo(((MacroDirective) arg0).getName()));
+			return nullToEmpty(getName()).compareTo(nullToEmpty(((MacroDirective) arg0).getName()));
 		else
 			return 0;
+	}
+
+	private String nullToEmpty(String s) {
+		return s == null ? "" : s; //$NON-NLS-1$
 	}
 
 	public void addToContext(Map context) {
