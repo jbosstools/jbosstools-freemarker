@@ -40,12 +40,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class BuiltInFragment extends AbstractFragment {
 
-	private static final Map STRING_BUILT_INS = new HashMap();
-	private static final Map NUMBER_BUILT_INS = new HashMap();
-	private static final Map DATE_BUILT_INS = new HashMap();
-	private static final Map LIST_BUILT_INS = new HashMap();
-	private static final Map MAP_BUILT_INS = new HashMap();
-	private static final Map OBJECT_BUILT_INS = new HashMap();
+	private static final Map<String, ParameterSet> STRING_BUILT_INS = new HashMap<String, ParameterSet>();
+	private static final Map<String, ParameterSet> NUMBER_BUILT_INS = new HashMap<String, ParameterSet>();
+	private static final Map<String, ParameterSet> DATE_BUILT_INS = new HashMap<String, ParameterSet>();
+	private static final Map<String, ParameterSet> LIST_BUILT_INS = new HashMap<String, ParameterSet>();
+	private static final Map<String, ParameterSet> MAP_BUILT_INS = new HashMap<String, ParameterSet>();
+	private static final Map<String, ParameterSet> OBJECT_BUILT_INS = new HashMap<String, ParameterSet>();
 	static {
 		addToMap (OBJECT_BUILT_INS,
 				new Object[]{
@@ -147,43 +147,45 @@ public class BuiltInFragment extends AbstractFragment {
 					"keys", Collection.class, null, //$NON-NLS-1$
 		});
 	}
-	
-	private static void addToMap (Map map, Object[] arr) {
-		int i=0; 
+
+	private static void addToMap (Map<String, ParameterSet> map, Object[] arr) {
+		int i=0;
 		while (i<arr.length) {
 			map.put(
 					(String) arr[i++],
 					new ParameterSet (
-						(Class) arr[i++],
+						(Class<?>) arr[i++],
 						(String[]) arr[i++]));
 		}
 	}
-	
+
 	public BuiltInFragment(int offset, String content) {
 		super(offset, content);
 	}
 
 	private String subContent = null;
-	public Class getReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project) {
+	@Override
+	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project) {
 		if (null == subContent) {
 			subContent = getContent();
 			int index = subContent.indexOf("("); //$NON-NLS-1$
 			if (index > 0) subContent = subContent.substring(0, index);
 		}
-		ParameterSet parameterSet = (ParameterSet) STRING_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = (ParameterSet) NUMBER_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = (ParameterSet) DATE_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = (ParameterSet) LIST_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = (ParameterSet) MAP_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = (ParameterSet) OBJECT_BUILT_INS.get(subContent);
+		ParameterSet parameterSet = STRING_BUILT_INS.get(subContent);
+		if (null == parameterSet) parameterSet = NUMBER_BUILT_INS.get(subContent);
+		if (null == parameterSet) parameterSet = DATE_BUILT_INS.get(subContent);
+		if (null == parameterSet) parameterSet = LIST_BUILT_INS.get(subContent);
+		if (null == parameterSet) parameterSet = MAP_BUILT_INS.get(subContent);
+		if (null == parameterSet) parameterSet = OBJECT_BUILT_INS.get(subContent);
 		if (null != parameterSet) {
 			return parameterSet.getReturnClass();
 		}
 		else return null;
 	}
 
-	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class parentClass,
-			List fragments, ISourceViewer sourceViewer, Map context, IResource file, IProject project) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class<?> parentClass,
+			List<Fragment> fragments, ISourceViewer sourceViewer, Map<String, Class<?>> context, IResource file, IProject project) {
 		if (instanceOf(parentClass, String.class)) {
 			return getCompletionProposals(subOffset, offset, STRING_BUILT_INS);
 		}
@@ -202,24 +204,24 @@ public class BuiltInFragment extends AbstractFragment {
 		else return getCompletionProposals(subOffset, offset, OBJECT_BUILT_INS);
 	}
 
-	private ICompletionProposal[] getCompletionProposals(int subOffset, int offset, Map values) {
+	private ICompletionProposal[] getCompletionProposals(int subOffset, int offset, Map<String, ParameterSet> values) {
 		if (offset == 0) return null;
 		String prefix = getContent().substring(0, subOffset-1);
-		List proposals = new ArrayList();
-		for (Iterator i=values.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry entry = (Map.Entry) i.next();
-			String key = (String) entry.getKey();
-			ParameterSet params = (ParameterSet) entry.getValue();
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		for (Iterator<Map.Entry<String, ParameterSet>> i=values.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, ParameterSet> entry = i.next();
+			String key = entry.getKey();
+			ParameterSet params = entry.getValue();
 			if (key.startsWith(prefix)) {
 				proposals.add(getCompletionProposal(key, params, offset, subOffset));
 			}
 		}
 		if (!values.equals(OBJECT_BUILT_INS)) {
 			values = OBJECT_BUILT_INS;
-			for (Iterator i=values.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry entry = (Map.Entry) i.next();
-				String key = (String) entry.getKey();
-				ParameterSet params = (ParameterSet) entry.getValue();
+			for (Iterator<Map.Entry<String, ParameterSet>> i=values.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<String, ParameterSet> entry = i.next();
+				String key = entry.getKey();
+				ParameterSet params = entry.getValue();
 				if (key.startsWith(prefix)) {
 					proposals.add(getCompletionProposal(key, params, offset, subOffset));
 				}
@@ -241,20 +243,4 @@ public class BuiltInFragment extends AbstractFragment {
 		}
 	}
 
-	private String getReplacementString (String key, ParameterSet values) {
-		if (null == values.getParameters()) {
-			return key;
-		}
-		else {
-			StringBuffer sb = new StringBuffer();
-			sb.append(key);
-			sb.append("("); //$NON-NLS-1$
-//			for (int i=0; i<values.getParameters().length; i++) {
-//				if (i > 0) sb.append(", ");
-//				sb.append(values.getParameters()[i]);
-//			}
-			sb.append(")"); //$NON-NLS-1$
-			return sb.toString();
-		}
-	}
 }

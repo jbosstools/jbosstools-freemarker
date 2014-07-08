@@ -87,7 +87,7 @@ public class MacroLibrary {
 
 	private void load () {
 		try {
-			List macros = new ArrayList();
+			List<MacroDirective> macroDirectives = new ArrayList<MacroDirective>();
 			String search = "#macro "; //$NON-NLS-1$
 			int index = content.indexOf(search);
 			int startIndex = index;
@@ -122,7 +122,7 @@ public class MacroLibrary {
 					String sub = content.substring(startIndex, endIndex);
 					MacroDirective macroDirective = 
 						new LibraryMacroDirective(namespace, sub, startIndex-1, endIndex-index+2);
-					macros.add(macroDirective);
+					macroDirectives.add(macroDirective);
 					index = content.indexOf(startChar + search, endIndex);
 					if (index >= 0) index++;
 					startIndex = index;
@@ -132,8 +132,7 @@ public class MacroLibrary {
 					break;
 				}
 			}
-			this.macros = (MacroDirective[]) macros.toArray(
-					new MacroDirective[macros.size()]);
+			this.macros = macroDirectives.toArray(new MacroDirective[macroDirectives.size()]);
 			if (null != file)
 				this.lastUpdatedTime = file.getModificationStamp();
 		}

@@ -22,8 +22,6 @@
 package org.jboss.ide.eclipse.freemarker.preferences;
 
 
-import java.util.Properties;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -60,8 +58,9 @@ public class ContextProperties extends PropertyPage {
 		super();
 		setDescription(Messages.ContextProperties_Description);
 	}
-	
-    protected Control createContents(Composite parent) {
+
+    @Override
+	protected Control createContents(Composite parent) {
         return createContextPage(parent);
     }
 
@@ -69,16 +68,13 @@ public class ContextProperties extends PropertyPage {
     private Button editContextValueButton;
     private Button deleteContextValueButton;
     private Button addContextValueButton;
-    private Properties contextValues;
     // private DirectoryEditor rootDirectory;
-    
+
     private Control createContextPage(Composite parent) {
-        contextValues = new Properties();
         Composite composite = new Composite(parent, SWT.NULL);
         composite.setLayout(new GridLayout(1, true));
-        
+
         if (getElement() instanceof IProject) {
-            IProject project = (IProject) getElement();
             Composite subComp = new Composite(composite, SWT.NULL);
             subComp.setLayout(new GridLayout(2, false));
             subComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -91,19 +87,20 @@ public class ContextProperties extends PropertyPage {
         Composite subComp = new Composite(composite, SWT.NULL);
         subComp.setLayout(new GridLayout(1, false));
         subComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-        GridData gridData = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
         contextValuesTable = new Table(subComp, SWT.BORDER | SWT.H_SCROLL
                 | SWT.FULL_SELECTION);
         contextValuesTable.setVisible(true);
         contextValuesTable.setLinesVisible(false);
         contextValuesTable.setHeaderVisible(true);
         contextValuesTable.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 editContextValueButton.setEnabled(true);
                 deleteContextValueButton.setEnabled(true);
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
             }
         });
         contextValuesTable.addKeyListener(new ContextValueDeleteKeyListener());
@@ -197,11 +194,13 @@ public class ContextProperties extends PropertyPage {
         public void mouseUp(MouseEvent e) {
         }
 
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(SelectionEvent e) {
             doWork();
         }
 
-        public void widgetDefaultSelected(SelectionEvent e) {
+        @Override
+		public void widgetDefaultSelected(SelectionEvent e) {
         }
 
         public void doWork() {
@@ -215,21 +214,26 @@ public class ContextProperties extends PropertyPage {
 
     public class EditContextValueButtonListener implements SelectionListener,
             MouseListener {
-        public void mouseDoubleClick(MouseEvent e) {
+        @Override
+		public void mouseDoubleClick(MouseEvent e) {
             doWork();
         }
 
-        public void mouseDown(MouseEvent e) {
+        @Override
+		public void mouseDown(MouseEvent e) {
         }
 
-        public void mouseUp(MouseEvent e) {
+        @Override
+		public void mouseUp(MouseEvent e) {
         }
 
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(SelectionEvent e) {
             doWork();
         }
 
-        public void widgetDefaultSelected(SelectionEvent e) {
+        @Override
+		public void widgetDefaultSelected(SelectionEvent e) {
         }
 
         public void doWork() {
@@ -249,20 +253,24 @@ public class ContextProperties extends PropertyPage {
 
     public class ContextValueDeleteKeyListener implements SelectionListener,
             KeyListener {
-        public void widgetSelected(SelectionEvent e) {
+        @Override
+		public void widgetSelected(SelectionEvent e) {
             doWork();
         }
 
-        public void widgetDefaultSelected(SelectionEvent e) {
+        @Override
+		public void widgetDefaultSelected(SelectionEvent e) {
         }
 
-        public void keyPressed(KeyEvent e) {
+        @Override
+		public void keyPressed(KeyEvent e) {
             if (e.keyCode == SWT.DEL) {
                 doWork();
             }
         }
 
-        public void keyReleased(KeyEvent e) {
+        @Override
+		public void keyReleased(KeyEvent e) {
         }
 
         public void doWork() {
@@ -291,8 +299,9 @@ public class ContextProperties extends PropertyPage {
     private IResource getResource() {
         return (IResource) getElement();
     }
-  
-    public boolean performOk() {
+
+    @Override
+	public boolean performOk() {
         if (getElement() instanceof IProject) {
             IProject project = (IProject) getElement();
             ConfigurationManager.getInstance(project).reload();

@@ -44,10 +44,12 @@ public abstract class AbstractFragment implements Fragment {
 		this.offset = offset;
 	}
 
+	@Override
 	public int getLength() {
 		return content.length();
 	}
 
+	@Override
 	public int getOffset() {
 		return offset;
 	}
@@ -56,10 +58,10 @@ public abstract class AbstractFragment implements Fragment {
 		return content;
 	}
 
-	public ICompletionProposal[] completionProposals (List l) {
-		
-		Collections.sort(l, new CompletionProposalComparator());
-		return (ICompletionProposal[]) l.toArray(new ICompletionProposal[l.size()]);
+	public ICompletionProposal[] completionProposals (List<ICompletionProposal> l) {
+
+		Collections.sort(l, COMPLETION_PROPOSAL_COMPARATOR);
+		return l.toArray(new ICompletionProposal[l.size()]);
 	}
 
 	public ICompletionProposal getCompletionProposal (int offset, int subOffset,
@@ -69,7 +71,7 @@ public abstract class AbstractFragment implements Fragment {
 				replacingString.length(), replacementString.length());
 	}
 
-	protected boolean instanceOf (Class test, Class base) {
+	protected boolean instanceOf (Class<?> test, Class<?> base) {
 		if (null == test || null == base) return false;
 		while (null != test) {
 			for (int i=0; i<test.getInterfaces().length; i++) {
@@ -81,13 +83,15 @@ public abstract class AbstractFragment implements Fragment {
 		return false;
 	}
 
-	public class CompletionProposalComparator implements Comparator {
-		public int compare(Object arg0, Object arg1) {
-			return ((ICompletionProposal) arg0).getDisplayString().compareTo(((ICompletionProposal) arg1).getDisplayString());
+	private static final Comparator<ICompletionProposal> COMPLETION_PROPOSAL_COMPARATOR = new Comparator<ICompletionProposal>() {
+		@Override
+		public int compare(ICompletionProposal arg0, ICompletionProposal arg1) {
+			return arg0.getDisplayString().compareTo(arg1.getDisplayString());
 		}
-	}
+	};
 
-	public Class getSingularReturnClass(Class parentClass, List fragments, Map context, IResource resource, IProject project) {
+	@Override
+	public Class<?> getSingularReturnClass(Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project) {
 		return Object.class;
 	}
 }

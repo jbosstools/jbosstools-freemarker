@@ -46,6 +46,7 @@ public class MacroHyperlink  implements IHyperlink {
 		this.length = length;
 	}
 
+	@Override
 	public void open() {
 		try {
 			IEditorPart editorPart = Plugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -59,14 +60,17 @@ public class MacroHyperlink  implements IHyperlink {
 		}
 	}
 
+	@Override
 	public IRegion getHyperlinkRegion() {
 		return macroInstance.getRegion();
 	}
 
+	@Override
 	public String getHyperlinkText() {
 		return macroInstance.getName();
 	}
 
+	@Override
 	public String getTypeLabel() {
 		return Messages.MacroHyperlink_TYPELABEL_MACRO_DEFINITION;
 	}

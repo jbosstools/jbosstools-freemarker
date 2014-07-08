@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -223,7 +222,7 @@ public class ContextValueDialog extends Dialog {
 		    String className = valueText.getText().trim();
 		    if (className.length() == 0) MessageDialog.openError(getShell(), Messages.ContextValueDialog_ERROR, Messages.ContextValueDialog_MUST_CHOOSE_CLASS);
 		    String singularClassName = singleValueText.getText().trim();
-		    Class singularClass = null;
+		    Class<?> singularClass = null;
 		    if (null != singularClassName && singularClassName.trim().length() > 0) singularClass = ConfigurationManager.getInstance(resource.getProject()).getClass(singularClassName);
 		    if (className.length() == 0) singularClassName = null;
 	        contextValue = new ContextValue(

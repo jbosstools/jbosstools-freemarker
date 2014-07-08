@@ -33,22 +33,27 @@ public class ListDirective extends AbstractDirective {
 
 	private ListEndDirective endDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isStartItem() {
 		return super.isNestable();
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof ListEndDirective)
 			endDirective = (ListEndDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof ListEndDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return super.isNestable();
 	}
@@ -57,15 +62,18 @@ public class ListDirective extends AbstractDirective {
 		return endDirective;
 	}
 
+	@Override
 	public Item getRelatedItem() {
 		return getEndDirective();
 	}
 
+	@Override
 	public String getTreeImage() {
 		return "list.png"; //$NON-NLS-1$
 	}
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		ICompletionProposal[] proposals = super.getCompletionProposals(offset, context);
 		if (null == proposals) {
 			ContentWithOffset contentWithOffset = splitContents(offset);
@@ -82,7 +90,8 @@ public class ListDirective extends AbstractDirective {
 		return proposals;
 	}
 
-	public void addToContext(Map context) {
+	@Override
+	public void addToContext(Map<String, Class<?>> context) {
 		String[] contents = splitContents();
 		if (contents.length == 4) {
 			String key = contents[3];
@@ -91,7 +100,8 @@ public class ListDirective extends AbstractDirective {
 		}
 	}
 
-	public void removeFromContext(Map context) {
+	@Override
+	public void removeFromContext(Map<String, Class<?>> context) {
 		String[] contents = splitContents();
 		if (contents.length == 4) {
 			String key = contents[3];
@@ -99,6 +109,7 @@ public class ListDirective extends AbstractDirective {
 		}
 	}
 
+	@Override
 	public Item getEndItem() {
 		return endDirective;
 	}

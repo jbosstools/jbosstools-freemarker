@@ -30,7 +30,6 @@ public class FreemarkerEditorTest extends TestCase {
 	public void testFreemarkerEditorIsOpened() {
 		IEditorPart part = WorkbenchUtils.openEditor(TEST_EDITOR_PROJECT + IPath.SEPARATOR + EDITPROPERTY_XHTML_FTL);
 		assertTrue(part instanceof FreemarkerMultiPageEditor);
-		FreemarkerMultiPageEditor editor = (FreemarkerMultiPageEditor)part;
 	}
 
 	public void testFreemarkerContentAssistIsShowed() {

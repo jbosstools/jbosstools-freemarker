@@ -40,19 +40,23 @@ public class MacroInstance extends AbstractDirective {
 	private MacroEndInstance endInstance;
 	private String name;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 		name = getSplitValue(0);
 	}
 
+	@Override
 	public boolean isStartItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof MacroEndInstance)
 			endInstance = (MacroEndInstance) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		if (directive instanceof MacroEndInstance) {
 			MacroEndInstance endDirective = (MacroEndInstance) directive;
@@ -67,37 +71,40 @@ public class MacroInstance extends AbstractDirective {
 		return endInstance;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != getEndDirective())
 				l.add(getEndDirective());
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public String getTreeImage() {
 		return "macro_instance.png"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		ContentWithOffset contentWithOffset = splitContents(offset);
 		int index = contentWithOffset.getIndex();
 		int subOffset = contentWithOffset.getOffsetInIndex();
-		int directiveOffset = contentWithOffset.getOffset();
 		String[] contents = contentWithOffset.getContents();
 		if (index == 0 && !contentWithOffset.wasLastCharSpace()) {
 			// name
 			String prefix = contents[index].substring(0, subOffset);
-			List l = new ArrayList();
-			for (Iterator i=getItemSet().getMacroDefinitions().iterator(); i.hasNext(); ) {
-				MacroDirective macro = (MacroDirective) i.next();
+			List<ICompletionProposal> l = new ArrayList<ICompletionProposal>();
+			for (Iterator<MacroDirective> i=getItemSet().getMacroDefinitions().iterator(); i.hasNext(); ) {
+				MacroDirective macro = i.next();
 				if (macro.getName().startsWith(prefix)) {
 					l.add(getCompletionProposal(offset, subOffset,
 							macro.getName(), contents[0]));
@@ -120,8 +127,8 @@ public class MacroInstance extends AbstractDirective {
 			String name = contents[0];
 			// see if we can find a macro match
 			MacroDirective match = null;
-			for (Iterator i=getItemSet().getMacroDefinitions().iterator(); i.hasNext(); ) {
-				MacroDirective macro = (MacroDirective) i.next();
+			for (Iterator<MacroDirective> i=getItemSet().getMacroDefinitions().iterator(); i.hasNext(); ) {
+				MacroDirective macro = i.next();
 				if (macro.getName().equals(name)) {
 					match = macro;
 					break;
@@ -146,7 +153,7 @@ public class MacroInstance extends AbstractDirective {
 					prefix = ""; //$NON-NLS-1$
 				else
 					prefix = contents[index].substring(0, subOffset);
-				List l = new ArrayList();
+				List<ICompletionProposal> l = new ArrayList<ICompletionProposal>();
 				for (int i=0; i<match.getAttributes().length; i++) {
 					if (match.getAttributes()[i].startsWith(prefix)) {
 						l.add(getCompletionProposal(offset, subOffset,

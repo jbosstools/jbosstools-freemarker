@@ -30,31 +30,37 @@ public class GenericNestableDirective extends AbstractDirective {
 	private String image;
 	private String name;
 	private GenericNestableEndDirective endDirective;
-	
+
 	public GenericNestableDirective (String name, String image) {
 		this.name = name;
 		this.image = image;
 	}
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public String getTreeImage() {
 		return image;
 	}
 
+	@Override
 	public Item getStartItem() {
 		return this;
 	}
 
+	@Override
 	public boolean isNestable() {
 		return !getContents().trim().endsWith("/"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isStartItem() {
 		return true;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		if (directive instanceof GenericNestableEndDirective) {
 			return ((GenericNestableEndDirective) directive).getName().equals(name);
@@ -62,21 +68,25 @@ public class GenericNestableDirective extends AbstractDirective {
 		else return false;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof GenericNestableEndDirective) {
 			endDirective = (GenericNestableEndDirective) directive;
 		}
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public Item getEndItem() {
 		return endDirective;
 	}
 
 	private Item[] relatedItems;
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
 			if (null != endDirective)

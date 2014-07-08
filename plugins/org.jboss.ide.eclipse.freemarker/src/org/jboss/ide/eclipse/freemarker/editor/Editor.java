@@ -31,8 +31,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.internal.ui.javaeditor.JarEntryEditorInput;
-import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -40,7 +38,6 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyEvent;
@@ -55,7 +52,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.jboss.ide.eclipse.freemarker.Constants;
-import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.model.Item;
@@ -91,6 +87,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		setSourceViewerConfiguration(configuration);
 		setDocumentProvider(new DocumentProvider());
 	}
+	@Override
 	public void dispose() {
 		ConfigurationManager.getInstance(getProject()).reload();
 		super.dispose();
@@ -99,7 +96,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		}
 	}
 
-	public Object getAdapter(Class aClass) {
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class aClass) {
 	    Object adapter;
 		if (aClass.equals(IContentOutlinePage.class)) {
 			if (fOutlinePage == null) {
@@ -117,6 +115,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	protected static final char[] BRACKETS= {'{', '}', '(', ')', '[', ']', '<', '>' };
 	private MatchingCharacterPainter matchingCharacterPainter;
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		 getSourceViewer().getTextWidget().addKeyListener(this);
@@ -127,6 +126,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		//((SourceViewer) getSourceViewer()).addPainter(matchingCharacterPainter);
 	}
 
+	@Override
 	protected void createActions() {
 		super.createActions();
 		// Add content assist propsal action
@@ -138,6 +138,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		action.setEnabled(true);
 	}
 
+	@Override
 	protected void handleCursorPositionChanged() {
 		super.handleCursorPositionChanged();
 		if (!mouseDown) {
@@ -160,11 +161,14 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				fOutlinePage.update(item);
 		}
 	}
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
+	@Override
 	public void mouseDown(MouseEvent e) {
 		mouseDown = true;
 	}
+	@Override
 	public void mouseUp(MouseEvent e) {
 		mouseDown = false;
 		handleCursorPositionChanged();
@@ -189,7 +193,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	public void addProblemMarker(String aMessage, int aLine) {
 		IFile file = ((IFileEditorInput)getEditorInput()).getFile(); 
 		try {
-			Map attributes = new HashMap(5);
+			Map<String, Object> attributes = new HashMap<String, Object>(5);
 			attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
 			attributes.put(IMarker.LINE_NUMBER, new Integer(aLine));
 			attributes.put(IMarker.MESSAGE, aMessage);
@@ -283,6 +287,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		return fOutlinePage;
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.keyCode == SWT.CTRL) {
 			ctrlDown = true;
@@ -312,6 +317,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		}
 	}
 
+	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.keyCode == SWT.CTRL) {
 			ctrlDown = false;
@@ -331,8 +337,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 						if (offset > 0) {
 							for (int i=offset+1; i<getSourceViewer().getDocument().getLength(); i++) {
 								char c2 = getSourceViewer().getDocument().getChar(i);
-								if (i == endChar) return;
-								else if (i == '\n') break;
+								if (i == endChar) return; //FIXME: should we not preplace i with c2?
+								else if (i == '\n') break; //FIXME: should we not preplace i with c2?
 							}
 							getSourceViewer().getDocument().replace(offset, 0, new String(new char[]{endChar}));
 						}
@@ -351,8 +357,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 						if (offset > 0) {
 							for (int i=offset+1; i<getSourceViewer().getDocument().getLength(); i++) {
 								char c2 = getSourceViewer().getDocument().getChar(i);
-								if (i == '}') return;
-								else if (i == '\n') break;
+								if (i == '}') return; //FIXME: should we not preplace i with c2?
+								else if (i == '\n') break; //FIXME: should we not preplace i with c2?
 							}
 							getSourceViewer().getDocument().replace(offset, 0, "}"); //$NON-NLS-1$
 						}
@@ -429,6 +435,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		public Validator (Editor editor) {
 			this.editor = editor;
 		}
+		@Override
 		public void run () {
 			try {
 				if (null != getFile()) {
@@ -473,16 +480,18 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				Plugin.log(e);
 			}
 			finally {
-				editor.VALIDATOR = null;
+				Editor.VALIDATOR = null;
 			}
 		}
 	}
 
+	@Override
 	protected void editorSaved() {
 		super.editorSaved();
 		validateContents();
 	}
 
+	@Override
 	public boolean isEditorInputReadOnly() {
 		return readOnly;
 	}

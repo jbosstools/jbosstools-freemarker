@@ -32,6 +32,7 @@ public class MacroInstanceRule extends DirectiveRule {
 		super("", token, false); //$NON-NLS-1$
 	}
 
+	@Override
 	protected char getIdentifierChar() {
 		return '@';
 	}

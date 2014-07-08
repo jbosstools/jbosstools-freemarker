@@ -26,15 +26,15 @@ package org.jboss.ide.eclipse.freemarker.model.interpolation;
  */
 public class ParameterSet {
 
-	private Class returnClass;
+	private Class<?> returnClass;
 	private String[] parameters;
 
-	public ParameterSet (Class returnClass, String[] parameters) {
+	public ParameterSet (Class<?> returnClass, String[] parameters) {
 		this.returnClass = returnClass;
 		this.parameters = parameters;
 	}
 
-	public Class getReturnClass() {
+	public Class<?> getReturnClass() {
 		return returnClass;
 	}
 

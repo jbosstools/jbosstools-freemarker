@@ -37,6 +37,7 @@ public class OutlineLabelProvider
 		super();
 	}
 
+	@Override
 	public Image getImage(Object anElement) {
 		Image result = null;
 		if (anElement instanceof Item) {
@@ -48,6 +49,7 @@ public class OutlineLabelProvider
 		return result;
 	}
 
+	@Override
 	public String getText(Object anElement) {
 		String text = null;
 		if (anElement instanceof Item) {
@@ -56,6 +58,7 @@ public class OutlineLabelProvider
 		return text;
 	}
 
+	@Override
 	public void dispose() {
-	}	
+	}
 }

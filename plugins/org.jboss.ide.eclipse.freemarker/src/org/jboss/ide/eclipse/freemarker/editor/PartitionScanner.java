@@ -120,7 +120,7 @@ public class PartitionScanner extends RuleBasedPartitionScanner {
      * Creates a new partition scanner.
      */
 	public PartitionScanner() {
-		List rules = new ArrayList();
+		List<IPredicateRule> rules = new ArrayList<IPredicateRule>();
 
 		IToken ftlComment = new Token(FTL_COMMENT);
 
@@ -172,8 +172,6 @@ public class PartitionScanner extends RuleBasedPartitionScanner {
 
         rules.add(new XmlRule(new Token(XML_TAG)));
         
-		IPredicateRule[] result= new IPredicateRule[rules.size()];
-		rules.toArray(result);
-		setPredicateRules(result);
+		setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
 	}
 }

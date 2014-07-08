@@ -31,6 +31,7 @@ public class NullFragment extends NameFragment {
 		super(0, ""); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isStartFragment() {
 		return true;
 	}

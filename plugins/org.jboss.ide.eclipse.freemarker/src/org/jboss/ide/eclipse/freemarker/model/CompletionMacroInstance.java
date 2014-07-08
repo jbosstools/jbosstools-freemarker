@@ -35,14 +35,17 @@ public class CompletionMacroInstance extends MacroInstance {
 		setResource(resource);
 	}
 
+	@Override
 	public int getOffset() {
 		return offset;
 	}
 
+	@Override
 	public String getFullContents() {
 		return contents;
 	}
 
+	@Override
 	public int getLength() {
 		return contents.length();
 	}

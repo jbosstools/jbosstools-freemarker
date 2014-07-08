@@ -42,8 +42,6 @@ import org.jboss.ide.eclipse.freemarker.Constants;
  */
 public class Configuration extends TextSourceViewerConfiguration {
 	private ColorManager colorManager;
-	private XMLTagScanner xmlTagScanner;
-	private DirectiveScanner directiveScanner;
 	private Editor editor;
 
 	public Configuration(IPreferenceStore preferenceStore, ColorManager colorManager, Editor editor) {
@@ -51,11 +49,13 @@ public class Configuration extends TextSourceViewerConfiguration {
 		this.editor = editor;
 		this.colorManager = colorManager;
 	}
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return PartitionScanner.PARTITIONS;
 	}
 
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
@@ -118,6 +118,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 		return reconciler;
 	}
 
+	@Override
     public IContentAssistant getContentAssistant(ISourceViewer aSourceViewer)
     {
         ContentAssistant assistant = new ContentAssistant();
@@ -137,10 +138,12 @@ public class Configuration extends TextSourceViewerConfiguration {
         return assistant;
     }
     
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();
 	}
 
+	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		IHyperlinkDetector[] detectors = super.getHyperlinkDetectors(sourceViewer);
 		if (null == detectors) detectors = new IHyperlinkDetector[0];

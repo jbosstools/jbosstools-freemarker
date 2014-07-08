@@ -35,6 +35,7 @@ public class XmlRule extends MultiLineRule {
 	public XmlRule(IToken token) {
 		super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	@Override
 	protected boolean sequenceDetected(
 		ICharacterScanner scanner,
 		char[] sequence,
@@ -62,14 +63,14 @@ public class XmlRule extends MultiLineRule {
 		return super.sequenceDetected(scanner, sequence, eofAllowed);
 	}
 
-	private int LT = '<';
-	private int LB = '[';
-	private int GT = '>';
+	private static final int LT = '<';
+	private static final int LB = '[';
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;	
-		Stack stack = new Stack();
+		Stack<String> stack = new Stack<String>();
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
 				// Skip the escaped character.

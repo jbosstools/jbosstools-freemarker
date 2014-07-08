@@ -32,24 +32,28 @@ public class IfDirective extends AbstractDirective {
 
 	private IfEndDirective endDirective;
 	private IfElseDirective elseDirective;
-	private List elseIfDirectives = new ArrayList(1);
+	private List<ElseIfDirective> elseIfDirectives = new ArrayList<ElseIfDirective>(1);
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isStartItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof IfElseDirective)
 			elseDirective = (IfElseDirective) directive;
 		else if (directive instanceof IfEndDirective)
 			endDirective = (IfEndDirective) directive;
 		else if (directive instanceof ElseIfDirective)
-			elseIfDirectives.add(directive);
+			elseIfDirectives.add((ElseIfDirective) directive);
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfDirective
 				|| directive instanceof IfElseDirective
@@ -57,6 +61,7 @@ public class IfDirective extends AbstractDirective {
 				|| directive instanceof IfEndDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return true;
 	}
@@ -69,29 +74,32 @@ public class IfDirective extends AbstractDirective {
 		return endDirective;
 	}
 
-	public List getElseIfDirectives () {
+	public List<ElseIfDirective> getElseIfDirectives () {
 		return elseIfDirectives;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			l.add(this);
 			if (null != getElseDirective())
 				l.add(getElseDirective());
 			if (null != getEndDirective())
 				l.add(getEndDirective());
 			l.addAll(getElseIfDirectives());
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public String getTreeImage() {
 		return "if.png"; //$NON-NLS-1$
 	}
 
+	@Override
 	public Item getEndItem() {
 		return endDirective;
 	}

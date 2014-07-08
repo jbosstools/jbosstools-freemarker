@@ -35,11 +35,13 @@ public class StringSubRule extends SingleLineRule {
 		super(startSequence, endSequence, token);
 	}
 
+	@Override
 	protected boolean sequenceDetected(ICharacterScanner scanner,
 			char[] sequence, boolean eofAllowed) {
 		return true;
 	}
 
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		for (int i=0; i<unReadAmount; i++)
 			scanner.unread();

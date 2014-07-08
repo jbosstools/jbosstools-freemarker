@@ -28,9 +28,11 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class IfElseDirective extends AbstractDirective {
 	private IfDirective ifDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof IfDirective)
 			ifDirective = (IfDirective) directive;
@@ -44,6 +46,7 @@ public class IfElseDirective extends AbstractDirective {
 		}
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfDirective
 				|| directive instanceof IfElseDirective
@@ -51,6 +54,7 @@ public class IfElseDirective extends AbstractDirective {
 				|| directive instanceof IfEndDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return true;
 	}
@@ -59,19 +63,23 @@ public class IfElseDirective extends AbstractDirective {
 		return ifDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		return (null == getIfDirective()) ?
 				null : getIfDirective().getRelatedItems();
 	}
 
+	@Override
 	public Item getStartItem () {
 		return getIfDirective();
 	}
 
+	@Override
 	public String getTreeImage() {
 		return "else.png"; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isStartAndEndItem() {
 		return true;
 	}

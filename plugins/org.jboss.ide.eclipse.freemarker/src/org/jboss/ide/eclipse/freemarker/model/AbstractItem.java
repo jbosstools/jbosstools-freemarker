@@ -39,10 +39,11 @@ public abstract class AbstractItem implements Item {
 	private ITypedRegion region;
 	private ISourceViewer viewer;
 	private IResource resource;
-	private List subDirectives;
+	private List<Item> subDirectives;
 	private Item parentItem;
 	private ItemSet itemSet;
-	
+
+	@Override
 	public final void load(ITypedRegion region, ISourceViewer viewer, IResource resource) {
 		this.region = region;
 		this.viewer = viewer;
@@ -57,39 +58,47 @@ public abstract class AbstractItem implements Item {
 
 	protected abstract void init (ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception;
 
+	@Override
 	public boolean isStartItem() {
 		return false;
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return false;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return false;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (null == relatedItemsArr)
-			relatedItemsArr = new ArrayList();
+			relatedItemsArr = new ArrayList<Item>();
 		relatedItemsArr.add(directive);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return (null != getContents() && !getContents().endsWith("/")); //$NON-NLS-1$
 	}
 
+	@Override
 	public ITypedRegion getRegion() {
 		return region;
 	}
 
-	public List getChildItems() {
+	@Override
+	public List<Item> getChildItems() {
 		if (null == subDirectives) {
-			subDirectives = new ArrayList(0);
+			subDirectives = new ArrayList<Item>(0);
 		}
 		return subDirectives;
 	}
 
+	@Override
 	public void addSubDirective(Item directive) {
 		getChildItems().add(directive);
 		directive.setParentItem(this);
@@ -104,11 +113,12 @@ public abstract class AbstractItem implements Item {
 	}
 
 	protected Item[] relatedItems;
-	protected List relatedItemsArr;
+	protected List<Item> relatedItemsArr;
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
 			if (null != relatedItemsArr) {
-				relatedItems = (Item[]) relatedItemsArr.toArray(new Item[relatedItemsArr.size()]);
+				relatedItems = relatedItemsArr.toArray(new Item[relatedItemsArr.size()]);
 			}
 			else if (null == getRelatedItem()) {
 				relatedItems = new Item[0];
@@ -121,6 +131,7 @@ public abstract class AbstractItem implements Item {
 	}
 
 	private String contents;
+	@Override
 	public String getContents () {
 		if (null == contents) {
 			contents = getFullContents();
@@ -145,9 +156,9 @@ public abstract class AbstractItem implements Item {
 		int spacesEncountered = 0;
 		int totalSpacesEncountered = 0;
 		int cursorPos = getCursorPosition(offset);
-		List arr = new ArrayList();
+		List<String> arr = new ArrayList<String>();
 		StringBuffer current = new StringBuffer();
-		Stack currentStack = new Stack();
+		Stack<String> currentStack = new Stack<String>();
 		boolean escape = false;
 		boolean doEscape = false;
 		boolean doAppend = true;
@@ -197,7 +208,7 @@ public abstract class AbstractItem implements Item {
 					}
 					else
 						currentStack.push("\""); //$NON-NLS-1$
-					
+
 				}
 				else if (c == '(') {
 					currentStack.push("("); //$NON-NLS-1$
@@ -251,7 +262,7 @@ public abstract class AbstractItem implements Item {
 			actualIndexOffset = offset - cursorPos - indexOffset;
 		}
 		ContentWithOffset contentWithOffset = new ContentWithOffset(
-				(String[]) arr.toArray(new String[arr.size()]),
+				arr.toArray(new String[arr.size()]),
 				actualIndex, actualIndexOffset, indexOffset, actualOffset, spacesEncountered,
 				totalSpacesEncountered, encounteredSpace, nextCharSpace);
 		if (offset == -1) standardSplit = contentWithOffset;
@@ -291,7 +302,7 @@ public abstract class AbstractItem implements Item {
 			this.wasLastCharSpace = wasLastCharSpace;
 			this.isNextCharSpace = isNextCharSpace;
 		}
-		
+
 		public String[] getContents() {
 			return contents;
 		}
@@ -336,18 +347,22 @@ public abstract class AbstractItem implements Item {
 		}
 	}
 
+	@Override
 	public Item getParentItem() {
 		return parentItem;
 	}
 
+	@Override
 	public void setParentItem(Item parentItem) {
 		this.parentItem = parentItem;
 	}
 
+	@Override
 	public Item getStartItem () {
 		return this;
 	}
 
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof Item) {
 			return ((Item) arg0).getRegion().equals(getRegion());
@@ -355,11 +370,13 @@ public abstract class AbstractItem implements Item {
 		else return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return getRegion().hashCode();
 	}
 
 	private String treeDisplay;
+	@Override
 	public String getTreeDisplay() {
 		if (null == treeDisplay) {
 			treeDisplay = getContents();
@@ -369,10 +386,12 @@ public abstract class AbstractItem implements Item {
 		return treeDisplay;
 	}
 
+	@Override
 	public String getTreeImage() {
 		return null;
 	}
 
+	@Override
 	public boolean isStartAndEndItem() {
 		return false;
 	}
@@ -384,7 +403,8 @@ public abstract class AbstractItem implements Item {
 		else return null;
 	}
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		return null;
 	}
 
@@ -397,6 +417,7 @@ public abstract class AbstractItem implements Item {
 		return itemSet;
 	}
 
+	@Override
 	public void setItemSet(ItemSet itemSet) {
 		this.itemSet = itemSet;
 	}
@@ -420,6 +441,7 @@ public abstract class AbstractItem implements Item {
 	}
 
 	String firstToken = null;
+	@Override
 	public String getFirstToken() {
 		if (null == firstToken) {
 			StringBuffer sb = new StringBuffer();
@@ -449,16 +471,20 @@ public abstract class AbstractItem implements Item {
 		this.resource = resource;
 	}
 
-	public void addToContext(Map context) {
+	@Override
+	public void addToContext(Map<String, Class<?>> context) {
 	}
 
-	public void removeFromContext(Map context) {
+	@Override
+	public void removeFromContext(Map<String, Class<?>> context) {
 	}
 
+	@Override
 	public Item getEndItem() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return getFirstToken();
 	}

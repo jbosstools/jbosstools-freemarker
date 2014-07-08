@@ -27,18 +27,22 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class FtlDirective extends AbstractDirective {
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isNestable() {
 		return false;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		return relatedItems;
 	}
 	private Item[] relatedItems = new Item[0];
 
+	@Override
 	public String getTreeImage() {
 		return "element.png"; //$NON-NLS-1$
 	}

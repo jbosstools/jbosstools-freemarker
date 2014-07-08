@@ -36,7 +36,7 @@ import org.eclipse.jface.text.rules.Token;
 public class DirectiveRule extends MultiLineRule {
 
 	protected static final char[] START_SEQUENCES = {'<', '['};
-	protected static Map END_SEQUENCES = new HashMap(START_SEQUENCES.length);
+	protected static Map<Character, Character> END_SEQUENCES = new HashMap<Character, Character>(START_SEQUENCES.length);
 	protected char[] sequence;
 	protected boolean nameOnly = false;
 	
@@ -61,6 +61,7 @@ public class DirectiveRule extends MultiLineRule {
 		boolean eofAllowed) {
 		for (int i= 0; i < sequence.length; i++) {
 			int c= scanner.read();
+			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == ICharacterScanner.EOF && eofAllowed) {
 				return true;
@@ -78,14 +79,15 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = ((Character) END_SEQUENCES.get(new Character((char) startChar))).charValue();
+		char endChar = END_SEQUENCES.get(new Character((char) startChar)).charValue();
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;	
-		Stack keyStack = new Stack();
+		Stack<String> keyStack = new Stack<String>();
 		int charsRead = 0;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			charsRead ++;
+			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (nameOnly) {
 				if (c != endChar) {
@@ -174,12 +176,14 @@ public class DirectiveRule extends MultiLineRule {
 	 * @return the token resulting from this evaluation
 	 * @since 2.0
 	 */
+	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		if (resume) {
 			if (endSequenceDetected(scanner))
 				return fToken;
 		} else {
 			int c= scanner.read();
+			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
 				// check for the sequence identifier

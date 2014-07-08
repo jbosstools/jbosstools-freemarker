@@ -37,15 +37,16 @@ import org.jboss.ide.eclipse.freemarker.Plugin;
 public class PreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
-	
-	public static final String ID = "org.jboss.ide.eclipse.freemarker.preferences.OutlinePreferencePage";
-	
+
+	public static final String ID = "org.jboss.ide.eclipse.freemarker.preferences.OutlinePreferencePage"; //$NON-NLS-1$
+
 	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
 		setDescription(Messages.PreferencePage_DESCRIPTION_FREEMARKER_SETTINGS);
 	}
 
+	@Override
 	public void createFieldEditors() {
 		addField(new ColorFieldEditor(Constants.COLOR_DIRECTIVE,
 				Messages.PreferencePage_FIELD_DIRECTIVE, getFieldEditorParent()));
@@ -66,7 +67,8 @@ public class PreferencePage
         addField(new ColorFieldEditor(Constants.COLOR_XML_COMMENT,
                 Messages.PreferencePage_FIELD_HTML_XML_COMMENT, getFieldEditorParent()));
 	}
-	
+
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 }

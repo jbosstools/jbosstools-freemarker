@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaProject;
@@ -50,13 +51,13 @@ public class ProjectClassLoader extends URLClassLoader {
 	}
 
 	private static URL[] getURLSFromProject (IJavaProject project, URL[] extraUrls) throws JavaModelException {
-		List list = new ArrayList();
+		List<URL> list = new ArrayList<URL>();
 		if (null != extraUrls) {
 			for (int i=0; i<extraUrls.length; i++) {
 				list.add(extraUrls[i]);
 			}
 		}
-		
+
 		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 		String installLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath();
 		installLoc = installLoc.replace('\\', '/');
@@ -65,9 +66,9 @@ public class ProjectClassLoader extends URLClassLoader {
 		for (int i=0; i<roots.length; i++) {
 			try {
 				if (roots[i].isArchive()) {
-					File f = new File(Platform.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()).getFile());
+					File f = new File(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()).getFile());
 					if (f.exists()) {
-						list.add(Platform.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()));
+						list.add(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()));
 					}
 					else {
 						String s = roots[i].getPath().toOSString().replace('\\', '/');
@@ -105,12 +106,7 @@ public class ProjectClassLoader extends URLClassLoader {
 			}
 			catch (Exception e) {}
 		}
-		
-		URL[] urls = new URL[list.size()];
-		int index = 0;
-		for (Iterator i=list.iterator(); i.hasNext(); index++) {
-			urls[index] = (URL) i.next();
-		}
-		return urls;
+
+		return list.toArray(new URL[list.size()]);
 	}
 }

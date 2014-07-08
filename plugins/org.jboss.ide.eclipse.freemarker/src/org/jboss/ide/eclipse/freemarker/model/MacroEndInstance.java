@@ -33,20 +33,24 @@ public class MacroEndInstance extends AbstractDirective {
 	private MacroInstance macroInstance;
 	private String name;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 		name = getSplitValue(0);
 	}
-		
 
+
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof MacroInstance)
 			macroInstance = (MacroInstance) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		if (directive instanceof MacroInstance) {
 			MacroInstance macroInstance = (MacroInstance) directive;
@@ -59,27 +63,31 @@ public class MacroEndInstance extends AbstractDirective {
 		return macroInstance;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != getMacroDirective()) {
 				l.add(getMacroDirective());
 			}
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public Item getStartItem () {
 		return getMacroDirective();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	private String contents;
+	@Override
 	public String getContents() {
 		if (null == contents) {
 			try {

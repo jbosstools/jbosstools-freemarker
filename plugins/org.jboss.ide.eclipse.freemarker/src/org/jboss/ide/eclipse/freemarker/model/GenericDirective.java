@@ -33,18 +33,17 @@ public class GenericDirective extends AbstractDirective {
 		this.image = image;
 	}
 
-	protected void init(ITypedRegion region, ISourceViewer viewer)
-			throws Exception {
-	}
-
+	@Override
 	public String getTreeImage() {
 		return image;
 	}
 
+	@Override
 	public boolean isNestable() {
 		return false;
 	}
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 }

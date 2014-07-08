@@ -22,10 +22,6 @@
 package org.jboss.ide.eclipse.freemarker.editor;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -78,14 +74,12 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 	public static final String ID = "org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor"; //$NON-NLS-1$
 	                                 
     private Editor vEditor;
-    private String text;
     private boolean readOnly = false;
 
     static String currentProject;
-    static Map projectClassLoaders = new HashMap();
-    static Map currentProjectCacheMap = new HashMap();
 
-    protected void createPages()
+    @Override
+	protected void createPages()
     {
         createPage0();
         if (!vEditor.isEditorInputReadOnly())
@@ -111,7 +105,8 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
     	return vEditor;
     }
 
-    protected void pageChange(int newPageIndex) {
+    @Override
+	protected void pageChange(int newPageIndex) {
         super.pageChange(newPageIndex);
         if (newPageIndex == 1) {
             reloadContextValues();
@@ -121,9 +116,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 	private Button editContextValueButton;
 	private Button deleteContextValueButton;
 	private Button addContextValueButton;
-	private Properties contextValues;
     void createContextPage() {
-    	contextValues = new Properties();
     	Composite composite = new Composite(getContainer(), SWT.NULL);
     	composite.setLayout(new FillLayout());
     	contextValuesTable = new Table(composite, SWT.BORDER | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -131,11 +124,13 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
     	contextValuesTable.setLinesVisible (false);
     	contextValuesTable.setHeaderVisible(true);
     	contextValuesTable.addSelectionListener(new SelectionListener () {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editContextValueButton.setEnabled(true);
 				deleteContextValueButton.setEnabled(true);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
     	contextValuesTable.addKeyListener(new ContextValueDeleteKeyListener());
@@ -226,9 +221,11 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		}
 		public void mouseDown(MouseEvent e) {}
 		public void mouseUp(MouseEvent e) {}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			doWork();
 		}
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
 
 		public void doWork() {
@@ -240,14 +237,19 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 	}
 
 	public class EditContextValueButtonListener implements SelectionListener, MouseListener {
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			doWork();
 		}
+		@Override
 		public void mouseDown(MouseEvent e) {}
+		@Override
 		public void mouseUp(MouseEvent e) {}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			doWork();
 		}
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
 
 		public void doWork() {
@@ -264,15 +266,19 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 	}
 	
 	public class ContextValueDeleteKeyListener implements SelectionListener, KeyListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			doWork();
 		}
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.keyCode == SWT.DEL) {
 				doWork();
 			}
 		}
+		@Override
 		public void keyReleased(KeyEvent e) {}
 
 		public void doWork () {
@@ -297,7 +303,8 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
     /**
      * Saves the multi-page vEditor's document.
      */
-    public void doSave(IProgressMonitor monitor)
+    @Override
+	public void doSave(IProgressMonitor monitor)
     {
         getEditor(0).doSave(monitor);
     }
@@ -307,7 +314,8 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
      * text for page 0's tab, and updates this multi-page vEditor's input to
      * correspond to the nested vEditor's.
      */
-    public void doSaveAs()
+    @Override
+	public void doSaveAs()
     {
         IEditorPart editor = getEditor(0);
         editor.doSaveAs();
@@ -324,7 +332,8 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
      * The <code>MultiPageEditorExample</code> implementation of this method
      * checks that the input is an instance of <code>IFileEditorInput</code>.
      */
-    public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException
+    @Override
+	public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException
     {
         super.init(site, editorInput);
         if (!(editorInput instanceof IFileEditorInput)) {
@@ -335,88 +344,109 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 
 
 
-    public boolean isSaveAsAllowed()
+    @Override
+	public boolean isSaveAsAllowed()
     {
         return true;
     }
 
-    public Object getAdapter(Class aClass)
+    @Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class aClass)
     {
         return vEditor.getAdapter(aClass);
     }
 
+	@Override
 	public void close(boolean save) {
 		vEditor.close(save);
 	}
 
+	@Override
 	public void doRevertToSaved() {
 		vEditor.doRevertToSaved();
 	}
 
+	@Override
 	public IAction getAction(String actionId) {
 		return vEditor.getAction(actionId);
 	}
 
+	@Override
 	public IDocumentProvider getDocumentProvider() {
 		return vEditor.getDocumentProvider();
 	}
 
+	@Override
 	public IRegion getHighlightRange() {
 		return vEditor.getHighlightRange();
 	}
 
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return vEditor.getSelectionProvider();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return vEditor.isEditable();
 	}
 
+	@Override
 	public void removeActionActivationCode(String actionId) {
 		vEditor.removeActionActivationCode(actionId);
 	}
 
+	@Override
 	public void resetHighlightRange() {
 		vEditor.resetHighlightRange();
 	}
 
+	@Override
 	public void selectAndReveal(int offset, int length) {
 		vEditor.selectAndReveal(offset, length);
 	}
 
+	@Override
 	public void setAction(String actionID, IAction action) {
 		vEditor.setAction(actionID, action);
 	}
 
+	@Override
 	public void setActionActivationCode(String actionId, char activationCharacter, int activationKeyCode, int activationStateMask) {
 		vEditor.setActionActivationCode(actionId, activationCharacter, activationKeyCode, activationStateMask);
 	}
 
+	@Override
 	public void setHighlightRange(int offset, int length, boolean moveCursor) {
 		vEditor.setHighlightRange(offset, length, moveCursor);
 	}
 
+	@Override
 	public void showHighlightRangeOnly(boolean showHighlightRangeOnly) {
 		vEditor.showHighlightRangeOnly(showHighlightRangeOnly);
 	}
 
+	@Override
 	public boolean showsHighlightRangeOnly() {
 		return vEditor.showsHighlightRangeOnly();
 	}
 
+	@Override
 	public void addRulerContextMenuListener(IMenuListener listener) {
 		vEditor.addRulerContextMenuListener(listener);
 	}
 
+	@Override
 	public boolean isEditorInputReadOnly() {
 		return vEditor.isEditorInputReadOnly();
 	}
 
+	@Override
 	public void removeRulerContextMenuListener(IMenuListener listener) {
 		vEditor.removeRulerContextMenuListener(listener);
 	}
 
+	@Override
 	public void setStatusField(IStatusField field, String category) {
 		vEditor.setStatusField(field, category);
 	}

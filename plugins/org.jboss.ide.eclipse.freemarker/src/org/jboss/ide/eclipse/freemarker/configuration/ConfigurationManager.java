@@ -38,9 +38,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJarEntryResource;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.JarEntryFile;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -56,19 +56,18 @@ import org.w3c.dom.NodeList;
  */
 public class ConfigurationManager {
 
-	private static final Map instances = new HashMap();
+	private static final Map<String, ConfigurationManager> instances = new HashMap<String, ConfigurationManager>();
 
 	private IProject project;
 	private ProjectClassLoader projectClassLoader;
-	private Map contextValues = new HashMap();
-	private Map macroLibrary = new HashMap();
+	private Map<String, ContextValue[]> contextValues = new HashMap<String, ContextValue[]>();
+	private Map<String, MacroLibrary> macroLibrary = new HashMap<String, MacroLibrary>();
 	private MacroLibrary[] macroLibraryArr;
 
 	private ConfigurationManager () {}
 
 	public synchronized static final ConfigurationManager getInstance (IProject project) {
-		ConfigurationManager configuration =
-			(ConfigurationManager) instances.get(project.getName());
+		ConfigurationManager configuration = instances.get(project.getName());
 		if (null == configuration) {
 			configuration = new ConfigurationManager();
 			configuration.project = project;
@@ -82,8 +81,8 @@ public class ConfigurationManager {
 		return macroLibraryArr;
 	}
 
-	public void associateMappingLibraries (List libraries, Shell shell) {
-		for (Iterator i=libraries.iterator(); i.hasNext(); ) {
+	public void associateMappingLibraries (List<?> libraries, Shell shell) {
+		for (Iterator<?> i=libraries.iterator(); i.hasNext(); ) {
 			Object obj = i.next();
 			if (obj instanceof IFile) {
 				IFile file = (IFile) obj;
@@ -110,8 +109,8 @@ public class ConfigurationManager {
 					}
 				}
 			}
-			else if (obj instanceof JarEntryFile) {
-				JarEntryFile jef = (JarEntryFile) obj;
+			else if (obj instanceof IJarEntryResource && ((IJarEntryResource) obj).isFile()) {
+				IJarEntryResource jef = (IJarEntryResource) obj;
 				String namespace = jef.getName();
 				int index = namespace.indexOf("."); //$NON-NLS-1$
 				if (index >= 0) namespace = namespace.substring(0, index);
@@ -144,31 +143,31 @@ public class ConfigurationManager {
 		}
 		save();
 	}
-	
+
 	public MacroLibrary getMacroLibrary (String namespace) {
-		return (MacroLibrary) macroLibrary.get(namespace);
+		return macroLibrary.get(namespace);
 	}
 
 	private void writeMacroLibrary(StringBuffer sb) {
-		for (Iterator i=macroLibrary.values().iterator(); i.hasNext(); ) {
-			MacroLibrary macroLibrary = (MacroLibrary) i.next();
-			sb.append("\t\t" + macroLibrary.toXML() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		for (Iterator<MacroLibrary> i=macroLibrary.values().iterator(); i.hasNext(); ) {
+			MacroLibrary ml = i.next();
+			sb.append("\t\t" + ml.toXML() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
-	private Map loadMacroTemplates (Element element) {
-		Map map = new HashMap();
+
+	private Map<String, MacroLibrary> loadMacroTemplates (Element element) {
+		Map<String, MacroLibrary> map = new HashMap<String, MacroLibrary>();
         try {
             NodeList nl = element
                     .getElementsByTagName("entry"); //$NON-NLS-1$
             for (int i = 0; i < nl.getLength(); i++) {
                 try {
                     Node n = nl.item(i);
-                    MacroLibrary macroLibrary = MacroLibrary.fromXML(project, (Element) n, getProjectClassLoader());
-                    if (null != macroLibrary) {
-                    	map.put(macroLibrary.getNamespace(), macroLibrary);
+                    MacroLibrary ml = MacroLibrary.fromXML(project, (Element) n, getProjectClassLoader());
+                    if (null != ml) {
+                    	map.put(ml.getNamespace(), ml);
                     }
-                    
+
                 } catch (Exception e) {
                 	Plugin.log(e);
                 }
@@ -180,16 +179,8 @@ public class ConfigurationManager {
         return map;
 	}
 
-	private IFile getFile (String path) {
-		return project.getFile(path);
-	}
-
-	private String getPath (IFile file) {
-		return file.getProjectRelativePath().toString();
-	}
-
-	private Map loadContextValues (Element element) {
-		Map map = new HashMap();
+	private Map<String, ContextValue[]> loadContextValues (Element element) {
+		Map<String, ContextValue[]> map = new HashMap<String, ContextValue[]>();
         try {
             NodeList nl = element
                     .getElementsByTagName("resource"); //$NON-NLS-1$
@@ -197,25 +188,25 @@ public class ConfigurationManager {
                 try {
                     Node n = nl.item(i);
                     String path = ((Element) n).getAttribute("path"); //$NON-NLS-1$
-                    List contextValues = new ArrayList();
+                    List<ContextValue> contextVals = new ArrayList<ContextValue>();
                     NodeList nl2 = ((Element) n)
                             .getElementsByTagName("value"); //$NON-NLS-1$
                     for (int j = 0; j < nl2.getLength(); j++) {
                         Node n2 = nl2.item(j);
                         String key = ((Element) n2).getAttribute("key"); //$NON-NLS-1$
-                        Class value = getClass(((Element) n2)
+                        Class<?> value = getClass(((Element) n2)
                                 .getAttribute("object-class")); //$NON-NLS-1$
                         String singularName = ((Element) n2)
                                 .getAttribute("item-class"); //$NON-NLS-1$
-                        Class singularClass = null;
+                        Class<?> singularClass = null;
                         if (null != singularName && singularName.trim().length()>0)
                             singularClass = getClass(singularName);
-                        contextValues.add(new ContextValue(key, value,
+                        contextVals.add(new ContextValue(key, value,
                                 singularClass));
                     }
                     map.put(path,
-                            contextValues
-                                    .toArray(new ContextValue[contextValues
+                            contextVals
+                                    .toArray(new ContextValue[contextVals
                                             .size()]));
                 } catch (Exception e) {
                 	Plugin.log(e);
@@ -228,7 +219,7 @@ public class ConfigurationManager {
         return map;
 	}
 
-    public synchronized Class getClass(String className)
+    public synchronized Class<?> getClass(String className)
     throws JavaModelException, ClassNotFoundException {
     	return getProjectClassLoader().loadClass(className);
     }
@@ -238,7 +229,7 @@ public class ConfigurationManager {
     		this.projectClassLoader = new ProjectClassLoader(JavaCore.create(project));
     	return this.projectClassLoader;
     }
-    
+
     private void save() {
         StringBuffer sb = new StringBuffer();
         sb.append("<config>\n"); //$NON-NLS-1$
@@ -268,7 +259,6 @@ public class ConfigurationManager {
         IFile file = project.getFile(".freemarker-ide.xml"); //$NON-NLS-1$
         if (file.exists()) {
         	try { file.refreshLocal(1, null); } catch (CoreException e) {}
-            Map map = new HashMap();
             try {
                 Document document = DocumentBuilderFactory.newInstance()
                         .newDocumentBuilder().parse(file.getContents());
@@ -277,20 +267,20 @@ public class ConfigurationManager {
                 if (nl.getLength() > 0)
                     this.contextValues = loadContextValues((Element) nl.item(0));
                 else
-                    this.contextValues = new HashMap();
+                    this.contextValues = new HashMap<String, ContextValue[]>();
                 nl = document.getDocumentElement()
                 	.getElementsByTagName(
 						"macro-library"); //$NON-NLS-1$
-                List libraries = new ArrayList();
+                List<MacroLibrary> libraries = new ArrayList<MacroLibrary>();
                 if (nl.getLength() > 0) {
                 	this.macroLibrary = loadMacroTemplates((Element) nl.item(0));
-                	for (Iterator i=macroLibrary.values().iterator(); i.hasNext(); ) {
+                	for (Iterator<MacroLibrary> i=macroLibrary.values().iterator(); i.hasNext(); ) {
                 		libraries.add(i.next());
                 	}
                 }
                 else
-                	this.macroLibrary = new HashMap();
-                macroLibraryArr = (MacroLibrary[]) libraries.toArray(new MacroLibrary[libraries.size()]);
+                	this.macroLibrary = new HashMap<String, MacroLibrary>();
+                macroLibraryArr = libraries.toArray(new MacroLibrary[libraries.size()]);
             } catch (Exception e) {
             	Plugin.error(e);
             }
@@ -298,10 +288,10 @@ public class ConfigurationManager {
     }
 
     private void writeContextValues(StringBuffer sb) {
-        for (Iterator i = contextValues.entrySet().iterator(); i.hasNext();) {
-            Map.Entry entry = (Map.Entry) i.next();
-            String fileName = (String) entry.getKey();
-            ContextValue[] values = (ContextValue[]) entry.getValue();
+        for (Iterator<Map.Entry<String, ContextValue[]>> i = contextValues.entrySet().iterator(); i.hasNext();) {
+            Map.Entry<String, ContextValue[]> entry = i.next();
+            String fileName = entry.getKey();
+            ContextValue[] values = entry.getValue();
             if (null != values && values.length > 0) {
                 sb.append("\t\t<resource path=\"" + fileName + "\">\n");  //$NON-NLS-1$//$NON-NLS-2$
                 for (int j = 0; j < values.length; j++) {
@@ -318,14 +308,14 @@ public class ConfigurationManager {
             }
         }
     }
-    
+
     public ContextValue[] getContextValues(IResource resource, boolean recurse) {
-        Map newValues = new HashMap();
+        Map<String, ContextValue> newValues = new HashMap<String, ContextValue>();
         addRootContextValues(resource, newValues, recurse);
-        return (ContextValue[]) newValues.values().toArray(new ContextValue[newValues.size()]);
+        return newValues.values().toArray(new ContextValue[newValues.size()]);
     }
-    
-    private void addRootContextValues(IResource resource, Map newValues, boolean recurse) {
+
+    private void addRootContextValues(IResource resource, Map<String, ContextValue> newValues, boolean recurse) {
         String key = null;
         if (null != resource.getParent()) {
             key = resource.getProjectRelativePath().toString();
@@ -334,7 +324,7 @@ public class ConfigurationManager {
         else
 			key = ""; //$NON-NLS-1$
         if (null != resource.getProject()) {
-	        ContextValue[] values = (ContextValue[]) contextValues.get(key);
+	        ContextValue[] values = contextValues.get(key);
 	        if (null != values) {
 	            for (int i=0; i<values.length; i++) {
 	                newValues.put(values[i].name, values[i]);

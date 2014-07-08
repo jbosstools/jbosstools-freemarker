@@ -40,6 +40,7 @@ public class AnnotationHover implements IAnnotationHover {
 	/**
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
 	 */
+	@Override
 	public String getHoverInfo(ISourceViewer aViewer, int aLine) {
 		String info = null;
 		IMarker marker = getMarkerForLine(aViewer, aLine);
@@ -59,7 +60,7 @@ public class AnnotationHover implements IAnnotationHover {
 		IMarker marker = null;
 		IAnnotationModel model = aViewer.getAnnotationModel();
 		if (model != null) {
-			Iterator e = model.getAnnotationIterator();
+			Iterator<?> e = model.getAnnotationIterator();
 			while (e.hasNext()) {
 				Object o = e.next();
 				if (o instanceof MarkerAnnotation) {
