@@ -24,7 +24,6 @@ package org.jboss.ide.eclipse.freemarker.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -43,6 +42,7 @@ public class XMLTagScanner extends RuleBasedScanner {
 
 	private IToken lastToken;
 	
+	@Override
 	public IToken nextToken() {
 		lastToken = super.nextToken();
 		return lastToken;
@@ -62,7 +62,7 @@ public class XMLTagScanner extends RuleBasedScanner {
 				new TextAttribute(
 						manager.getColor(Constants.COLOR_INTERPOLATION)));
 
-		List l = new ArrayList();
+		List<IRule> l = new ArrayList<IRule>();
 
 		l.add(new StringSubRule("\"", "${", 2, string)); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new InterpolationRule('$', interpolation));
@@ -72,6 +72,6 @@ public class XMLTagScanner extends RuleBasedScanner {
 		l.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new WhitespaceRule(new WhitespaceDetector()));
 		
-		setRules((IRule[]) l.toArray(new IRule[l.size()]));
+		setRules(l.toArray(new IRule[l.size()]));
 	}
 }

@@ -36,6 +36,7 @@ public class DocumentProvider extends FileDocumentProvider {
 		super();
 	}
 
+	@Override
 	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document != null) {

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITypedRegion;
@@ -42,18 +41,21 @@ import org.jboss.ide.eclipse.freemarker.model.interpolation.StringFragment;
 
 public class Interpolation extends AbstractDirective {
 
-	private List fragments;
+	private List<Fragment> fragments;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public String getTreeImage() {
 		return "interpolation.png"; //$NON-NLS-1$
 	}
 
-	public synchronized ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public synchronized ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		Item parent = getParentItem();
-		List parents = new ArrayList();
+		List<Item> parents = new ArrayList<Item>();
 		Item tempItem = getParentItem();
 		while (null != parent) {
 			parents.add(0, parent);
@@ -72,10 +74,10 @@ public class Interpolation extends AbstractDirective {
 			}
 			else item.addToContext(context);
 		}
-		for (Iterator i=parents.iterator(); i.hasNext(); ) {
-			Item item = (Item) i.next();
-			for (Iterator i2=item.getChildItems().iterator(); i2.hasNext(); ) {
-				Item item2 = (Item) i2.next();
+		for (Iterator<Item> i=parents.iterator(); i.hasNext(); ) {
+			Item item = i.next();
+			for (Iterator<Item> i2=item.getChildItems().iterator(); i2.hasNext(); ) {
+				Item item2 = i2.next();
 				if (parents.contains(item2)) break;
 				item2.addToContext(context);
 			}
@@ -87,16 +89,16 @@ public class Interpolation extends AbstractDirective {
 		int subOffset = offset - getOffset() - 2;
 		if (subOffset < 0) return null;
 		Fragment fragment = null;
-		for (Iterator i = fragments.iterator(); i.hasNext(); ) {
-			Fragment fragmentSub = (Fragment) i.next();
+		for (Iterator<Fragment> i = fragments.iterator(); i.hasNext(); ) {
+			Fragment fragmentSub = i.next();
 			if (fragmentSub.getOffset() <= subOffset) fragment = fragmentSub;
 			else break;
 		}
 		if (null != fragment) {
 			// find the parent class
-			Class parentClass = null;
-			for (Iterator i = fragments.iterator(); i.hasNext(); ) {
-				Fragment fragmentSub = (Fragment) i.next();
+			Class<?> parentClass = null;
+			for (Iterator<Fragment> i = fragments.iterator(); i.hasNext(); ) {
+				Fragment fragmentSub = i.next();
 				if (fragmentSub.equals(fragment)) break;
 				else parentClass = fragmentSub.getReturnClass(parentClass, fragments, context, getResource(), getResource().getProject());
 			}
@@ -112,11 +114,10 @@ public class Interpolation extends AbstractDirective {
 
 	private synchronized void initFragments () {
 		if (null != fragments) return;
-		fragments = new ArrayList();
+		fragments = new ArrayList<Fragment>();
 		StringBuffer sb = new StringBuffer();
 		String contents = getFullContents();
 		contents = contents.substring(2, contents.length()-1);
-		Stack stack = new Stack();
 		int offsetStart = 0;
 		boolean inString = false;
 		boolean inBuiltIn = false;
@@ -124,7 +125,6 @@ public class Interpolation extends AbstractDirective {
 		boolean inParameters = false;
 		boolean escape = false;
 		boolean doEscape = false;
-		int offset = getOffset();
 		for (int i=0; i<contents.length(); i++) {
 			doEscape = false;
 			char c = contents.charAt(i);
@@ -240,7 +240,6 @@ public class Interpolation extends AbstractDirective {
 				sb.delete(0, sb.length());
 			}
 			else sb.append(c);
-			offset++;
 			escape = doEscape;
 		}
 		if (sb.length() > 0 || inBuiltIn) {
@@ -249,29 +248,26 @@ public class Interpolation extends AbstractDirective {
 		}
 	}
 
-	private ClassLoader getClassLoader () {
-		return Thread.currentThread().getContextClassLoader();
-	}
-
+	@Override
 	public boolean isNestable() {
 		return false;
 	}
 
-	public Class getReturnClass (Map context) {
+	public Class<?> getReturnClass (Map<String, Class<?>> context) {
 		initFragments();
-		Class returnClass = null;
-		for (Iterator i=fragments.iterator(); i.hasNext(); ) {
-			Fragment fragment = (Fragment) i.next();
+		Class<?> returnClass = null;
+		for (Iterator<Fragment> i=fragments.iterator(); i.hasNext(); ) {
+			Fragment fragment = i.next();
 			returnClass = fragment.getReturnClass(returnClass, fragments, context, getResource(), getResource().getProject());
 		}
 		return returnClass;
 	}
 
-	public Class getSingularReturnClass (Map context) {
+	public Class<?> getSingularReturnClass (Map<String, Class<?>> context) {
 		initFragments();
-		Class returnClass = null;
-		for (Iterator i=fragments.iterator(); i.hasNext(); ) {
-			Fragment fragment = (Fragment) i.next();
+		Class<?> returnClass = null;
+		for (Iterator<Fragment> i=fragments.iterator(); i.hasNext(); ) {
+			Fragment fragment = i.next();
 			if (i.hasNext())
 				returnClass = fragment.getReturnClass(returnClass, fragments, context, getResource(), getResource().getProject());
 			else

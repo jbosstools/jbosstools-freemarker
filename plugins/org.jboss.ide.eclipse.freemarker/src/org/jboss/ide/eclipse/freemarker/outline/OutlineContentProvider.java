@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.model.Item;
-import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
 
 /**
@@ -42,6 +41,7 @@ public class OutlineContentProvider implements ITreeContentProvider {
 		fEditor = anEditor;
 	}
 
+	@Override
 	public void inputChanged(
 		Viewer aViewer,
 		Object anOldInput,
@@ -52,32 +52,32 @@ public class OutlineContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
-		ItemSet itemSet = null;
-		if (inputElement instanceof ItemSet)
-			itemSet = (ItemSet) inputElement;
-		else
-			itemSet = fEditor.getItemSet();
-		List rootItems = new ArrayList();
-		
+		List<Item> rootItems = new ArrayList<Item>();
+
 		rootItems.addAll(fEditor.getItemSet().getMacroDefinitions());
 		Item[] items = fEditor.getItemSet().getRootItems();
 		for (int i=0; i<items.length; i++) {
-			if (!(items[i] instanceof MacroDirective)) 
+			if (!(items[i] instanceof MacroDirective))
 				rootItems.add(items[i]);
 		}
 		return rootItems.toArray();
 	}
 
+	@Override
 	public Object[] getChildren(Object anElement) {
 		if (anElement instanceof Item) {
-			if (anElement instanceof MacroDirective) return null;
-			Object[] items = ((Item) anElement).getChildItems().toArray(
-					new Item[((Item) anElement).getChildItems().size()]);
-			List l = new ArrayList(items.length);
+			if (anElement instanceof MacroDirective) {
+				return null;
+			}
+			List<Item> children = ((Item) anElement).getChildItems();
+			Item[] items = children.toArray(new Item[children.size()]);
+			List<Item> l = new ArrayList<Item>(items.length);
 			for (int i=0; i<items.length; i++) {
 				if (!(items[i] instanceof MacroDirective))
 					l.add(items[i]);
@@ -88,6 +88,7 @@ public class OutlineContentProvider implements ITreeContentProvider {
 			return null;
 	}
 
+	@Override
 	public Object getParent(Object anElement) {
 		if (anElement instanceof Item)
 			return ((Item) anElement).getParentItem();
@@ -95,6 +96,7 @@ public class OutlineContentProvider implements ITreeContentProvider {
 			return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object anElement) {
 		if (anElement instanceof Item)
 			if (anElement instanceof MacroDirective) return false;

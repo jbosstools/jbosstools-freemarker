@@ -29,13 +29,16 @@ public class IfEndDirective extends AbstractDirective {
 
 	private IfDirective ifDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof IfDirective)
 			ifDirective = (IfDirective) directive;
@@ -46,6 +49,7 @@ public class IfEndDirective extends AbstractDirective {
 		}
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfDirective
 				|| directive instanceof IfElseDirective
@@ -57,11 +61,13 @@ public class IfEndDirective extends AbstractDirective {
 		return ifDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		return (null == getIfDirective()) ?
 				null : getIfDirective().getRelatedItems();
 	}
 
+	@Override
 	public Item getStartItem () {
 		return getIfDirective();
 	}

@@ -30,29 +30,35 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class CaseDefaultDirective extends AbstractDirective {
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isStartAndEndItem() {
 		return true;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof CaseDirective
 				|| directive instanceof CaseDefaultDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return true;
 	}
 
+	@Override
 	public String getTreeImage() {
 		return "default.png"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (null == relatedItemsArr) {
-			List dRelatedItems = null;
+			List<Item> dRelatedItems = null;
 			if (directive instanceof CaseDirective)
 				dRelatedItems = ((CaseDirective) directive).getRelatedItemsArray();
 			else if (directive instanceof CaseDirective)
@@ -60,19 +66,19 @@ public class CaseDefaultDirective extends AbstractDirective {
 			relatedItemsArr = dRelatedItems;
 		}
 		if (null == relatedItemsArr)
-			relatedItemsArr = new ArrayList();
+			relatedItemsArr = new ArrayList<Item>();
 		if (!relatedItemsArr.contains(directive))
 			relatedItemsArr.add(directive);
 	}
 
 	public void relateItemNoRecurse (Item directive) {
 		if (null == relatedItemsArr)
-			relatedItemsArr = new ArrayList();
+			relatedItemsArr = new ArrayList<Item>();
 		if (!relatedItemsArr.contains(directive))
 			relatedItemsArr.add(directive);
 	}
 
-	public List getRelatedItemsArray () {
+	public List<Item> getRelatedItemsArray () {
 		return relatedItemsArr;
 	}
 }

@@ -23,14 +23,13 @@ package org.jboss.ide.eclipse.freemarker.linetracker;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -39,6 +38,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * @author <a href="mailto:joe&binamics.net">Joe Hudson </a>
@@ -53,10 +53,12 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	private static final String CHECK_TEMPLATE = "template:"; //$NON-NLS-1$
 	private static final String CHECK_TEMPLATE2 = " in "; //$NON-NLS-1$
 	
-	public void init(IConsole console) {
-		this.console = console;
+	@Override
+	public void init(IConsole cons) {
+		this.console = cons;
 	}
 
+	@Override
 	public void lineAppended(IRegion line) {
 		try {
 			String text = console.getDocument().get(line.getOffset(), line.getLength());
@@ -101,12 +103,13 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 						// we can still proceed if we don't get the line number
 					}
 					
-					IPath path = new Path(fileName);
 					IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 					
-					List files = new ArrayList();
+					List<IResource> files = new ArrayList<IResource>();
 					for (int i = 0; i < projects.length; i++) {
 						IProject project = projects[i];
+						//FIXME: javaProject is not used. Fid out if it can be removed or if it should be 
+						// used in populateMatchingFiles()
 						IJavaProject javaProject = JavaCore.create(project);
 						fileName = fileName.replace('\\', '/');
 						try {
@@ -120,7 +123,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 					if (files.size() != 0) {
 						IFile file = (IFile) files.get(0);
 						if (file != null && file.exists()) {
-							FileLink link = new FileLink(file, null, -1, -1, lineNumber);
+							IHyperlink link = new FileLink(file, null, -1, -1, lineNumber);
 							console.addLink(link, linkOffset, linkLength);
 						}
 					}
@@ -130,7 +133,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		}
 	}
 
-	public void populateMatchingFiles(IContainer container, List files, String[] fileNameSeq) throws CoreException {
+	public void populateMatchingFiles(IContainer container, List<IResource> files, String[] fileNameSeq) throws CoreException {
 		IResource[] resources = container.members();
 		for (int i=0; i<resources.length; i++) {
 			IResource resource = resources[i];
@@ -151,7 +154,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		}
 	}
 
-	private boolean isCorrectFile(IFile file, String[] filenameSeqs) {
+	private static boolean isCorrectFile(IFile file, String[] filenameSeqs) {
 		IResource temp = file;
 		for (int i = filenameSeqs.length - 1; i >= 0; i--) {
 			String seq = filenameSeqs[i];
@@ -163,6 +166,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		return true;
 	}
 
+	@Override
 	public void dispose() {
 	}
 }

@@ -29,18 +29,22 @@ public class FunctionEndDirective extends AbstractDirective {
 
 	private FunctionDirective functionDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof FunctionDirective)
 			functionDirective = (FunctionDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof FunctionDirective);
 	}
@@ -49,10 +53,12 @@ public class FunctionEndDirective extends AbstractDirective {
 		return functionDirective;
 	}
 
+	@Override
 	public Item getRelatedItem() {
 		return getFunctionDirective();
 	}
 
+	@Override
 	public Item getStartItem () {
 		return getFunctionDirective();
 	}

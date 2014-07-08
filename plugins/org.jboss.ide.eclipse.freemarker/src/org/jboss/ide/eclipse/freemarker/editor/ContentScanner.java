@@ -21,8 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -36,16 +34,13 @@ import org.jboss.ide.eclipse.freemarker.Constants;
 public class ContentScanner implements ITokenScanner {
 
 	private IDocument document;
-	private int offset;
-	private int length;
 	private int endOffset;
-	private Stack stack = new Stack();
+	private Stack<String> stack = new Stack<String>();
 	private IToken defaultToken;
 	private int tokenOffset;
 	private int tokenLength;
-	private Stack stringTypes = new Stack();
+	private Stack<Character> stringTypes = new Stack<Character>();
 
-	private List tokens = new ArrayList();
 	private int currentOffset;
 
 	public ContentScanner (IToken defaultToken, ColorManager colorManager) {
@@ -61,15 +56,13 @@ public class ContentScanner implements ITokenScanner {
 						colorManager.getColor(Constants.COLOR_DIRECTIVE)));
 	}
 
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 		this.document = document;
-		this.offset = offset;
 		this.currentOffset = offset;
-		this.length = length;
 		this.endOffset = offset + length;
 		this.stack.clear();
 		this.stringTypes.clear();
-		this.tokens.clear();
 	}
 
 	private static String TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
@@ -81,6 +74,7 @@ public class ContentScanner implements ITokenScanner {
 	private static IToken INTERPOLATION_TOKEN;
 	private static IToken DIRECTIVE_TOKEN;
 
+	@Override
 	public IToken nextToken() {
 		int offsetStart = currentOffset;
 		int i = currentOffset;
@@ -104,7 +98,7 @@ public class ContentScanner implements ITokenScanner {
 					}
 					else if (c == '\"' || c == '\'') {
 						if (type.equals(TYPE_STRING)) {
-							if (stringTypes.size() > 0 && c == ((Character) stringTypes.peek()).charValue()) {
+							if (stringTypes.size() > 0 && c == stringTypes.peek().charValue()) {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart + 1;
 								this.currentOffset = i + 1;
@@ -229,7 +223,7 @@ public class ContentScanner implements ITokenScanner {
 	}
 
 	private String peek () {
-		if (stack.size() > 0) return (String) stack.peek();
+		if (stack.size() > 0) return stack.peek();
 		else return TYPE_UNKNOWN;
 	}
 
@@ -238,7 +232,7 @@ public class ContentScanner implements ITokenScanner {
 	}
 
 	private String pop () {
-		if (stack.size() > 0) return (String) stack.pop();
+		if (stack.size() > 0) return stack.pop();
 		else return TYPE_UNKNOWN;
 	}
 
@@ -249,10 +243,12 @@ public class ContentScanner implements ITokenScanner {
 		else return defaultToken;
 	}
 
+	@Override
 	public int getTokenOffset() {
 		return tokenOffset;
 	}
 
+	@Override
 	public int getTokenLength() {
 		return tokenLength;
 	}

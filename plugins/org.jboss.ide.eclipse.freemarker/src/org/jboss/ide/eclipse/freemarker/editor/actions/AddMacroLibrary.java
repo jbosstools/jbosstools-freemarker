@@ -28,10 +28,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.core.JarEntryFile;
 import org.eclipse.jdt.internal.ui.preferences.ProjectSelectionDialog;
@@ -55,6 +53,7 @@ public class AddMacroLibrary implements IObjectActionDelegate {
 
     private IWorkbenchPart part;
 
+	@Override
     public void run(IAction action) {
         ISelectionProvider provider = part.getSite().getSelectionProvider();
         if (null != provider) {
@@ -62,7 +61,7 @@ public class AddMacroLibrary implements IObjectActionDelegate {
                 try {
                     IStructuredSelection selection = (IStructuredSelection) provider.getSelection();
                     Object[] obj = selection.toArray();
-                    List documents = new ArrayList();
+                    List<Object> documents = new ArrayList<Object>();
                     for (int i=0; i<obj.length; i++) {
                         if (obj[i] instanceof IFile) {
                             IFile file = (IFile) obj[i];
@@ -71,16 +70,16 @@ public class AddMacroLibrary implements IObjectActionDelegate {
                         else if (obj[i] instanceof JarEntryFile) {
                         	JarEntryFile jef = (JarEntryFile) obj[i];
                         	documents.add(jef);
-                        	System.out.println(jef.getFullPath().makeAbsolute());
-                        	System.out.println(jef.getFullPath().makeRelative());
-                        	IPath path = jef.getFullPath();
-                        	System.out.println(path);
-                        	System.out.println(jef.getName());
-                        	IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(jef.getFullPath());
-                        	System.out.println(resource);
+                        	//System.out.println(jef.getFullPath().makeAbsolute());
+                        	//System.out.println(jef.getFullPath().makeRelative());
+                        	//IPath path = jef.getFullPath();
+                        	//System.out.println(path);
+                        	//System.out.println(jef.getName());
+                        	//IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(jef.getFullPath());
+                        	//System.out.println(resource);
                         }
                         else if (obj[i] instanceof IStorage) {
-                        	
+
                         }
                     }
                     IProject project = null;
@@ -89,6 +88,8 @@ public class AddMacroLibrary implements IObjectActionDelegate {
                     	HashSet projects = new HashSet();
                     	IProject[] p = ResourcesPlugin.getWorkspace().getRoot().getProjects();
                     	for (int i=0; i<p.length; i++) {
+                    		//FIXME: we should make sure that we are adding IJavaProjects because
+                    		// the ProjectSelectionDialog constructor expects Set<IJavaProject> projectsWithSpecifics
                     		projects.add(p[i]);
                     	}
                     	ProjectSelectionDialog dialog = new ProjectSelectionDialog(Display.getCurrent().getActiveShell(), projects);
@@ -116,13 +117,15 @@ public class AddMacroLibrary implements IObjectActionDelegate {
         }
     }
 
-    public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+    @Override
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
         this.part = targetPart;
     }
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
     }
-   
+
     protected boolean shouldForce () {
         return false;
     }

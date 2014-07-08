@@ -21,8 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-import java.util.Vector;
-
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -43,16 +41,16 @@ public class DirectiveScanner extends RuleBasedScanner {
 				new TextAttribute(
 						manager.getColor(Constants.COLOR_STRING)));
 
-		Vector rules = new Vector();
+		IRule[] result = new IRule[3];
+		int i = 0;
+		
 		// Add rule for double quotes
-		rules.add(new SingleLineRule("\"", "\"", string,'\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		result[i++] = new SingleLineRule("\"", "\"", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
 	    // Add rule for single quotes
-	    rules.add(new SingleLineRule("'", "'", string,'\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		result[i++] = new SingleLineRule("'", "'", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add generic whitespace rule.
-		rules.add(new WhitespaceRule(new WhitespaceDetector()));
+		result[i++] = new WhitespaceRule(new WhitespaceDetector());
 	
-		IRule[] result = new IRule[rules.size()];
-		rules.copyInto(result);
 		setRules(result);
 	}
 }

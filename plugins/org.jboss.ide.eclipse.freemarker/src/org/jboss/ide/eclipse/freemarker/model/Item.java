@@ -51,7 +51,7 @@ public interface Item {
 
 	public ITypedRegion getRegion();
 
-	public List getChildItems();
+	public List<Item> getChildItems();
 
 	public Item getParentItem();
 	
@@ -67,15 +67,15 @@ public interface Item {
 	
 	public String getTreeDisplay();
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context);
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context);
 
 	public void setItemSet (ItemSet itemSet);
 
 	public String getFirstToken ();
 
-	public void addToContext (Map context);
+	public void addToContext (Map<String, Class<?>> context);
 
-	public void removeFromContext (Map context);
+	public void removeFromContext (Map<String, Class<?>> context);
 
 	public String getName();
 }

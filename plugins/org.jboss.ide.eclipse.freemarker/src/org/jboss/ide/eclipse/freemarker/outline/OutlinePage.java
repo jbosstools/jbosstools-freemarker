@@ -54,7 +54,6 @@ import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.model.Interpolation;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
-import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -71,6 +70,7 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 	/**
 	 * @see org.eclipse.ui.part.IPart#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite aParent) {
 		super.createControl(aParent);
 
@@ -127,7 +127,7 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 			if (null == item)
 				getTreeViewer().setSelection(
 						new StructuredSelection(new Object[0]), true);
-			else if (null != item)
+			else if (null != item) // FIXME: check if this should be a pure else
 				getTreeViewer().setSelection(
 						new StructuredSelection(item), true);
 		}
@@ -136,10 +136,12 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 	/**
 	 * @see org.eclipse.ui.part.Page#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
+	@Override
 	public void doubleClick(DoubleClickEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Item item = (Item) selection.getFirstElement();
@@ -148,28 +150,27 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 		}
 	}
 
+	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(getTreeViewer().getTree());
-		
+
 		menuMgr.add(new SetContextEntryAction(this));
 		getTreeViewer().getTree().setMenu(menu);
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 	}
 
 	public class SetContextEntryAction extends Action {
-		private OutlinePage outlinePage;
 
 		public SetContextEntryAction (OutlinePage outlinePage) {
-			this.outlinePage = outlinePage;
 			this.setText(Messages.OutlinePage_SetContextClassEntryAction);
 			this.setEnabled(true);
 		}
 
+		@Override
 		public void runWithEvent(Event event) {
 			Tree tree = getTreeViewer().getTree();
 			TreeItem[] items = tree.getSelection();
-			Document doc = null;
 			Interpolation interpolation = null;
 			for (int i=0; i<items.length; i++) {
 				TreeItem item = items[i];
@@ -185,7 +186,7 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 							IType type = (IType) objects[0];
 							try {
 								configuration.addContextValue(
-										new ContextValue(interpolation.getFirstToken(), 
+										new ContextValue(interpolation.getFirstToken(),
 												configuration.getClass(type.getFullyQualifiedName()), null), interpolation.getResource());
 							}
 							catch (ClassNotFoundException e) {

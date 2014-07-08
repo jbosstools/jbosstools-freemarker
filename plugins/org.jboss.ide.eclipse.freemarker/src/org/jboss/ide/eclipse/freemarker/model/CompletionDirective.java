@@ -45,7 +45,7 @@ public class CompletionDirective extends AbstractDirective {
 		this.offset = offset;
 		this.length = length;
 		String[] arr = splitContents();
-		if (null != arr || arr.length > 0) {
+		if (null != arr && arr.length > 0) {
 			String s = arr[0];
 			try {
 				if (s.equals("list")) { //$NON-NLS-1$
@@ -72,23 +72,28 @@ public class CompletionDirective extends AbstractDirective {
 		}
 	}
 
+	@Override
 	public int getOffset() {
 		return offset;
 	}
 
+	@Override
 	public String getFullContents() {
 		return contents;
 	}
 
+	@Override
 	public int getLength() {
 		return length;
 	}
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		if (directive.equals(this)) return super.getCompletionProposals(offset, context);
 		else return directive.getCompletionProposals(offset, context);
 	}
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 }

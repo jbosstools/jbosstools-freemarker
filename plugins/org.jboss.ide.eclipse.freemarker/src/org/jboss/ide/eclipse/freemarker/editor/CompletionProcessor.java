@@ -60,11 +60,12 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 		this.editor = editor;
 	}
 	
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
 			ItemSet directiveSet = editor.getItemSet();
 	
-			Map context = new HashMap();
+			Map<String, Class<?>> context = new HashMap<String, Class<?>>();
 			ContextValue[] values = ConfigurationManager.getInstance(editor.getProject()).getContextValues(editor.getFile(), true);
 			for (int i=0; i<values.length; i++) {
 				context.put(values[i].name, values[i].objClass);
@@ -171,18 +172,22 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 		return NO_COMPLETIONS;
 	}
 
+	@Override
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
 		return null;
 	}
 
+	@Override
 	protected Image getImage(Template template) {
 		return null;
 	}
 
+	@Override
 	protected Template[] getTemplates(String contextTypeId) {
 		return null;
 	}
 
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[]{'.', '$', '#', '@', '/', '?', '{'};
 	}

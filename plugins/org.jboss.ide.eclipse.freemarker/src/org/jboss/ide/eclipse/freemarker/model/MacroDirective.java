@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-public class MacroDirective extends AbstractDirective implements Comparable {
+public class MacroDirective extends AbstractDirective implements Comparable<MacroDirective> {
 
 	private MacroEndDirective endDirective;
 	private String name;
@@ -39,23 +39,28 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 	public MacroDirective (String contents) {
 		this.contents = contents;
 	}
-	
+
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
-	
+
+	@Override
 	public boolean isStartItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof MacroEndDirective)
 			endDirective = (MacroEndDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof MacroEndDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return true;
 	}
@@ -64,21 +69,24 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 		return endDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != getEndDirective())
 				l.add(getEndDirective());
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public String getTreeImage() {
 		return "macro.png"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getTreeDisplay() {
 		return getSplitValue(1);
 	}
@@ -86,7 +94,7 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 	private String[] attributes;
 	public String[] getAttributes () {
 		if (null == attributes) {
-			List l = new ArrayList();
+			List<String> l = new ArrayList<String>();
 			String[] contents = splitContents();
 			int i = 2;
 			while (i<contents.length) {
@@ -102,11 +110,12 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 					i+=2;
 				}
 			}
-			attributes = (String[]) l.toArray(new String[l.size()]);
+			attributes = l.toArray(new String[l.size()]);
 		}
 		return attributes;
 	}
 
+	@Override
 	public String getName() {
 		if (null == name) {
 			name = getSplitValue(1);
@@ -114,34 +123,36 @@ public class MacroDirective extends AbstractDirective implements Comparable {
 		return name;
 	}
 
+	@Override
 	public Item getEndItem() {
 		return endDirective;
 	}
 
 	private static final char[] descriptorTokens = new char[]{'/','#','@','<','>'};
+	@Override
 	public char[] getDescriptors () {
 		return descriptorTokens;
 	}
 
-	public int compareTo(Object arg0) {
-		if (arg0 instanceof MacroDirective)
-			return nullToEmpty(getName()).compareTo(nullToEmpty(((MacroDirective) arg0).getName()));
-		else
-			return 0;
+	@Override
+	public int compareTo(MacroDirective arg0) {
+		return nullToEmpty(getName()).compareTo(nullToEmpty(arg0.getName()));
 	}
 
-	private String nullToEmpty(String s) {
+	private static String nullToEmpty(String s) {
 		return s == null ? "" : s; //$NON-NLS-1$
 	}
 
-	public void addToContext(Map context) {
+	@Override
+	public void addToContext(Map<String, Class<?>> context) {
 		for (int i=0; i<getAttributes().length; i++) {
 			if (null == context.get(getAttributes()[i]))
 				context.put(getAttributes()[i], Object.class);
 		}
 	}
 
-	public void removeFromContext(Map context) {
+	@Override
+	public void removeFromContext(Map<String, Class<?>> context) {
 		for (int i=0; i<getAttributes().length; i++) {
 			Object obj = context.get(getAttributes()[i]);
 			if (null != obj && obj.equals(Object.class))

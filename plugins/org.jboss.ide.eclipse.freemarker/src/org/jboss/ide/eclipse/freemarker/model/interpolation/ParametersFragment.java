@@ -38,12 +38,14 @@ public class ParametersFragment extends AbstractFragment {
 		super(offset, content);
 	}
 
-	public Class getReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project) {
+	@Override
+	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project) {
 		return parentClass;
 	}
 
-	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class parentClass,
-			List fragments, ISourceViewer sourceViewer, Map context, IResource file, IProject project) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class<?> parentClass,
+			List<Fragment> fragments, ISourceViewer sourceViewer, Map<String, Class<?>> context, IResource file, IProject project) {
 		return null;
 	}
 }

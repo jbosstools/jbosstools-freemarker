@@ -31,28 +31,35 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class AssignmentDirective extends AbstractDirective {
 
 	private AssignmentEndDirective endDirective;
+
+	@SuppressWarnings("unused")
 	private String type;
-	
+
 	public AssignmentDirective (String type) {
 		this.type = type;
 	}
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isStartItem() {
 		return super.isNestable();
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof AssignmentEndDirective)
 			endDirective = (AssignmentEndDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof AssignmentEndDirective);
 	}
 
+	@Override
 	public boolean isNestable() {
 		return (null != getContents() && !getContents().endsWith("/")); //$NON-NLS-1$
 	}
@@ -61,30 +68,33 @@ public class AssignmentDirective extends AbstractDirective {
 		return endDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != endDirective)
 				l.add(endDirective);
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public String getTreeImage() {
 		return "assign.png"; //$NON-NLS-1$
 	}
 
-	Map contextValues;
-	public void addToContext(Map context) {
+	Map<String, Class<?>> contextValues;
+	@Override
+	public void addToContext(Map<String, Class<?>> context) {
 		if (null == contextValues) {
 			String[] values = splitContents();
 			String key = null;
 			String value = null;
 			if (values.length >= 2) key = values[1];
 			if (values.length >= 4) value = values[3];
-			Class valueClass = null;
+			Class<?> valueClass = null;
 			if (null != value && value.length() > 0) {
 				if (value.charAt(0) == '\"') valueClass = String.class;
 				else if (Character.isDigit(value.charAt(0))) valueClass = Number.class;
@@ -101,6 +111,7 @@ public class AssignmentDirective extends AbstractDirective {
 		super.addToContext(context);
 	}
 
+	@Override
 	public Item getEndItem() {
 		return endDirective;
 	}

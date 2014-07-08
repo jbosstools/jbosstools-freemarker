@@ -36,8 +36,8 @@ public interface Fragment {
 
 	public int getOffset();
 	public int getLength();
-	public Class getReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project);
-	public Class getSingularReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project);
-	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class parentClass,
-			List fragments, ISourceViewer sourceViewer, Map context, IResource file, IProject project);
+	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project);
+	public Class<?> getSingularReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project);
+	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class<?> parentClass,
+			List<Fragment> fragments, ISourceViewer sourceViewer, Map<String, Class<?>> context, IResource file, IProject project);
 }

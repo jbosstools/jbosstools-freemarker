@@ -35,6 +35,7 @@ public abstract class AbstractDirective extends AbstractItem {
 
 	String contents;
 
+	@Override
 	public String getContents() {
 		if (null == contents) {
 			contents = super.getContents();
@@ -56,17 +57,17 @@ public abstract class AbstractDirective extends AbstractItem {
 		"stop", "ftl", "t", "lt", "rt", "nt", "attempt", "recover", "visit", "recurse", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 		"fallback" //$NON-NLS-1$
 	};
-	public ICompletionProposal[] getCompletionProposals(int offset, Map context) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		if (offset < 2) return null;
 		ContentWithOffset contentWithOffset = splitContents(offset);
 		int index = contentWithOffset.getIndex();
 		if (index == 0) {
 			int subOffset = contentWithOffset.getOffsetInIndex();
-			int directiveOffset = contentWithOffset.getOffset();
-			String[] contents = contentWithOffset.getContents();
+			String[] contentWithOffsetContents = contentWithOffset.getContents();
 			// name
 			if (contentWithOffset.wasLastCharSpace()) {
-				if (contents.length == 1) {
+				if (contentWithOffsetContents.length == 1) {
 					// first param
 					CompletionInterpolation completionInterpolation = new CompletionInterpolation(
 							"${" , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
@@ -76,13 +77,13 @@ public abstract class AbstractDirective extends AbstractItem {
 					return null;
 				}
 			}
-			String prefix = contents[index].substring(0, subOffset);
-			List l = new ArrayList();
+			String prefix = contentWithOffsetContents[index].substring(0, subOffset);
+			List<ICompletionProposal> l = new ArrayList<ICompletionProposal>();
 			for (int i=0; i<directives.length; i++) {
 				String name = directives[i];
 				if (name.startsWith(prefix)) {
 					l.add(getCompletionProposal(offset, subOffset,
-							name, contents[0]));
+							name, contentWithOffsetContents[0]));
 				}
 			}
 			return completionProposals(l);
@@ -100,9 +101,9 @@ public abstract class AbstractDirective extends AbstractItem {
 		return null;
 	}
 
-	public ICompletionProposal[] completionProposals (List l) {
-		Collections.sort(l, new CompletionProposalComparator());
-		return (ICompletionProposal[]) l.toArray(new ICompletionProposal[l.size()]);
+	public ICompletionProposal[] completionProposals (List<ICompletionProposal> l) {
+		Collections.sort(l, COMPLETION_PROPOSAL_COMPARATOR);
+		return l.toArray(new ICompletionProposal[l.size()]);
 	}
 
 	public ICompletionProposal getCompletionProposal (int offset, int subOffset,
@@ -112,9 +113,10 @@ public abstract class AbstractDirective extends AbstractItem {
 				replacingString.length(), replacementString.length());
 	}
 
-	public class CompletionProposalComparator implements Comparator {
-		public int compare(Object arg0, Object arg1) {
-			return ((ICompletionProposal) arg0).getDisplayString().compareTo(((ICompletionProposal) arg1).getDisplayString());
+	private static final Comparator<ICompletionProposal> COMPLETION_PROPOSAL_COMPARATOR = new Comparator<ICompletionProposal>() {
+		@Override
+		public int compare(ICompletionProposal arg0, ICompletionProposal arg1) {
+			return arg0.getDisplayString().compareTo(arg1.getDisplayString());
 		}
-	}
+	};
 }

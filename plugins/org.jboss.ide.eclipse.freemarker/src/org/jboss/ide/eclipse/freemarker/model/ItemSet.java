@@ -40,15 +40,15 @@ import org.jboss.ide.eclipse.freemarker.Plugin;
 public class ItemSet {
 
 	private ISourceViewer viewer;
-	private List regions;
-	private List directives;
-	private List topLevelDirectives;
-	private Map directiveRegions;
-	private List macroDefinitions = new ArrayList();
+	private List<ITypedRegion> regions;
+	private List<Item> directives;
+	private List<Item> topLevelDirectives;
+	private Map<Integer, Item> directiveRegions;
+	private List<MacroDirective> macroDefinitions = new ArrayList<MacroDirective>();
 
 	public ItemSet (ISourceViewer viewer, IResource resource) {
 		this.viewer = viewer;
-		regions = new ArrayList();
+		regions = new ArrayList<ITypedRegion>();
 		// get all regions
 		int index = 0;
 		while (true) {
@@ -66,25 +66,26 @@ public class ItemSet {
 
 	private void parse (ISourceViewer viewer, IResource resource) {
 		try {
-			this.directives = new ArrayList();
-			this.directiveRegions = new HashMap();
-			this.topLevelDirectives = new ArrayList();
-			
-			Stack stackDirectives = new Stack();
-			List fullDirectives = new ArrayList();
-			for (Iterator i=regions.iterator(); i.hasNext(); ) {
-				ITypedRegion region = (ITypedRegion) i.next();
+			this.directives = new ArrayList<Item>();
+			this.directiveRegions = new HashMap<Integer, Item>();
+			this.topLevelDirectives = new ArrayList<Item>();
+
+			Stack<Item> stackDirectives = new Stack<Item>();
+			for (Iterator<ITypedRegion> i=regions.iterator(); i.hasNext(); ) {
+				ITypedRegion region = i.next();
 				Item directive = ItemFactory.getItem(region, viewer, resource);
 				if (null != directive) {
 					directive.setItemSet(this);
 					if (directive instanceof MacroDirective) {
-						macroDefinitions.add(directive);
+						macroDefinitions.add((MacroDirective) directive);
 					}
 					if (stackDirectives.size() == 0) {
 						topLevelDirectives.add(directive);
 					}
 					directiveRegions.put(new Integer(region.getOffset()), directive);
-					if (!directive.isEndItem()) directives.add(directive);
+					if (!directive.isEndItem()) {
+						directives.add(directive);
+					}
 					if (!directive.isStartItem()) {
 						Item directiveCheck = getFirstNestableItem(stackDirectives);
 						if (directive.isStartAndEndItem()) {
@@ -118,7 +119,7 @@ public class ItemSet {
 								directiveCheck.relateItem(directive);
 								directive.relateItem(directiveCheck);
 								if (directive.isEndItem()) {
-									Item peek = (Item) stackDirectives.peek();
+									Item peek = stackDirectives.peek();
 									while (null != peek && peek.relatesToItem(directive)) {
 										if (peek.isStartItem()) {
 											stackDirectives.pop();
@@ -126,7 +127,7 @@ public class ItemSet {
 										}
 										else {
 											stackDirectives.pop();
-											peek = (Item) ((stackDirectives.size()>0) ? stackDirectives.peek() : null);
+											peek = stackDirectives.size() > 0 ? stackDirectives.peek() : null;
 										}
 									}
 								}
@@ -155,7 +156,7 @@ public class ItemSet {
 					}
 					else {
 						if (stackDirectives.size() > 0) {
-							((Item) stackDirectives.peek()).addSubDirective(directive);
+							stackDirectives.peek().addSubDirective(directive);
 						}
 						if (directive.isNestable())
 							stackDirectives.push(directive);
@@ -169,12 +170,12 @@ public class ItemSet {
 		Collections.sort(macroDefinitions);
 	}
 
-	private Item getFirstNestableItem (Stack directives) {
+	private static Item getFirstNestableItem (Stack<Item> directives) {
 		if (directives.size() == 0) return null;
 		else {
 			Item directiveCheck = null;
 			for (int i=directives.size()-1; i>=0; i++){
-				directiveCheck = (Item) directives.get(i);
+				directiveCheck = directives.get(i);
 				if (directiveCheck.isNestable()) return directiveCheck;
 			}
 			return null;
@@ -182,22 +183,22 @@ public class ItemSet {
 	}
 
 	public Item[] getRootItems () {
-		return (Item[]) topLevelDirectives.toArray(
+		return topLevelDirectives.toArray(
 				new Item[topLevelDirectives.size()]);
 	}
 
 	public Item getSelectedItem (int offset) {
 		ITypedRegion region = getRegion(offset);
 		if (null == region) return null;
-		else return (Item) directiveRegions.get(new Integer(region.getOffset()));
+		else return directiveRegions.get(new Integer(region.getOffset()));
 	}
 
 	public Item getContextItem (int offset) {
 		Item directive = getSelectedItem(offset);
 		if (null == directive && null != directives) {
 			Item dt = null;
-			for (Iterator i=directives.iterator(); i.hasNext(); ) {
-				Item t = (Item) i.next();
+			for (Iterator<Item> i=directives.iterator(); i.hasNext(); ) {
+				Item t = i.next();
 				if (t.isNestable() && t.getRegion().getOffset() < offset)
 					dt = t;
 				else if (t.isEndItem() && t.getRegion().getOffset() < offset)
@@ -217,15 +218,15 @@ public class ItemSet {
 		}
 	}
 
-	public List getMacroDefinitions() {
+	public List<MacroDirective> getMacroDefinitions() {
 		return macroDefinitions;
 	}
 
 	public Item getPreviousItem (int offset) {
 		Item item = getContextItem(offset);
 		if (null == item) {
-			for (Iterator i=directives.iterator(); i.hasNext(); ) {
-				Item itemSub = (Item) i.next();
+			for (Iterator<Item> i=directives.iterator(); i.hasNext(); ) {
+				Item itemSub = i.next();
 				if (itemSub.getRegion().getOffset() + itemSub.getRegion().getOffset() < offset)
 					item = itemSub;
 				else
@@ -237,8 +238,8 @@ public class ItemSet {
 
 	public Item getPreviousStartItem (int offset) {
 		Item item = null;
-		for (Iterator i=directives.iterator(); i.hasNext(); ) {
-			Item itemSub = (Item) i.next();
+		for (Iterator<Item> i=directives.iterator(); i.hasNext(); ) {
+			Item itemSub = i.next();
 			if (itemSub.getRegion().getOffset() > offset) break;
 			if (itemSub.isStartItem()) {
 				Item itemSub2 = itemSub.getEndItem();
@@ -251,12 +252,12 @@ public class ItemSet {
 
 	public Item getItem (IRegion region) {
 		if (null == directiveRegions) return null;
-		else return (Item) directiveRegions.get(region);
+		else return directiveRegions.get(region);
 	}
 
 	public Item getItem (int offset) {
-		for (Iterator i=directives.iterator(); i.hasNext(); ) {
-			Item item = (Item) i.next();
+		for (Iterator<Item> i=directives.iterator(); i.hasNext(); ) {
+			Item item = i.next();
 			if (item.getRegion().getOffset() <= offset && item.getRegion().getOffset() + item.getRegion().getLength() >= offset)
 				return item;
 		}

@@ -30,24 +30,30 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class AssignmentEndDirective extends AbstractDirective {
 
 	private AssignmentDirective assignmentDirective;
+
+	@SuppressWarnings("unused")
 	private String type;
-	
+
 	public AssignmentEndDirective (String type) {
 		this.type = type;
 	}
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof AssignmentDirective)
 			assignmentDirective = (AssignmentDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof AssignmentDirective);
 	}
@@ -56,18 +62,20 @@ public class AssignmentEndDirective extends AbstractDirective {
 		return assignmentDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != assignmentDirective) {
 				l.add(assignmentDirective);
 			}
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public Item getStartItem () {
 		return getAssignmentDirective();
 	}

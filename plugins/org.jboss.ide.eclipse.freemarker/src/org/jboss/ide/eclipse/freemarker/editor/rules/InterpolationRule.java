@@ -36,14 +36,14 @@ public class InterpolationRule extends SingleLineRule {
         super(startChar + "{", "}", token); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
-		char[][] delimiters= scanner.getLegalLineDelimiters();
-		boolean previousWasEscapeCharacter = false;	
-		Stack keyStack = new Stack();
+		Stack<String> keyStack = new Stack<String>();
 		int charsRead = 0;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			charsRead ++;
+			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == '{') {
 				if (keyStack.size() == 0) {
@@ -87,7 +87,6 @@ public class InterpolationRule extends SingleLineRule {
 			else if (c == '\n') {
 				break;
 			}
-			previousWasEscapeCharacter = (c == fEscapeCharacter);
 		}
 		if (fBreaksOnEOF) return true;
 		for (int i=0; i<charsRead; i++)

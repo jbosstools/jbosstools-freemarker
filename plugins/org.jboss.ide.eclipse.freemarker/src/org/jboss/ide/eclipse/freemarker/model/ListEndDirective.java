@@ -29,18 +29,22 @@ public class ListEndDirective extends AbstractDirective {
 
 	private ListDirective listDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof ListDirective)
 			listDirective = (ListDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfElseDirective || directive instanceof ListDirective);
 	}
@@ -49,10 +53,12 @@ public class ListEndDirective extends AbstractDirective {
 		return listDirective;
 	}
 
+	@Override
 	public Item getRelatedItem() {
 		return getListDirective();
 	}
 
+	@Override
 	public Item getStartItem () {
 		return getListDirective();
 	}

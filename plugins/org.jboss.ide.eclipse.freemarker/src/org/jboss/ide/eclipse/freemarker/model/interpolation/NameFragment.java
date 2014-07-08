@@ -53,14 +53,15 @@ public class NameFragment extends AbstractFragment {
 		super(offset, content);
 	}
 
-	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class parentClass,
-			List fragments, ISourceViewer sourceViewer, Map context, IResource file, IProject project) {
+	@Override
+	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class<?> parentClass,
+			List<Fragment> fragments, ISourceViewer sourceViewer, Map<String, Class<?>> context, IResource file, IProject project) {
 		if (isStartFragment()) {
 			// pull from context
 			String prefix = getContent().substring(0, subOffset);
-			List proposals = new ArrayList();
-			for (Iterator i=context.keySet().iterator(); i.hasNext(); ) {
-				String key = (String) i.next();
+			List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+			for (Iterator<String> i=context.keySet().iterator(); i.hasNext(); ) {
+				String key = i.next();
 				if (key.startsWith(prefix)) proposals.add(getCompletionProposal(
 						offset, subOffset, key, getContent()));
 			}
@@ -72,12 +73,13 @@ public class NameFragment extends AbstractFragment {
 		}
 	}
 
-	private Class returnClass;
-	public Class getReturnClass (Class parentClass, List fragments, Map context, IResource resource, IProject project){
+	private Class<?> returnClass;
+	@Override
+	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project){
 		if (null == returnClass) {
 			String content = getContent();
 			if (isStartFragment()) {
-				returnClass = (Class) context.get(content);
+				returnClass = context.get(content);
 			}
 			else {
 				if (null == parentClass) {
@@ -99,8 +101,9 @@ public class NameFragment extends AbstractFragment {
 		return returnClass;
 	}
 
-	private Class singulaReturnClass;
-	public Class getSingularReturnClass(Class parentClass, List fragments, Map context, IResource resource, IProject project) {
+	private Class<?> singulaReturnClass;
+	@Override
+	public Class<?> getSingularReturnClass(Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project) {
 		if (null == singulaReturnClass) {
 			String content = getContent();
 			if (isStartFragment()) {
@@ -124,7 +127,7 @@ public class NameFragment extends AbstractFragment {
 							if (type instanceof ParameterizedType) {
 								ParameterizedType pType = (ParameterizedType) type;
 								if (pType.getActualTypeArguments().length > 0) {
-									singulaReturnClass = (Class) pType.getActualTypeArguments()[0];
+									singulaReturnClass = (Class<?>) pType.getActualTypeArguments()[0];
 									break;
 								}
 							}
@@ -144,7 +147,7 @@ public class NameFragment extends AbstractFragment {
 
 	public static final String[] invalidMethods = {
 		"clone", "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-	public ICompletionProposal[] getMethodCompletionProposals (int subOffset, int offset, Class parentClass, IResource file) {
+	public ICompletionProposal[] getMethodCompletionProposals (int subOffset, int offset, Class<?> parentClass, IResource file) {
 		if (instanceOf(parentClass, String.class)
 				|| instanceOf(parentClass, Number.class)
 				|| instanceOf(parentClass, Date.class)
@@ -153,7 +156,7 @@ public class NameFragment extends AbstractFragment {
 				|| instanceOf(parentClass, Map.class))
 			return null;
 		String prefix = getContent().substring(1, subOffset);
-		List proposals = new ArrayList();
+		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		String pUpper = prefix.toUpperCase();
 		try {
 			BeanInfo bi = Introspector.getBeanInfo(parentClass);

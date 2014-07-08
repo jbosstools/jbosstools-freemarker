@@ -30,18 +30,17 @@ import org.eclipse.jface.text.rules.SingleLineRule;
  */
 public class StringRule extends SingleLineRule {
 
-	private String rule;
-	
 	public StringRule(String rule, IToken token) {
 		super(rule, "", token); //$NON-NLS-1$
-		this.rule = rule;
 	}
 
+	@Override
 	protected boolean sequenceDetected(ICharacterScanner scanner,
 			char[] sequence, boolean eofAllowed) {
 		return true;
 	}
 
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		return true;
 	}

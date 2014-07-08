@@ -44,12 +44,14 @@ public class GenericDirectiveRuleEnd extends GenericDirectiveRule {
 	 * @return the token resulting from this evaluation
 	 * @since 2.0
 	 */
+	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		if (resume) {
 			if (endSequenceDetected(scanner))
 				return fToken;
 		} else {
 			int c= scanner.read();
+			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
 				int c2 = scanner.read();

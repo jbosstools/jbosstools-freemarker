@@ -31,18 +31,22 @@ public class MacroEndDirective extends AbstractDirective {
 
 	private MacroDirective macroDirective;
 
+	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
 
+	@Override
 	public boolean isEndItem() {
 		return true;
 	}
 
+	@Override
 	public void relateItem(Item directive) {
 		if (directive instanceof MacroDirective)
 			macroDirective = (MacroDirective) directive;
 	}
 
+	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof MacroDirective);
 	}
@@ -51,18 +55,20 @@ public class MacroEndDirective extends AbstractDirective {
 		return macroDirective;
 	}
 
+	@Override
 	public Item[] getRelatedItems() {
 		if (null == relatedItems) {
-			ArrayList l = new ArrayList();
+			ArrayList<Item> l = new ArrayList<Item>();
 			if (null != getMacroDirective()) {
 				l.add(getMacroDirective());
 			}
-			relatedItems = (Item[]) l.toArray(new Item[l.size()]);
+			relatedItems = l.toArray(new Item[l.size()]);
 		}
 		return relatedItems;
 	}
 	private Item[] relatedItems;
 
+	@Override
 	public Item getStartItem () {
 		return getMacroDirective();
 	}

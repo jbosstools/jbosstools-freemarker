@@ -24,7 +24,6 @@ package org.jboss.ide.eclipse.freemarker.editor;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
@@ -42,6 +41,7 @@ public class MacroHyperlinkDetector implements IHyperlinkDetector {
 		this.editor = editor;
 	}
 
+	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		Item item = editor.getItemSet().getItem(region.getOffset());
 		if (null != item && item instanceof MacroInstance) {
@@ -65,9 +65,9 @@ public class MacroHyperlinkDetector implements IHyperlinkDetector {
 					return new IHyperlink[]{new MacroHyperlink(instance, macroLibrary.getFile(), -1, -1)};
 			}
 			else {
-				List macroDefinitions = instance.getItemSet().getMacroDefinitions();
-				for (Iterator i=macroDefinitions.iterator(); i.hasNext(); ) {
-					MacroDirective macroDefinition = (MacroDirective) i.next();
+				List<MacroDirective> macroDefinitions = instance.getItemSet().getMacroDefinitions();
+				for (Iterator<MacroDirective> i=macroDefinitions.iterator(); i.hasNext(); ) {
+					MacroDirective macroDefinition = i.next();
 					if (macroDefinition.getName().equals(instance.getName())) {
 						return new IHyperlink[]{new MacroHyperlink(
 								instance, editor.getFile(),
