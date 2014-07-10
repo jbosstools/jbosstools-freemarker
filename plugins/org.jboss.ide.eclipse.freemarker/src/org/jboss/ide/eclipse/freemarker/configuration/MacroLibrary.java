@@ -121,7 +121,7 @@ public class MacroLibrary {
 				if (endIndex > 0) {
 					String sub = content.substring(startIndex, endIndex);
 					MacroDirective macroDirective =
-						new LibraryMacroDirective(namespace, sub, startIndex-1, endIndex-index+2);
+						new LibraryMacroDirective(null, namespace, sub, startIndex-1, endIndex-index+2);
 					macroDirectives.add(macroDirective);
 					index = content.indexOf(startChar + search, endIndex);
 					if (index >= 0) index++;
@@ -171,24 +171,39 @@ public class MacroLibrary {
 	}
 
 	public static MacroLibrary fromXML (IProject project, Element node, ClassLoader classLoader) throws CoreException, IOException {
-        String namespace = node.getAttribute("namespace"); //$NON-NLS-1$
+		String namespace = node.getAttribute("namespace"); //$NON-NLS-1$
 		String path = node.getAttribute("path"); //$NON-NLS-1$
 		String projectName = node.getAttribute("project"); //$NON-NLS-1$
 		String type = node.getAttribute("type"); //$NON-NLS-1$
-        if (null == type || type.length() == 0 || type.equals(TYPE_FILE)) {
-        	if (null != projectName && projectName.length() > 0)
-        		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-        	IFile file = project.getFile(new Path(path));
-        	if (null == file || !file.exists()) return null;
-        	else return new MacroLibrary(namespace, file);
-        }
-        else if (type.equals(TYPE_JAR_ENTRY)) {
-        	InputStream is = classLoader.getResourceAsStream(path);
-        	if (null != is) {
-        		return new MacroLibrary(namespace, is, path, TYPE_JAR_ENTRY);
-        	}
-        	else return null;
-        }
-        else return null;
+		if (null == type || type.length() == 0 || type.equals(TYPE_FILE)) {
+			if (null != projectName && projectName.length() > 0) {
+				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			}
+			IFile file = project.getFile(new Path(path));
+			if (null == file || !file.exists()) {
+				return null;
+			}
+			else {
+				return new MacroLibrary(namespace, file);
+			}
+		}
+		else if (type.equals(TYPE_JAR_ENTRY)) {
+			InputStream is = null;
+			try {
+				is = classLoader.getResourceAsStream(path);
+				if (null != is) {
+					return new MacroLibrary(namespace, is, path, TYPE_JAR_ENTRY);
+				} else {
+					return null;
+				}
+			} finally {
+				if (is != null) {
+					is.close();
+				}
+			}
+		}
+		else {
+			return null;
+		}
 	}
 }

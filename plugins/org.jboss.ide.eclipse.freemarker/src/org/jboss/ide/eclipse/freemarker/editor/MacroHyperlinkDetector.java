@@ -52,12 +52,15 @@ public class MacroHyperlinkDetector implements IHyperlinkDetector {
 				String namespace = instance.getName().substring(0, index);
 				MacroLibrary macroLibrary = ConfigurationManager.getInstance(editor.getProject()).getMacroLibrary(namespace);
 				if (null != macroLibrary) {
-					for (int i=0; i<macroLibrary.getMacros().length; i++) {
-						if (macroLibrary.getMacros()[i].getName().equals(instance.getName())) {
-							// we have a match
-							return new IHyperlink[]{new MacroHyperlink(
-									instance, macroLibrary.getFile(),
-									macroLibrary.getMacros()[i].getOffset(), macroLibrary.getMacros()[i].getLength())};
+					MacroDirective[] macros = macroLibrary.getMacros();
+					if (null != macros) {
+						for (MacroDirective macro : macros) {
+							if (macro.getName().equals(instance.getName())) {
+								// we have a match
+								return new IHyperlink[]{new MacroHyperlink(
+										instance, macroLibrary.getFile(),
+										macro.getOffset(), macro.getLength())};
+							}
 						}
 					}
 				}

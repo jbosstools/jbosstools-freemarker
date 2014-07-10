@@ -27,6 +27,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class FtlDirective extends AbstractDirective {
 
+	public FtlDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

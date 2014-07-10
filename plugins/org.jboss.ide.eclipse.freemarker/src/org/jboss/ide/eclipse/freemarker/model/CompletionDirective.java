@@ -39,7 +39,8 @@ public class CompletionDirective extends AbstractDirective {
 	private int length;
 	private AbstractDirective directive = this;
 
-	public CompletionDirective (int offset, int length, ItemSet itemSet, ISourceViewer viewer, IResource resource) throws BadLocationException {
+	public CompletionDirective (ItemSet itemSet, int offset, int length, ISourceViewer viewer, IResource resource) throws BadLocationException {
+		super(itemSet);
 		this.contents = viewer.getDocument().get(offset, length);
 		ITypedRegion region = new TypedRegion(offset, this.contents.length(), "default"); //$NON-NLS-1$
 		this.offset = offset;
@@ -49,14 +50,12 @@ public class CompletionDirective extends AbstractDirective {
 			String s = arr[0];
 			try {
 				if (s.equals("list")) { //$NON-NLS-1$
-					directive = new ListDirective();
+					directive = new ListDirective(itemSet);
 					directive.load(new TypedRegion(offset, this.contents.length(), "list"), viewer, resource); //$NON-NLS-1$
-					directive.setItemSet(itemSet);
 				}
 				else if (s.equals("if")) { //$NON-NLS-1$
-					directive = new IfDirective();
+					directive = new IfDirective(itemSet);
 					directive.load(new TypedRegion(offset, this.contents.length(), "if"), viewer, resource); //$NON-NLS-1$
-					directive.setItemSet(itemSet);
 				}
 			}
 			catch (Exception e) {

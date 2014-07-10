@@ -32,6 +32,10 @@ public class FunctionDirective extends AbstractDirective {
 
 	private FunctionEndDirective endDirective;
 
+	public FunctionDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

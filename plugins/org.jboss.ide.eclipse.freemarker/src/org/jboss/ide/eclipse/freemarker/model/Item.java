@@ -38,9 +38,9 @@ public interface Item {
 	public boolean isStartItem ();
 
 	public boolean isEndItem ();
-	
+
 	public boolean isStartAndEndItem ();
-	
+
 	public Item getStartItem ();
 
 	public Item getEndItem ();
@@ -54,22 +54,20 @@ public interface Item {
 	public List<Item> getChildItems();
 
 	public Item getParentItem();
-	
+
 	public void setParentItem(Item item);
 
 	public void addSubDirective(Item directive);
 
 	public Item[] getRelatedItems ();
-	
+
 	public String getContents();
 
 	public String getTreeImage();
-	
+
 	public String getTreeDisplay();
 
 	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context);
-
-	public void setItemSet (ItemSet itemSet);
 
 	public String getFirstToken ();
 

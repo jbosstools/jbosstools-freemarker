@@ -29,6 +29,10 @@ public class IfEndDirective extends AbstractDirective {
 
 	private IfDirective ifDirective;
 
+	public IfEndDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

@@ -34,9 +34,13 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 	private MacroEndDirective endDirective;
 	private String name;
 
-	public MacroDirective () {}
 
-	public MacroDirective (String contents) {
+	public MacroDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
+	public MacroDirective (ItemSet itemSet, String contents) {
+		super(itemSet);
 		this.contents = contents;
 	}
 

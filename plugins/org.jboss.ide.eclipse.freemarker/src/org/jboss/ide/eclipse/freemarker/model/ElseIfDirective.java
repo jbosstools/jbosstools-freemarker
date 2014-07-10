@@ -28,6 +28,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class ElseIfDirective extends AbstractDirective {
 	private IfDirective ifDirective;
 
+	public ElseIfDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

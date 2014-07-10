@@ -33,6 +33,10 @@ public class ListDirective extends AbstractDirective {
 
 	private ListEndDirective endDirective;
 
+	public ListDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}
@@ -83,7 +87,7 @@ public class ListDirective extends AbstractDirective {
 				if (contentWithOffset.getContents().length >= 2)
 					value = contentWithOffset.getContents()[1];
 				CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-							"${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
+							getItemSet(), "${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getResource()); //$NON-NLS-1$
 				proposals = completionInterpolation.getCompletionProposals(offset, context);
 			}
 		}
@@ -95,7 +99,7 @@ public class ListDirective extends AbstractDirective {
 		String[] contents = splitContents();
 		if (contents.length == 4) {
 			String key = contents[3];
-			CompletionInterpolation completionInterpolation = new CompletionInterpolation("${" + contents[1], 0, getItemSet(), getResource()); //$NON-NLS-1$
+			CompletionInterpolation completionInterpolation = new CompletionInterpolation(getItemSet(), "${" + contents[1], 0, getResource()); //$NON-NLS-1$
 			context.put(key, completionInterpolation.getSingularReturnClass(context));
 		}
 	}

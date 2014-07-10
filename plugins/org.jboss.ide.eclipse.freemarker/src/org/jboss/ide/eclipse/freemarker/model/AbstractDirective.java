@@ -35,6 +35,10 @@ public abstract class AbstractDirective extends AbstractItem {
 
 	String contents;
 
+	public AbstractDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	public String getContents() {
 		if (null == contents) {
@@ -70,7 +74,7 @@ public abstract class AbstractDirective extends AbstractItem {
 				if (contentWithOffsetContents.length == 1) {
 					// first param
 					CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-							"${" , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
+							getItemSet() , "${", offset - contentWithOffset.getOffsetInIndex() - 2, getResource()); //$NON-NLS-1$
 					return completionInterpolation.getCompletionProposals(offset, context);
 				}
 				else {
@@ -95,7 +99,7 @@ public abstract class AbstractDirective extends AbstractItem {
 			}
 			catch (Exception e) {}
 			CompletionInterpolation completionInterpolation = new CompletionInterpolation(
-					"${" + value , offset - contentWithOffset.getOffsetInIndex() - 2, getItemSet(), getResource()); //$NON-NLS-1$
+					getItemSet() , "${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getResource()); //$NON-NLS-1$
 			return completionInterpolation.getCompletionProposals(offset, context);
 		}
 		return null;

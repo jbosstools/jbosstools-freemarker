@@ -28,10 +28,10 @@ public class CompletionInterpolation extends Interpolation {
 	private String contents;
 	private int offset;
 
-	public CompletionInterpolation (String contents, int offset, ItemSet itemSet, IResource resource) {
+	public CompletionInterpolation (ItemSet itemSet, String contents, int offset, IResource resource) {
+		super(itemSet);
 		this.contents = contents + "}"; //$NON-NLS-1$
 		this.offset = offset;
-		setItemSet(itemSet);
 		setResource(resource);
 	}
 

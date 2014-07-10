@@ -30,6 +30,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class CaseDefaultDirective extends AbstractDirective {
 
+	public CaseDefaultDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

@@ -34,7 +34,7 @@ public class LibraryMacroDirective extends MacroDirective {
 			String content = "#macro entries startIndex=1\r\n" + //$NON-NLS-1$
 			"data=\"data\" headerUrls=[] sortIndex=-1"; //$NON-NLS-1$
 
-			LibraryMacroDirective lmd = new LibraryMacroDirective("lib", content, 0, content.length()); //$NON-NLS-1$
+			LibraryMacroDirective lmd = new LibraryMacroDirective(new ItemSet(null, null), "lib", content, 0, content.length()); //$NON-NLS-1$
 			String[] attributes = lmd.getAttributes();
 			for (int i=0; i<attributes.length; i++) {
 				System.out.println(attributes[i]);
@@ -45,7 +45,8 @@ public class LibraryMacroDirective extends MacroDirective {
 		}
 	}
 
-	public LibraryMacroDirective (String namespace, String contents, int offset, int length) {
+	public LibraryMacroDirective (ItemSet itemSet, String namespace, String contents, int offset, int length) {
+		super(itemSet);
 		this.contents = contents;
 		this.namespace = namespace;
 		this.offset = offset;

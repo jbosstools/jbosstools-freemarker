@@ -43,6 +43,10 @@ public class Interpolation extends AbstractDirective {
 
 	private List<Fragment> fragments;
 
+	public Interpolation(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

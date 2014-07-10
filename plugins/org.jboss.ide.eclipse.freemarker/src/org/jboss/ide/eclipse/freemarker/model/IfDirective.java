@@ -34,6 +34,10 @@ public class IfDirective extends AbstractDirective {
 	private IfElseDirective elseDirective;
 	private List<ElseIfDirective> elseIfDirectives = new ArrayList<ElseIfDirective>(1);
 
+	public IfDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

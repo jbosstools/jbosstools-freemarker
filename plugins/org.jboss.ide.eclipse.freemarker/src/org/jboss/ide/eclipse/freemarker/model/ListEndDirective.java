@@ -29,6 +29,10 @@ public class ListEndDirective extends AbstractDirective {
 
 	private ListDirective listDirective;
 
+	public ListEndDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

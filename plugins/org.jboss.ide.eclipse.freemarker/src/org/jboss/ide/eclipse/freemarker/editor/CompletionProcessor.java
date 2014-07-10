@@ -89,15 +89,13 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 							if (editor.getDocument().getLength() > i) {
 								char c2 = editor.getDocument().getChar(i+1);
 								if (c2 == '#') {
-									CompletionDirective completionDirective = new CompletionDirective(
-											i, offset - i, editor.getItemSet(), (ISourceViewer) viewer, (IResource) editor.getFile());
-									completionDirective.setItemSet(editor.getItemSet());
+									CompletionDirective completionDirective = new CompletionDirective(editor.getItemSet(),
+											i, offset - i, (ISourceViewer) viewer, (IResource) editor.getFile());
 									return completionDirective.getCompletionProposals(offset, context);
 								}
 								else if (c2 == '@') {
 									CompletionMacroInstance completionMacroInstance = new CompletionMacroInstance(
-											editor.getDocument().get(i, offset - i), i, editor.getItemSet(), editor.getFile());
-									completionMacroInstance.setItemSet(editor.getItemSet());
+											editor.getItemSet(), editor.getDocument().get(i, offset - i), i, editor.getFile());
 									return completionMacroInstance.getCompletionProposals(offset, context);
 								}
 								else if (c2 == '/') {
@@ -153,7 +151,7 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 										j++;
 									}
 									CompletionInterpolation interpolation = new CompletionInterpolation(
-											editor.getDocument().get(i, j - i), i, editor.getItemSet(), editor.getFile());
+											editor.getItemSet(), editor.getDocument().get(i, j - i), i, editor.getFile());
 									interpolation.setParentItem(editor.getItemSet().getPreviousStartItem(offset));
 									return interpolation.getCompletionProposals(offset, context);
 								}

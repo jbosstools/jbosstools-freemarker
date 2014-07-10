@@ -28,10 +28,10 @@ public class CompletionMacroInstance extends MacroInstance {
 	private String contents;
 	private int offset;
 
-	public CompletionMacroInstance (String contents, int offset, ItemSet itemSet, IResource resource) {
+	public CompletionMacroInstance (ItemSet itemSet, String contents, int offset, IResource resource) {
+		super(itemSet);
 		this.contents = contents;
 		this.offset = offset;
-		setItemSet(itemSet);
 		setResource(resource);
 	}
 

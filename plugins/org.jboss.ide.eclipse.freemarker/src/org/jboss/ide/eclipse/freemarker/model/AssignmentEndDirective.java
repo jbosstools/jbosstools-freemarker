@@ -34,7 +34,8 @@ public class AssignmentEndDirective extends AbstractDirective {
 	@SuppressWarnings("unused")
 	private String type;
 
-	public AssignmentEndDirective (String type) {
+	public AssignmentEndDirective (ItemSet itemSet, String type) {
+		super(itemSet);
 		this.type = type;
 	}
 

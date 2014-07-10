@@ -31,7 +31,8 @@ public class GenericNestableDirective extends AbstractDirective {
 	private String name;
 	private GenericNestableEndDirective endDirective;
 
-	public GenericNestableDirective (String name, String image) {
+	public GenericNestableDirective (ItemSet itemSet, String name, String image) {
+		super(itemSet);
 		this.name = name;
 		this.image = image;
 	}

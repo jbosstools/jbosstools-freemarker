@@ -29,7 +29,8 @@ public class GenericDirective extends AbstractDirective {
 
 	private String image;
 
-	public GenericDirective (String image) {
+	public GenericDirective (ItemSet itemSet, String image) {
+		super(itemSet);
 		this.image = image;
 	}
 

@@ -40,6 +40,10 @@ public class MacroInstance extends AbstractDirective {
 	private MacroEndInstance endInstance;
 	private String name;
 
+	public MacroInstance(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 		name = getSplitValue(0);

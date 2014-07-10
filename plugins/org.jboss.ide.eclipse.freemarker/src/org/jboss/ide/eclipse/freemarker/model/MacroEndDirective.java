@@ -31,6 +31,10 @@ public class MacroEndDirective extends AbstractDirective {
 
 	private MacroDirective macroDirective;
 
+	public MacroEndDirective(ItemSet itemSet) {
+		super(itemSet);
+	}
+
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
 	}

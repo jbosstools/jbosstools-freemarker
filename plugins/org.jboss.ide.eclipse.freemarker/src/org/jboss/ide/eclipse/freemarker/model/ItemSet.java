@@ -75,9 +75,8 @@ public class ItemSet {
 			Stack<Item> stackDirectives = new Stack<Item>();
 			for (Iterator<ITypedRegion> i=regions.iterator(); i.hasNext(); ) {
 				ITypedRegion region = i.next();
-				Item directive = ItemFactory.getItem(region, viewer, resource);
+				Item directive = ItemFactory.getItem(this, region, viewer, resource);
 				if (null != directive) {
-					directive.setItemSet(this);
 					if (directive instanceof MacroDirective) {
 						macroDefinitions.add((MacroDirective) directive);
 						modifiableOutlineItems.add(directive);

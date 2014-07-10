@@ -41,7 +41,11 @@ public abstract class AbstractItem implements Item {
 	private IResource resource;
 	private List<Item> subDirectives;
 	private Item parentItem;
-	private ItemSet itemSet;
+	private final ItemSet itemSet;
+
+	protected AbstractItem(ItemSet itemSet) {
+		this.itemSet = itemSet;
+	}
 
 	@Override
 	public final void load(ITypedRegion region, ISourceViewer viewer, IResource resource) {
@@ -415,11 +419,6 @@ public abstract class AbstractItem implements Item {
 
 	public ItemSet getItemSet() {
 		return itemSet;
-	}
-
-	@Override
-	public void setItemSet(ItemSet itemSet) {
-		this.itemSet = itemSet;
 	}
 
 	public String getFullContents () {

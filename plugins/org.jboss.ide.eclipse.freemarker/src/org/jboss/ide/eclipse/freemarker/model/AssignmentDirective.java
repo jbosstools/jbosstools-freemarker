@@ -35,7 +35,8 @@ public class AssignmentDirective extends AbstractDirective {
 	@SuppressWarnings("unused")
 	private String type;
 
-	public AssignmentDirective (String type) {
+	public AssignmentDirective (ItemSet itemSet, String type) {
+		super(itemSet);
 		this.type = type;
 	}
 
@@ -100,7 +101,7 @@ public class AssignmentDirective extends AbstractDirective {
 				else if (Character.isDigit(value.charAt(0))) valueClass = Number.class;
 				else {
 					CompletionInterpolation completionInterpolation =
-						new CompletionInterpolation("${" + value, 2, getItemSet(), getResource()); //$NON-NLS-1$
+						new CompletionInterpolation(getItemSet(), "${" + value, 2, getResource()); //$NON-NLS-1$
 					valueClass = completionInterpolation.getReturnClass(context);
 				}
 			}
