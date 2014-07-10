@@ -124,12 +124,22 @@ public class ConfigurationManager {
 				if (rtn == IDialogConstants.OK_ID) {
 					namespace = inputDialog.getValue();
 					try {
-						InputStream is = getProjectClassLoader().getResourceAsStream(jef.getFullPath().toString());
-						if (null != is) {
-							this.macroLibrary.put(namespace, new MacroLibrary(namespace, is, jef.getFullPath().toString(), MacroLibrary.TYPE_JAR_ENTRY));
-						}
-						else {
-							// FIXME: add error dialog here
+						InputStream is = null;
+						try {
+							is = getProjectClassLoader().getResourceAsStream(
+									jef.getFullPath().toString());
+							if (null != is) {
+								this.macroLibrary.put(namespace,
+										new MacroLibrary(namespace, is, jef
+												.getFullPath().toString(),
+												MacroLibrary.TYPE_JAR_ENTRY));
+							} else {
+								// FIXME: add error dialog here
+							}
+						} finally {
+							if (is != null) {
+								is.close();
+							}
 						}
 					}
 					catch (CoreException e) {

@@ -25,14 +25,12 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
@@ -66,26 +64,26 @@ public class ProjectClassLoader extends URLClassLoader {
 		for (int i=0; i<roots.length; i++) {
 			try {
 				if (roots[i].isArchive()) {
-					File f = new File(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()).getFile());
+					File f = new File(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURI().toURL()).getFile());
 					if (f.exists()) {
-						list.add(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURL()));
+						list.add(FileLocator.resolve(roots[i].getPath().makeAbsolute().toFile().toURI().toURL()));
 					}
 					else {
 						String s = roots[i].getPath().toOSString().replace('\\', '/');
 						if (!s.startsWith("/")) s = "/" + s; //$NON-NLS-1$ //$NON-NLS-2$
 						f = new File(installLoc + s);
 						if (f.exists()) {
-							list.add(f.toURL());
+							list.add(f.toURI().toURL());
 						}
 						else {
 							f = new File("c:" + installLoc + s); //$NON-NLS-1$
 							if (f.exists()) {
-								list.add(f.toURL());
+								list.add(f.toURI().toURL());
 							}
 							else {
 								f = new File("d:" + installLoc + s); //$NON-NLS-1$
 								if (f.exists()) {
-									list.add(f.toURL());
+									list.add(f.toURI().toURL());
 								}
 							}
 						}
@@ -96,11 +94,11 @@ public class ProjectClassLoader extends URLClassLoader {
                     if (path.segmentCount() > 1) {
                         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
                         path = root.getFolder(path).getLocation();
-                        list.add(path.toFile().toURL());
+                        list.add(path.toFile().toURI().toURL());
                     }
                     else {
                         path = roots[i].getJavaProject().getProject().getLocation();
-                        list.add(path.toFile().toURL());
+                        list.add(path.toFile().toURI().toURL());
                     }
 				}
 			}

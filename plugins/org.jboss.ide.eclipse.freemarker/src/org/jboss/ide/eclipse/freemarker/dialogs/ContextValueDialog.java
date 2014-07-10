@@ -63,7 +63,7 @@ public class ContextValueDialog extends Dialog {
 	private Text singleValueText;
 	private Label singleLabel;
 	private Button singleBrowse;
-	
+
 	public ContextValueDialog(Shell parentShell, ContextValue contextValue, IResource resource) {
 		super(parentShell);
 		this.resource = resource;
@@ -73,13 +73,15 @@ public class ContextValueDialog extends Dialog {
 	/**
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(Messages.ContextValueDialog_SHELL_CONTEXT_VALUE_CONFIG);
 		super.configureShell(newShell);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout(3, false));
 
@@ -107,7 +109,8 @@ public class ContextValueDialog extends Dialog {
         Button browse = new Button(composite, 8);
         browse.setText(Messages.ContextValueDialog_BUTTON_BROWSE);
         browse.addMouseListener(new MouseListener() {
-            public void mouseDown(MouseEvent e)
+            @Override
+			public void mouseDown(MouseEvent e)
             {
                 try {
                     IJavaProject javaProject = JavaCore.create(resource.getProject());
@@ -153,11 +156,13 @@ public class ContextValueDialog extends Dialog {
                 catch(JavaModelException _ex) { }
             }
 
-            public void mouseDoubleClick(MouseEvent mouseevent)
+            @Override
+			public void mouseDoubleClick(MouseEvent mouseevent)
             {
             }
 
-            public void mouseUp(MouseEvent mouseevent)
+            @Override
+			public void mouseUp(MouseEvent mouseevent)
             {
             }
 
@@ -179,7 +184,8 @@ public class ContextValueDialog extends Dialog {
         singleBrowse.setEnabled(enabled);
         singleBrowse.setText(Messages.ContextValueDialog_BUTTON_BROWSE);
         singleBrowse.addMouseListener(new MouseListener() {
-            public void mouseDown(MouseEvent e)
+            @Override
+			public void mouseDown(MouseEvent e)
             {
                 try {
                     IJavaProject javaProject = JavaCore.create(resource.getProject());
@@ -202,11 +208,13 @@ public class ContextValueDialog extends Dialog {
                 catch(JavaModelException _ex) { }
             }
 
-            public void mouseDoubleClick(MouseEvent mouseevent)
+            @Override
+			public void mouseDoubleClick(MouseEvent mouseevent)
             {
             }
 
-            public void mouseUp(MouseEvent mouseevent)
+            @Override
+			public void mouseUp(MouseEvent mouseevent)
             {
             }
 
@@ -214,6 +222,7 @@ public class ContextValueDialog extends Dialog {
 		return parent;
 	}
 
+	@Override
 	protected void okPressed() {
 	    try {
 		    String name = keyText.getText().trim();
