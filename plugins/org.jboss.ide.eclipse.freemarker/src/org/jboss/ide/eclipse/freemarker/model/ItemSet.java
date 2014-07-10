@@ -73,8 +73,7 @@ public class ItemSet {
 			this.topLevelDirectives = new ArrayList<Item>();
 
 			Stack<Item> stackDirectives = new Stack<Item>();
-			for (Iterator<ITypedRegion> i=regions.iterator(); i.hasNext(); ) {
-				ITypedRegion region = i.next();
+			for (ITypedRegion region : regions) {
 				Item directive = ItemFactory.getItem(this, region, viewer, resource);
 				if (null != directive) {
 					if (directive instanceof MacroDirective) {

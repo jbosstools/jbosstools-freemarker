@@ -36,6 +36,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.jboss.ide.eclipse.freemarker.Constants;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -67,18 +68,22 @@ public class Configuration extends TextSourceViewerConfiguration {
 				new TextAttribute(
 					colorManager.getColor(Constants.COLOR_DIRECTIVE)));
 		ContentScanner contentScanner = new ContentScanner(defaultToken, colorManager);
-				
-		for (int i=0; i<PartitionScanner.DIRECTIVES.length; i++) {
-			dr = new DefaultDamagerRepairer(contentScanner);
-			reconciler.setDamager(dr, PartitionScanner.DIRECTIVES[i]);
-			reconciler.setRepairer(dr, PartitionScanner.DIRECTIVES[i]);
+
+		for (Directive directive : Directive.values()) {
+			if (directive != Directive.__ftl_interpolation) {
+				/* skip interpolation here as it has a different color */
+				dr = new DefaultDamagerRepairer(contentScanner);
+				reconciler.setDamager(dr, directive.name());
+				reconciler.setRepairer(dr, directive.name());
+			}
 		}
-		dr = new DefaultDamagerRepairer(contentScanner);
-		reconciler.setDamager(dr, PartitionScanner.FTL_DIRECTIVE);
-		reconciler.setRepairer(dr, PartitionScanner.FTL_DIRECTIVE);
-		dr = new DefaultDamagerRepairer(contentScanner);
-		reconciler.setDamager(dr, PartitionScanner.FTL_DIRECTIVE_END);
-		reconciler.setRepairer(dr, PartitionScanner.FTL_DIRECTIVE_END);
+
+		defaultToken = new Token(
+				new TextAttribute(
+					colorManager.getColor(Constants.COLOR_INTERPOLATION)));
+		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken, colorManager));
+		reconciler.setDamager(dr, Directive.__ftl_interpolation.name());
+		reconciler.setRepairer(dr, Directive.__ftl_interpolation.name());
 
 		ndr =
 			new NonRuleBasedDamagerRepairer(
@@ -103,13 +108,6 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 		defaultToken = new Token(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_INTERPOLATION)));
-		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken, colorManager));
-		reconciler.setDamager(dr, PartitionScanner.FTL_INTERPOLATION);
-		reconciler.setRepairer(dr, PartitionScanner.FTL_INTERPOLATION);
-		
-		defaultToken = new Token(
-				new TextAttribute(
 					colorManager.getColor(Constants.COLOR_XML_TAG)));
 		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken, colorManager));
 		reconciler.setDamager(dr, PartitionScanner.XML_TAG);
@@ -124,20 +122,17 @@ public class Configuration extends TextSourceViewerConfiguration {
         ContentAssistant assistant = new ContentAssistant();
         CompletionProcessor completionProcessor = new CompletionProcessor(editor);
         assistant.setContentAssistProcessor(completionProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-        for (int i=0; i<PartitionScanner.DIRECTIVES.length; i++) {
-        	assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.DIRECTIVES[i]);
+		for (Directive directive : Directive.values()) {
+        	assistant.setContentAssistProcessor(completionProcessor, directive.name());
         }
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.FTL_DIRECTIVE);
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.FTL_DIRECTIVE_END);
         assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.FTL_COMMENT);
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.FTL_INTERPOLATION);
         assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_COMMENT);
         assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_TAG);
         assistant.enableAutoInsert(true);
         assistant.enableAutoActivation(true);
         return assistant;
     }
-    
+
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new AnnotationHover();

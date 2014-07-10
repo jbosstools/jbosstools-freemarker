@@ -26,80 +26,123 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.jboss.ide.eclipse.freemarker.editor.PartitionScanner;
+import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
 
 
 public class ItemFactory {
 
 	public static Item getItem (ItemSet itemSet, ITypedRegion region, ISourceViewer viewer, IResource resource) {
-		if (null == region) return null;
+		if (null == region) {
+			return null;
+		}
 		else {
-			Item directive = null;
-			if (region.getType().equals(PartitionScanner.FTL_IF_DIRECTIVE_START))
-				directive = new IfDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_IF_DIRECTIVE_END))
-				directive = new IfEndDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_IF_ELSE_DIRECTIVE))
-				directive = new IfElseDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_ELSE_IF_DIRECTIVE))
-				directive = new ElseIfDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_LIST_DIRECTIVE_START))
-				directive = new ListDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_LIST_DIRECTIVE_END))
-				directive = new ListEndDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_FUNCTION_DIRECTIVE_START))
-				directive = new FunctionDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_FUNCTION_DIRECTIVE_END))
-				directive = new FunctionEndDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_MACRO_DIRECTIVE_START))
-				directive = new MacroDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_MACRO_DIRECTIVE_END))
-				directive = new MacroEndDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_MACRO_INSTANCE_START))
-				directive = new MacroInstance(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_MACRO_INSTANCE_END))
-				directive = new MacroEndInstance(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_INCLUDE))
-				directive = new GenericDirective(itemSet, "include.png"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_IMPORT))
-				directive = new GenericDirective(itemSet, "import.png"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_ASSIGN)
-					|| region.getType().equals(PartitionScanner.FTL_LOCAL)
-					|| region.getType().equals(PartitionScanner.FTL_GLOBAL))
-				directive = new AssignmentDirective(itemSet, region.getType());
-			else if (region.getType().equals(PartitionScanner.FTL_ASSIGN_END)
-					|| region.getType().equals(PartitionScanner.FTL_LOCAL_END)
-					|| region.getType().equals(PartitionScanner.FTL_GLOBAL_END))
-				directive = new AssignmentEndDirective(itemSet, region.getType());
-			else if (region.getType().equals(PartitionScanner.FTL_BREAK))
-				directive = new GenericDirective(itemSet, "break.png"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_STOP))
-				directive = new GenericDirective(itemSet, "stop.png"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_RETURN))
-				directive = new GenericDirective(itemSet, "return.png"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_SWITCH_DIRECTIVE_START))
-				directive = new GenericNestableDirective(itemSet, "switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$
-			else if (region.getType().equals(PartitionScanner.FTL_SWITCH_DIRECTIVE_END))
-				directive = new GenericNestableEndDirective(itemSet, "switch"); //$NON-NLS-1$
-			else if (region.getType().equals(PartitionScanner.FTL_CASE_DIRECTIVE_START))
-				directive = new CaseDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_CASE_DEFAULT_START))
-				directive = new CaseDefaultDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_INTERPOLATION))
-				directive = new Interpolation(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_FTL_DIRECTIVE))
-				directive = new FtlDirective(itemSet);
-			else if (region.getType().equals(PartitionScanner.FTL_DIRECTIVE)) {
-				String name = getDirectiveName(region, viewer);
-				directive = new GenericNestableDirective(itemSet, name, "element.png"); //$NON-NLS-1$
+			Directive directiveType = Directive.fastValueOf(region.getType());
+			if (directiveType == null) {
+				/* ignore non-directives */
+				return null;
 			}
-			else if (region.getType().equals(PartitionScanner.FTL_DIRECTIVE_END)) {
-				String name = getDirectiveName(region, viewer);
-				directive = new GenericNestableEndDirective(itemSet, name);
+			else {
+				Item directive = null;
+				switch (directiveType) {
+				case __ftl_if_directive_start:
+					directive = new IfDirective(itemSet);
+					break;
+				case __ftl_if_directive_end:
+					directive = new IfEndDirective(itemSet);
+					break;
+				case __ftl_if_else_directive:
+					directive = new IfElseDirective(itemSet);
+					break;
+				case __ftl_else_if_directive:
+					directive = new ElseIfDirective(itemSet);
+					break;
+				case __ftl_list_directive_start:
+					directive = new ListDirective(itemSet);
+					break;
+				case __ftl_list_directive_end:
+					directive = new ListEndDirective(itemSet);
+					break;
+				case __ftl_function_directive_start:
+					directive = new FunctionDirective(itemSet);
+					break;
+				case __ftl_function_directive_end:
+					directive = new FunctionEndDirective(itemSet);
+					break;
+				case __ftl_macro_directive_start:
+					directive = new MacroDirective(itemSet);
+					break;
+				case __ftl_macro_directive_end:
+					directive = new MacroEndDirective(itemSet);
+					break;
+				case __ftl_macro_instance_start:
+					directive = new MacroInstance(itemSet);
+					break;
+				case __ftl_macro_instance_end:
+					directive = new MacroEndInstance(itemSet);
+					break;
+				case __ftl_include:
+					directive = new GenericDirective(itemSet, "include.png"); //$NON-NLS-1$
+					break;
+				case __ftl_import:
+					directive = new GenericDirective(itemSet, "import.png"); //$NON-NLS-1$
+					break;
+				case __ftl_assign:
+				case __ftl_local:
+				case __ftl_global:
+					directive = new AssignmentDirective(itemSet, region.getType());
+					break;
+				case __ftl_assign_end:
+				case __ftl_local_end:
+				case __ftl_global_end:
+					directive = new AssignmentEndDirective(itemSet, region.getType());
+					break;
+				case __ftl_break:
+					directive = new GenericDirective(itemSet, "break.png"); //$NON-NLS-1$
+					break;
+				case __ftl_nested:
+					directive = new GenericDirective(itemSet, "nested.png"); //$NON-NLS-1$
+					break;
+				case __ftl_stop:
+					directive = new GenericDirective(itemSet, "stop.png"); //$NON-NLS-1$
+					break;
+				case __ftl_return:
+					directive = new GenericDirective(itemSet, "return.png"); //$NON-NLS-1$
+					break;
+				case __ftl_switch_directive_start:
+					directive = new GenericNestableDirective(itemSet, "switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$
+					break;
+				case __ftl_switch_directive_end:
+					directive = new GenericNestableEndDirective(itemSet, "switch"); //$NON-NLS-1$
+					break;
+				case __ftl_case_directive_start:
+					directive = new CaseDirective(itemSet);
+					break;
+				case __ftl_case_default_start:
+					directive = new CaseDefaultDirective(itemSet);
+					break;
+				case __ftl_interpolation:
+					directive = new Interpolation(itemSet);
+					break;
+				case __ftl_ftl_directive:
+					directive = new FtlDirective(itemSet);
+					break;
+				case __ftl_directive:
+					String name = getDirectiveName(region, viewer);
+					directive = new GenericNestableDirective(itemSet, name, "element.png"); //$NON-NLS-1$
+					break;
+				case __ftl_directive_end:
+					name = getDirectiveName(region, viewer);
+					directive = new GenericNestableEndDirective(itemSet, name);
+					break;
+				default:
+					Plugin.log("Unexpected "+ Directive.class.getName() + "'"+ region.getType() +"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				if (null != directive) {
+					directive.load(region, viewer, resource);
+				}
+				return directive;
 			}
-
-			if (null != directive) directive.load(region, viewer, resource);
-			return directive;
 		}
 	}
 
