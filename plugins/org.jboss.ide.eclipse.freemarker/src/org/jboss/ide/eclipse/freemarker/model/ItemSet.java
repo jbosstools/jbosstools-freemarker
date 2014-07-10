@@ -45,6 +45,7 @@ public class ItemSet {
 	private List<Item> topLevelDirectives;
 	private Map<Integer, Item> directiveRegions;
 	private List<MacroDirective> macroDefinitions = new ArrayList<MacroDirective>();
+	private List<Item> outlineItems = Collections.emptyList();
 
 	public ItemSet (ISourceViewer viewer, IResource resource) {
 		this.viewer = viewer;
@@ -65,6 +66,7 @@ public class ItemSet {
 	}
 
 	private void parse (ISourceViewer viewer, IResource resource) {
+		List<Item> modifiableOutlineItems = new ArrayList<Item>();
 		try {
 			this.directives = new ArrayList<Item>();
 			this.directiveRegions = new HashMap<Integer, Item>();
@@ -78,6 +80,10 @@ public class ItemSet {
 					directive.setItemSet(this);
 					if (directive instanceof MacroDirective) {
 						macroDefinitions.add((MacroDirective) directive);
+						modifiableOutlineItems.add(directive);
+					}
+					if (directive instanceof FunctionDirective) {
+						modifiableOutlineItems.add(directive);
 					}
 					if (stackDirectives.size() == 0) {
 						topLevelDirectives.add(directive);
@@ -107,6 +113,7 @@ public class ItemSet {
 							stackDirectives.push(directive);
 						}
 						else {
+							// directive.isStartAndEndItem()
 							if (null != directiveCheck && directive.isEndItem() && directiveCheck.isStartAndEndItem()) {
 								if (directiveCheck.relatesToItem(directive)) {
 									directiveCheck.relateItem(directive);
@@ -167,16 +174,21 @@ public class ItemSet {
 		catch (Exception e) {
 			Plugin.log(e);
 		}
+		finally {
+			this.outlineItems = Collections.unmodifiableList(modifiableOutlineItems);
+		}
 		Collections.sort(macroDefinitions);
 	}
 
 	private static Item getFirstNestableItem (Stack<Item> directives) {
-		if (directives.size() == 0) return null;
+		if (directives.size() == 0) {
+			return null;
+		}
 		else {
-			Item directiveCheck = null;
-			for (int i=directives.size()-1; i>=0; i++){
-				directiveCheck = directives.get(i);
-				if (directiveCheck.isNestable()) return directiveCheck;
+			for (Item directiveCheck : directives){
+				if (directiveCheck.isNestable()) {
+					return directiveCheck;
+				}
 			}
 			return null;
 		}
@@ -185,6 +197,14 @@ public class ItemSet {
 	public Item[] getRootItems () {
 		return topLevelDirectives.toArray(
 				new Item[topLevelDirectives.size()]);
+	}
+
+	/**
+	 * Returns an unmodifiable {@link List} of directives to be used as an outline of the underlying Freemarker document.
+	 * @return see above
+	 */
+	public List<Item> getOutlineItems() {
+		return outlineItems;
 	}
 
 	public Item getSelectedItem (int offset) {

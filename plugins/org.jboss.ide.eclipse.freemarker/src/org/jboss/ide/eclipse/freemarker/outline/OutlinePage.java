@@ -160,6 +160,14 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 	}
 
+	/** Made public for the sake of testing.
+	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#getTreeViewer()
+	 */
+	@Override
+	public TreeViewer getTreeViewer() {
+		return super.getTreeViewer();
+	}
+
 	public class SetContextEntryAction extends Action {
 
 		public SetContextEntryAction (OutlinePage outlinePage) {
