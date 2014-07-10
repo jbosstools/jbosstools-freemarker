@@ -53,24 +53,24 @@ import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
 public class CompletionProcessor extends TemplateCompletionProcessor implements IContentAssistProcessor {
 
 	private Editor editor;
-	
+
 	private static final ICompletionProposal[] NO_COMPLETIONS = new ICompletionProposal[0];
-	
+
 	public CompletionProcessor (Editor editor) {
 		this.editor = editor;
 	}
-	
+
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
 			ItemSet directiveSet = editor.getItemSet();
-	
+
 			Map<String, Class<?>> context = new HashMap<String, Class<?>>();
 			ContextValue[] values = ConfigurationManager.getInstance(editor.getProject()).getContextValues(editor.getFile(), true);
 			for (int i=0; i<values.length; i++) {
 				context.put(values[i].name, values[i].objClass);
 			}
-			
+
 			Item directive = directiveSet.getSelectedItem(offset);
 			if (null != directive) {
 				return directive.getCompletionProposals(offset, context);
@@ -106,18 +106,18 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 												|| editor.getDocument().getChar(i+2) == '\r'
 													|| editor.getDocument().getChar(i+2) == '\n') {
 										Item stackItem = editor.getItemSet().getPreviousStartItem(offset);
-										StringBuffer value = new StringBuffer();
+										StringBuilder value = new StringBuilder();
 										if (null != stackItem && stackItem instanceof MacroInstance)
-											value.append("@"); //$NON-NLS-1$
+											value.append('@');
 										else
-											value.append("#"); //$NON-NLS-1$
+											value.append('#');
 										String name = null;
 										if (null != stackItem) name = stackItem.getFirstToken();
 										if (null != name)
 											value.append(name);
 										if (c == '<')
 											value.append('>');
-										else 
+										else
 											value.append(']');
 										ICompletionProposal completionProposal = new CompletionProposal(
 												value.toString(), offset, 0, offset+value.toString().length());

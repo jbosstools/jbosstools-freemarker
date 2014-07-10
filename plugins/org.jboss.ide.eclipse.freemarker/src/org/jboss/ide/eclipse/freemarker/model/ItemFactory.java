@@ -104,7 +104,7 @@ public class ItemFactory {
 	}
 
 	private static String getDirectiveName (ITypedRegion region, ISourceViewer viewer) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			int offset = region.getOffset();
 			int stopIndex = offset + region.getLength();

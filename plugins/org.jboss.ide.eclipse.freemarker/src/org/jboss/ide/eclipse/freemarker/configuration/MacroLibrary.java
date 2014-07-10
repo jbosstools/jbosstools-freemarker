@@ -45,7 +45,7 @@ public class MacroLibrary {
 
 	public static final String TYPE_FILE = "file"; //$NON-NLS-1$
 	public static final String TYPE_JAR_ENTRY = "jarEntry"; //$NON-NLS-1$
-	
+
 	private long lastUpdatedTime;
 	private IFile file;
 	private String content;
@@ -120,7 +120,7 @@ public class MacroLibrary {
 				}
 				if (endIndex > 0) {
 					String sub = content.substring(startIndex, endIndex);
-					MacroDirective macroDirective = 
+					MacroDirective macroDirective =
 						new LibraryMacroDirective(namespace, sub, startIndex-1, endIndex-index+2);
 					macroDirectives.add(macroDirective);
 					index = content.indexOf(startChar + search, endIndex);
@@ -154,15 +154,13 @@ public class MacroLibrary {
 		this.type = type;
 	}
 
-	public String toXML () {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<entry namespace=\"" + getNamespace() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		sb.append("path=\"" + getPath() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+	public void toXML (StringBuilder sb) {
+		sb.append("<entry namespace=\"").append( getNamespace()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append("path=\"").append(getPath()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (null != file) {
-			sb.append("project=\"" + file.getProject().getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("project=\"").append(file.getProject().getName()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		sb.append("type=\"" + getType() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$
-		return sb.toString();
+		sb.append("type=\"").append(getType()).append("\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public String getPath () {

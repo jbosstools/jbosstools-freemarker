@@ -177,20 +177,22 @@ public class NameFragment extends AbstractFragment {
 				Method m = parentClass.getMethods()[i];
 				String mName = m.getName();
 				if (m.getParameterTypes().length > 0 && mName.startsWith("get") && mName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
-					StringBuffer display = new StringBuffer();
+					StringBuilder display = new StringBuilder();
 					display.append(mName);
-					display.append("("); //$NON-NLS-1$
+					display.append('(');
 					for (int j=0; j<m.getParameterTypes().length; j++) {
 						if (j > 0) display.append(", "); //$NON-NLS-1$
 						display.append(m.getParameterTypes()[j].getName());
 					}
-					display.append(")"); //$NON-NLS-1$
+					display.append(") - ").append(m.getReturnType().getName()); //$NON-NLS-1$
 					String actual = mName + "()"; //$NON-NLS-1$
 					int tLength = actual.length();
-					if (m.getParameterTypes().length > 0) tLength--;
+					if (m.getParameterTypes().length > 0) {
+						tLength--;
+					}
 					proposals.add(new CompletionProposal(actual,
 							offset - subOffset + 1, getContent().length()-1, tLength,
-							null, display.toString() + " - " + m.getReturnType().getName(), null, null)); //$NON-NLS-1$
+							null, display.toString(), null, null));
 				}
 			}
 			return completionProposals(proposals);

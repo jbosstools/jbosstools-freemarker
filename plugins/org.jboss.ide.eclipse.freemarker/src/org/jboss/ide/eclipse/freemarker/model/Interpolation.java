@@ -115,7 +115,7 @@ public class Interpolation extends AbstractDirective {
 	private synchronized void initFragments () {
 		if (null != fragments) return;
 		fragments = new ArrayList<Fragment>();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String contents = getFullContents();
 		contents = contents.substring(2, contents.length()-1);
 		int offsetStart = 0;

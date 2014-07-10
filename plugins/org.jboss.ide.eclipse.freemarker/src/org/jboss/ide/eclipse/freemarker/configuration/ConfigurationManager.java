@@ -148,10 +148,12 @@ public class ConfigurationManager {
 		return macroLibrary.get(namespace);
 	}
 
-	private void writeMacroLibrary(StringBuffer sb) {
+	private void writeMacroLibrary(StringBuilder sb) {
 		for (Iterator<MacroLibrary> i=macroLibrary.values().iterator(); i.hasNext(); ) {
 			MacroLibrary ml = i.next();
-			sb.append("\t\t" + ml.toXML() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append('\t').append('\t');
+			ml.toXML(sb);
+			sb.append('\n');
 		}
 	}
 
@@ -231,7 +233,7 @@ public class ConfigurationManager {
     }
 
     private void save() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<config>\n"); //$NON-NLS-1$
 		sb.append("\t<context-values>\n"); //$NON-NLS-1$
         writeContextValues(sb);
@@ -287,7 +289,7 @@ public class ConfigurationManager {
         }
     }
 
-    private void writeContextValues(StringBuffer sb) {
+    private void writeContextValues(StringBuilder sb) {
         for (Iterator<Map.Entry<String, ContextValue[]>> i = contextValues.entrySet().iterator(); i.hasNext();) {
             Map.Entry<String, ContextValue[]> entry = i.next();
             String fileName = entry.getKey();

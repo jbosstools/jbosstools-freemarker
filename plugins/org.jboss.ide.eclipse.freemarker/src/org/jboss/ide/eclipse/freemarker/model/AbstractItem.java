@@ -157,7 +157,7 @@ public abstract class AbstractItem implements Item {
 		int totalSpacesEncountered = 0;
 		int cursorPos = getCursorPosition(offset);
 		List<String> arr = new ArrayList<String>();
-		StringBuffer current = new StringBuffer();
+		StringBuilder current = new StringBuilder();
 		Stack<String> currentStack = new Stack<String>();
 		boolean escape = false;
 		boolean doEscape = false;
@@ -180,11 +180,11 @@ public abstract class AbstractItem implements Item {
 				if (current.length() != 0) {
 					if (currentStack.size() == 0) {
 						arr.add(current.toString());
-						current = new StringBuffer();
+						current = new StringBuilder();
 						offsetCount = 0;
 						if (c == '=') {
 							arr.add("="); //$NON-NLS-1$
-							current = new StringBuffer();
+							current = new StringBuilder();
 						}
 						else {
 							encounteredSpace = true;
@@ -444,11 +444,13 @@ public abstract class AbstractItem implements Item {
 	@Override
 	public String getFirstToken() {
 		if (null == firstToken) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			String content = getContents();
 			for (int i=0; i<content.length(); i++) {
 				char c = content.charAt(i);
-				if (c == '\"') return null;
+				if (c == '\"') {
+					return null;
+				}
 				else if (c == '?') {
 					firstToken = sb.toString();
 					break;
@@ -457,7 +459,9 @@ public abstract class AbstractItem implements Item {
 					firstToken = sb.toString();
 					break;
 				}
-				else sb.append(c);
+				else {
+					sb.append(c);
+				}
 			}
 		}
 		return firstToken;
