@@ -35,10 +35,18 @@ import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class OutlineContentProvider implements ITreeContentProvider {
+	/** Before JBIDE-15168, we have always shown the full AST.
+	 * Now, we normally show only macro and function definitions,
+	 * but an option to show the full AST is left here
+	 * so that the present plugin's devs can easily visualize the AST
+	 * to see if the code producing the AST works properly. */
+	private final boolean fullAstShown;
+
 	private Editor fEditor;
 
 	public OutlineContentProvider(Editor anEditor) {
 		fEditor = anEditor;
+		this.fullAstShown = false;
 	}
 
 	@Override
@@ -58,20 +66,26 @@ public class OutlineContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		List<Item> rootItems = new ArrayList<Item>();
-
-		rootItems.addAll(fEditor.getItemSet().getMacroDefinitions());
-		Item[] items = fEditor.getItemSet().getRootItems();
-		for (int i=0; i<items.length; i++) {
-			if (!(items[i] instanceof MacroDirective))
-				rootItems.add(items[i]);
+		if (fullAstShown) {
+			List<Item> rootItems = new ArrayList<Item>();
+			rootItems.addAll(fEditor.getItemSet().getMacroDefinitions());
+			Item[] items = fEditor.getItemSet().getRootItems();
+			for (int i=0; i<items.length; i++) {
+				if (!(items[i] instanceof MacroDirective))
+					rootItems.add(items[i]);
+			}
+			return rootItems.toArray();
 		}
-		return rootItems.toArray();
+		else {
+			List<Item> outlineItems = fEditor.getItemSet().getOutlineItems();
+			return outlineItems.toArray();
+		}
 	}
 
 	@Override
 	public Object[] getChildren(Object anElement) {
-		if (anElement instanceof Item) {
+		if (fullAstShown && anElement instanceof Item) {
+			/* we show  children only when debugging the AST parser */
 			if (anElement instanceof MacroDirective) {
 				return null;
 			}
@@ -84,8 +98,9 @@ public class OutlineContentProvider implements ITreeContentProvider {
 			}
 			return l.toArray();
 		}
-		else
+		else {
 			return null;
+		}
 	}
 
 	@Override
@@ -98,10 +113,12 @@ public class OutlineContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object anElement) {
-		if (anElement instanceof Item)
-			if (anElement instanceof MacroDirective) return false;
-			else return ((Item) anElement).getChildItems().size() > 0;
-		else
+		if (fullAstShown && anElement instanceof Item) {
+			Item item = (Item) anElement;
+			return !(anElement instanceof MacroDirective) && !item.getChildItems().isEmpty();
+		}
+		else {
 			return false;
+		}
 	}
 }
