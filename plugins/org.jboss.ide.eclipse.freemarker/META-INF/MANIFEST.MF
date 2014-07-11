@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.jboss.ide.eclipse.freemarker;singleton:=true
-Bundle-Version: 1.3.200.qualifier
+Bundle-Version: 1.4.0.qualifier
 Bundle-Activator: org.jboss.ide.eclipse.freemarker.Plugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -24,12 +24,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  freemarker-2.3.18.jar
 Bundle-Vendor: %providerName
-Export-Package: freemarker.core,
- freemarker.template,
- org.jboss.ide.eclipse.freemarker,
- org.jboss.ide.eclipse.freemarker.editor,
- org.jboss.ide.eclipse.freemarker.model,
- org.jboss.ide.eclipse.freemarker.outline,
- org.jboss.ide.eclipse.freemarker.preferences
+Export-Package: freemarker.core,freemarker.template,org.jboss.ide.ecli
+ pse.freemarker,org.jboss.ide.eclipse.freemarker.editor,org.jboss.ide.
+ eclipse.freemarker.model,org.jboss.ide.eclipse.freemarker.outline,org
+ .jboss.ide.eclipse.freemarker.preferences
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Eclipse-BundleShape: dir
