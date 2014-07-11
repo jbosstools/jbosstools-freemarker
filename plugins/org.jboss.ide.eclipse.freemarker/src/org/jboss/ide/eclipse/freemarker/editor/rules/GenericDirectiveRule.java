@@ -39,8 +39,8 @@ public class GenericDirectiveRule extends MultiLineRule {
 	protected static Map<Character, Character> END_SEQUENCES = new HashMap<Character, Character>(START_SEQUENCES.length);
 	
 	static {
-		END_SEQUENCES.put(new Character(START_SEQUENCES[0]), new Character('>'));
-		END_SEQUENCES.put(new Character(START_SEQUENCES[1]), new Character(']'));
+		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[0]), Character.valueOf('>'));
+		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[1]), Character.valueOf(']'));
 	}
 
 	public GenericDirectiveRule(IToken token) {
@@ -55,7 +55,7 @@ public class GenericDirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = END_SEQUENCES.get(new Character((char) startChar)).charValue();
+		char endChar = END_SEQUENCES.get(Character.valueOf((char) startChar)).charValue();
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;	

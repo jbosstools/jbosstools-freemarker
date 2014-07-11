@@ -194,8 +194,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		IFile file = ((IFileEditorInput)getEditorInput()).getFile(); 
 		try {
 			Map<String, Object> attributes = new HashMap<String, Object>(5);
-			attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
-			attributes.put(IMarker.LINE_NUMBER, new Integer(aLine));
+			attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
+			attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(aLine));
 			attributes.put(IMarker.MESSAGE, aMessage);
 			attributes.put(IMarker.TEXT, aMessage);
 			MarkerUtilities.createMarker(file, attributes, IMarker.PROBLEM);

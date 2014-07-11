@@ -109,7 +109,7 @@ public class ContentScanner implements ITokenScanner {
 						else {
 							if (i == offsetStart) {
 								push(TYPE_STRING);
-								stringTypes.push(new Character(c));
+								stringTypes.push(Character.valueOf(c));
 							}
 							else {
 								this.tokenOffset = offsetStart;

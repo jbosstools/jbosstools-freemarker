@@ -41,8 +41,8 @@ public class DirectiveRule extends MultiLineRule {
 	protected boolean nameOnly = false;
 	
 	static {
-		END_SEQUENCES.put(new Character(START_SEQUENCES[0]), new Character('>'));
-		END_SEQUENCES.put(new Character(START_SEQUENCES[1]), new Character(']'));
+		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[0]), Character.valueOf('>'));
+		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[1]), Character.valueOf(']'));
 	}
 
 	public DirectiveRule(String name, IToken token) {
@@ -79,7 +79,7 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = END_SEQUENCES.get(new Character((char) startChar)).charValue();
+		char endChar = END_SEQUENCES.get(Character.valueOf((char) startChar)).charValue();
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;	

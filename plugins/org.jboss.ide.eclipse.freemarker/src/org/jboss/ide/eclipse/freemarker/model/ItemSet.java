@@ -86,7 +86,7 @@ public class ItemSet {
 					if (stackDirectives.size() == 0) {
 						topLevelDirectives.add(directive);
 					}
-					directiveRegions.put(new Integer(region.getOffset()), directive);
+					directiveRegions.put(Integer.valueOf(region.getOffset()), directive);
 					if (!directive.isEndItem()) {
 						directives.add(directive);
 					}
@@ -208,7 +208,7 @@ public class ItemSet {
 	public Item getSelectedItem (int offset) {
 		ITypedRegion region = getRegion(offset);
 		if (null == region) return null;
-		else return directiveRegions.get(new Integer(region.getOffset()));
+		else return directiveRegions.get(Integer.valueOf(region.getOffset()));
 	}
 
 	public Item getContextItem (int offset) {
