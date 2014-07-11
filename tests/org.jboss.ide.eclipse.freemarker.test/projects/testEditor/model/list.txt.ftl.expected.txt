@@ -1,0 +1,22 @@
+  1. winter,
+  2. spring,
+  3. summer,
+  4. autumn
+
+    list item #1x1
+    list item #1x2
+    list item #1x3
+    list item #2x1
+    list item #2x2
+    list item #2x3
+    list item #3x1
+    list item #3x2
+    list item #3x3
+
+  winter
+  spring
+
+Number of words: 9
+    list item #1
+    list item #2
+    list item #3

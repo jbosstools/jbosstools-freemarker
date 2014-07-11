@@ -1,3 +1,24 @@
+/*
+ * JBoss by Red Hat
+ * Copyright 2006-2009, Red Hat Middleware, LLC, and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.jboss.ide.eclipse.freemarker.lang;
 
 import java.util.Collections;
@@ -6,44 +27,56 @@ import java.util.Map;
 
 import org.eclipse.jface.text.rules.Token;
 
+/**
+ * FTL directive tags.
+ *
+ * @since 1.4.0
+ * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
+ *
+ */
 public enum Directive {
 
-	__ftl_include,
-	__ftl_import,
-	__ftl_assign,
-	__ftl_assign_end,
-	__ftl_local,
-	__ftl_local_end,
-	__ftl_global,
-	__ftl_global_end,
-	__ftl_break,
-	__ftl_nested,
-	__ftl_return,
-	__ftl_stop,
-	__ftl_list_directive_start,
-	__ftl_list_directive_end,
-	__ftl_if_directive_start,
-	__ftl_else_if_directive,
-	__ftl_if_else_directive,
-	__ftl_if_directive_end,
-	__ftl_switch_directive_start,
-	__ftl_switch_directive_end,
-	__ftl_case_directive_start,
-	__ftl_case_default_start,
-	__ftl_macro_directive_start,
-	__ftl_macro_directive_end,
-	__ftl_macro_instance_start,
-	__ftl_macro_instance_end,
-	__ftl_ftl_directive,
-	__ftl_function_directive_start,
-	__ftl_function_directive_end,
+	__ftl_include(Keyword.include),
+	__ftl_import(Keyword.import_),
+	__ftl_assign(Keyword.assign),
+	__ftl_assign_end(Keyword.assign),
+	__ftl_local(Keyword.local),
+	__ftl_local_end(Keyword.local),
+	__ftl_global(Keyword.global),
+	__ftl_global_end(Keyword.global),
+	__ftl_break(Keyword.break_),
+	__ftl_nested(Keyword.nested),
+	__ftl_return(Keyword.return_),
+	__ftl_stop(Keyword.stop),
+	__ftl_list_directive_start(Keyword.list),
+	__ftl_list_directive_end(Keyword.list),
+	__ftl_if_directive_start(Keyword.if_),
+	__ftl_else_if_directive(Keyword.else_if),
+	__ftl_if_else_directive(Keyword.else_),
+	__ftl_if_directive_end(Keyword.if_),
+	__ftl_switch_directive_start(Keyword.switch_),
+	__ftl_switch_directive_end(Keyword.switch_),
+	__ftl_case_directive_start(Keyword.case_),
+	__ftl_case_default_start(Keyword.default_),
+	__ftl_macro_directive_start(Keyword.macro),
+	__ftl_macro_directive_end(Keyword.macro),
+	__ftl_macro_instance_start(Keyword.macro),
+	__ftl_macro_instance_end(Keyword.macro),
+	__ftl_ftl_directive(Keyword.ftl),
+	__ftl_function_directive_start(Keyword.function_),
+	__ftl_function_directive_end(Keyword.function_),
 
-	__ftl_directive,
-	__ftl_directive_end,
-	__ftl_interpolation
+	__ftl_directive(Keyword.directive),
+	__ftl_directive_end(Keyword.directive),
+	__ftl_interpolation(Keyword.interpolation)
 	;
 
 	private static final Map<String, Directive> FAST_LOOKUP;
+	private final Keyword keyword;
+
+	private Directive(Keyword keyword) {
+		this.keyword = keyword;
+	}
 
 	static {
 
@@ -91,5 +124,9 @@ public enum Directive {
 
 	public static Directive fastValueOf(String str) {
 		return FAST_LOOKUP.get(str);
+	}
+
+	public Keyword getKeyword() {
+		return keyword;
 	}
 }

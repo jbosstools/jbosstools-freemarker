@@ -124,12 +124,14 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 		if (null != item && item.isEndItem())
 			item = item.getStartItem();
 		if (null != getTreeViewer()) {
-			if (null == item)
+			if (null == item) {
 				getTreeViewer().setSelection(
 						new StructuredSelection(new Object[0]), true);
-			else if (null != item) // FIXME: check if this should be a pure else
+			}
+			else {
 				getTreeViewer().setSelection(
 						new StructuredSelection(item), true);
+			}
 		}
 	}
 

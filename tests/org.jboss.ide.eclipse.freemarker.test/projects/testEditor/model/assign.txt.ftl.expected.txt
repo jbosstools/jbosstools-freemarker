@@ -1,0 +1,7 @@
+Number of words: 8
+    winter foo
+    spring foo
+    summer foo
+    autumn foo
+
+Hello Joe!

@@ -23,6 +23,7 @@ package org.jboss.ide.eclipse.freemarker.outline;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -67,14 +68,14 @@ public class OutlineContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (fullAstShown) {
-			List<Item> rootItems = new ArrayList<Item>();
-			rootItems.addAll(fEditor.getItemSet().getMacroDefinitions());
-			Item[] items = fEditor.getItemSet().getRootItems();
-			for (int i=0; i<items.length; i++) {
-				if (!(items[i] instanceof MacroDirective))
-					rootItems.add(items[i]);
+			Collection<Item> items = fEditor.getItemSet().getDirectiveRegions().values();
+			List<Item> result = new ArrayList<Item>(items.size());
+			for (Item item : items) {
+				if (item.getParentItem() == null && !item.isEndItem()) {
+					result.add(item);
+				}
 			}
-			return rootItems.toArray();
+			return result.toArray();
 		}
 		else {
 			List<Item> outlineItems = fEditor.getItemSet().getOutlineItems();
@@ -90,13 +91,13 @@ public class OutlineContentProvider implements ITreeContentProvider {
 				return null;
 			}
 			List<Item> children = ((Item) anElement).getChildItems();
-			Item[] items = children.toArray(new Item[children.size()]);
-			List<Item> l = new ArrayList<Item>(items.length);
-			for (int i=0; i<items.length; i++) {
-				if (!(items[i] instanceof MacroDirective))
-					l.add(items[i]);
+			List<Item> result = new ArrayList<Item>(children.size());
+			for (Item item : children) {
+				if (!item.isEndItem()) {
+					result.add(item);
+				}
 			}
-			return l.toArray();
+			return result.toArray();
 		}
 		else {
 			return null;
@@ -115,7 +116,7 @@ public class OutlineContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object anElement) {
 		if (fullAstShown && anElement instanceof Item) {
 			Item item = (Item) anElement;
-			return !(anElement instanceof MacroDirective) && !item.getChildItems().isEmpty();
+			return !item.getChildItems().isEmpty();
 		}
 		else {
 			return false;

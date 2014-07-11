@@ -27,15 +27,35 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils.ParseException;
+
 
 public class AssignmentDirective extends AbstractDirective {
 
+	public static Boolean isNestable(String cont, Directive type) throws ParseException {
+		ParserUtils parser = new ParserUtils(cont);
+		/* the directive name */
+		parser.match(type.getKeyword().toString());
+		parser.consumeWhiteSpace();
+		/* first variable name */
+		parser.consumeIdentifierOrStringLiteral();
+		parser.consumeWhiteSpace();
+		/* lack of an equals sign at this position means that this is a nesting form of assign */
+		return Boolean.valueOf(parser.isAtEndOfInput()
+				|| !parser.matches(LexicalConstants.EQUALS, false));
+
+	}
+
 	private AssignmentEndDirective endDirective;
 
-	@SuppressWarnings("unused")
-	private String type;
+	private Directive type;
 
-	public AssignmentDirective (ItemSet itemSet, String type) {
+	private Boolean nestable = null;
+
+	public AssignmentDirective(ItemSet itemSet, Directive type) {
 		super(itemSet);
 		this.type = type;
 	}
@@ -62,7 +82,14 @@ public class AssignmentDirective extends AbstractDirective {
 
 	@Override
 	public boolean isNestable() {
-		return (null != getContents() && !getContents().endsWith("/")); //$NON-NLS-1$
+		if (this.nestable == null) {
+			try {
+				this.nestable = isNestable(getContents(), this.type);
+			} catch (ParseException e) {
+				this.nestable = Boolean.FALSE;
+			}
+		}
+		return this.nestable.booleanValue();
 	}
 
 	public AssignmentEndDirective getEndDirective() {

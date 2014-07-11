@@ -43,7 +43,7 @@ public class ListDirective extends AbstractDirective {
 
 	@Override
 	public boolean isStartItem() {
-		return super.isNestable();
+		return true;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ListDirective extends AbstractDirective {
 
 	@Override
 	public boolean isNestable() {
-		return super.isNestable();
+		return true;
 	}
 
 	public ListEndDirective getEndDirective() {

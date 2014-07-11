@@ -24,11 +24,12 @@ package org.jboss.ide.eclipse.freemarker.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
@@ -49,7 +50,7 @@ public class ItemSet {
 
 	public ItemSet (ISourceViewer viewer, IResource resource) {
 		this.viewer = viewer;
-		regions = new ArrayList<ITypedRegion>();
+		this.regions = new ArrayList<ITypedRegion>();
 		// get all regions
 		int index = 0;
 		while (true) {
@@ -67,9 +68,9 @@ public class ItemSet {
 
 	private void parse (ISourceViewer viewer, IResource resource) {
 		List<Item> modifiableOutlineItems = new ArrayList<Item>();
+		Map<Integer, Item> modifiableDirectiveRegions = new TreeMap<Integer, Item>();
 		try {
 			this.directives = new ArrayList<Item>();
-			this.directiveRegions = new HashMap<Integer, Item>();
 			this.topLevelDirectives = new ArrayList<Item>();
 
 			Stack<Item> stackDirectives = new Stack<Item>();
@@ -86,7 +87,7 @@ public class ItemSet {
 					if (stackDirectives.size() == 0) {
 						topLevelDirectives.add(directive);
 					}
-					directiveRegions.put(Integer.valueOf(region.getOffset()), directive);
+					modifiableDirectiveRegions.put(Integer.valueOf(region.getOffset()), directive);
 					if (!directive.isEndItem()) {
 						directives.add(directive);
 					}
@@ -111,7 +112,7 @@ public class ItemSet {
 							stackDirectives.push(directive);
 						}
 						else {
-							// directive.isStartAndEndItem()
+							// !directive.isStartAndEndItem()
 							if (null != directiveCheck && directive.isEndItem() && directiveCheck.isStartAndEndItem()) {
 								if (directiveCheck.relatesToItem(directive)) {
 									directiveCheck.relateItem(directive);
@@ -160,6 +161,7 @@ public class ItemSet {
 						}
 					}
 					else {
+						/* directive.isStartItem() == true */
 						if (stackDirectives.size() > 0) {
 							stackDirectives.peek().addSubDirective(directive);
 						}
@@ -174,16 +176,18 @@ public class ItemSet {
 		}
 		finally {
 			this.outlineItems = Collections.unmodifiableList(modifiableOutlineItems);
+			this.directiveRegions = Collections.unmodifiableMap(modifiableDirectiveRegions);
 		}
 		Collections.sort(macroDefinitions);
 	}
 
-	private static Item getFirstNestableItem (Stack<Item> directives) {
-		if (directives.size() == 0) {
+	private static Item getFirstNestableItem(Stack<Item> stack) {
+		if (stack.size() == 0) {
 			return null;
 		}
 		else {
-			for (Item directiveCheck : directives){
+			for (ListIterator<Item> i = stack.listIterator(stack.size()); i.hasPrevious();){
+				Item directiveCheck = i.previous();
 				if (directiveCheck.isNestable()) {
 					return directiveCheck;
 				}
@@ -203,6 +207,15 @@ public class ItemSet {
 	 */
 	public List<Item> getOutlineItems() {
 		return outlineItems;
+	}
+
+
+	/**
+	 * Returns an unmodifiable {@link Map} from initial directive offset to directives.
+	 * @return see above
+	 */
+	public Map<Integer, Item> getDirectiveRegions() {
+		return directiveRegions;
 	}
 
 	public Item getSelectedItem (int offset) {
@@ -269,16 +282,17 @@ public class ItemSet {
 	}
 
 	public Item getItem (IRegion region) {
-		if (null == directiveRegions) return null;
-		else return directiveRegions.get(region);
+		return null == directiveRegions ? null : directiveRegions.get(region);
 	}
 
 	public Item getItem (int offset) {
-		for (Iterator<Item> i=directives.iterator(); i.hasNext(); ) {
-			Item item = i.next();
-			if (item.getRegion().getOffset() <= offset && item.getRegion().getOffset() + item.getRegion().getLength() >= offset)
-				return item;
+		for (Item directive : directives) {
+			ITypedRegion region = directive.getRegion();
+			if (region.getOffset() <= offset && region.getOffset() + region.getLength() >= offset) {
+				return directive;
+			}
 		}
 		return null;
 	}
+
 }

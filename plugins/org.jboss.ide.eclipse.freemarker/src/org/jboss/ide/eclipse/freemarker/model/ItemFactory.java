@@ -90,7 +90,7 @@ public class ItemFactory {
 				case __ftl_assign:
 				case __ftl_local:
 				case __ftl_global:
-					directive = new AssignmentDirective(itemSet, region.getType());
+					directive = new AssignmentDirective(itemSet, directiveType);
 					break;
 				case __ftl_assign_end:
 				case __ftl_local_end:
