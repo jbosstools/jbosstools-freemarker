@@ -21,8 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor.rules;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -35,14 +33,23 @@ import org.eclipse.jface.text.rules.Token;
  */
 public class DirectiveRule extends MultiLineRule {
 
-	protected static final char[] START_SEQUENCES = {'<', '['};
-	protected static Map<Character, Character> END_SEQUENCES = new HashMap<Character, Character>(START_SEQUENCES.length);
-	protected char[] sequence;
+	protected static final char START_ANGLE_BRACKET = '<';
+	protected static final char START_SQUARE_BRACKET = '[';
+	protected static final char END_ANGLE_BRACKET = '>';
+	protected static final char END_SQUARE_BRACKET = ']';
+
+	protected String name;
 	protected boolean nameOnly = false;
-	
-	static {
-		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[0]), Character.valueOf('>'));
-		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[1]), Character.valueOf(']'));
+
+	public static char getMatchingEndCharacter(int startCharacter) {
+		switch (startCharacter) {
+		case START_ANGLE_BRACKET:
+			return END_ANGLE_BRACKET;
+		case START_SQUARE_BRACKET:
+			return END_SQUARE_BRACKET;
+		default:
+			throw new IllegalArgumentException("getMatchingEndCharacter() supported only for startCharacter '"+ START_ANGLE_BRACKET +"' or '"+ START_SQUARE_BRACKET +"'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 	public DirectiveRule(String name, IToken token) {
@@ -51,7 +58,7 @@ public class DirectiveRule extends MultiLineRule {
 
 	public DirectiveRule(String name, IToken token, boolean nameOnly) {
 		super("!", "!", token); //$NON-NLS-1$ //$NON-NLS-2$
-		this.sequence = name.toCharArray();
+		this.name = name;
 		this.nameOnly = nameOnly;
 	}
 
@@ -59,13 +66,13 @@ public class DirectiveRule extends MultiLineRule {
 		ICharacterScanner scanner,
 		int startChar,
 		boolean eofAllowed) {
-		for (int i= 0; i < sequence.length; i++) {
+		for (int i= 0; i < name.length(); i++) {
 			int c= scanner.read();
 			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == ICharacterScanner.EOF && eofAllowed) {
 				return true;
-			} else if (c != sequence[i]) {
+			} else if (c != name.charAt(i)) {
 				// Non-matching character detected, rewind the scanner back to the start.
 				// Do not unread the first character.
 				scanner.unread();
@@ -79,10 +86,10 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = END_SEQUENCES.get(Character.valueOf((char) startChar)).charValue();
+		char endChar = getMatchingEndCharacter(startChar);
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
-		boolean previousWasEscapeCharacter = false;	
+		boolean previousWasEscapeCharacter = false;
 		Stack<String> keyStack = new Stack<String>();
 		int charsRead = 0;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
@@ -185,7 +192,7 @@ public class DirectiveRule extends MultiLineRule {
 			int c= scanner.read();
 			@SuppressWarnings("unused")
 			char cCheck = (char) c;
-			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
+			if (c == START_ANGLE_BRACKET || c == START_ANGLE_BRACKET) {
 				// check for the sequence identifier
 				int c2 = scanner.read();
 				if (c2 == getIdentifierChar()) {

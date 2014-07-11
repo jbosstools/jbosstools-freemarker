@@ -57,7 +57,7 @@ public class DirectiveRuleEnd extends DirectiveRule {
 			int c= scanner.read();
 			@SuppressWarnings("unused")
 			char cCheck = (char) c;
-			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
+			if (c == START_ANGLE_BRACKET || c == START_ANGLE_BRACKET) {
 				int c2 = scanner.read();
 				if (c2 == '/') {
 					// check for the sequence identifier
