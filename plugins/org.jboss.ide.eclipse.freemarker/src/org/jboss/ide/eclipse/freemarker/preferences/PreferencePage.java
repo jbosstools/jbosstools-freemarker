@@ -50,8 +50,8 @@ public class PreferencePage
 	public void createFieldEditors() {
 		addField(new ColorFieldEditor(Constants.COLOR_DIRECTIVE,
 				Messages.PreferencePage_FIELD_DIRECTIVE, getFieldEditorParent()));
-        addField(new ColorFieldEditor(Constants.COLOR_RELATED_ITEM,
-                Messages.PreferencePage_FIELD_RELATED_DIRECTIVES, getFieldEditorParent()));
+		addField(new ColorFieldEditor(Constants.COLOR_RELATED_ITEM,
+				Messages.PreferencePage_FIELD_RELATED_DIRECTIVES, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(Constants.HIGHLIGHT_RELATED_ITEMS,
 				Messages.PreferencePage_FIELD_HIGHLIGHT_RELATED_DIRECTIVES, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_INTERPOLATION,
@@ -62,10 +62,10 @@ public class PreferencePage
 				Messages.PreferencePage_FIELD_COMMENT, getFieldEditorParent()));
 		addField(new ColorFieldEditor(Constants.COLOR_STRING,
 				Messages.PreferencePage_FIELD_STRING, getFieldEditorParent()));
-        addField(new ColorFieldEditor(Constants.COLOR_XML_TAG,
-                Messages.PreferencePage_FIELD_HTML_XML_TAG, getFieldEditorParent()));
-        addField(new ColorFieldEditor(Constants.COLOR_XML_COMMENT,
-                Messages.PreferencePage_FIELD_HTML_XML_COMMENT, getFieldEditorParent()));
+		addField(new ColorFieldEditor(Constants.COLOR_XML_TAG,
+				Messages.PreferencePage_FIELD_HTML_XML_TAG, getFieldEditorParent()));
+		addField(new ColorFieldEditor(Constants.COLOR_XML_COMMENT,
+				Messages.PreferencePage_FIELD_HTML_XML_COMMENT, getFieldEditorParent()));
 	}
 
 	@Override

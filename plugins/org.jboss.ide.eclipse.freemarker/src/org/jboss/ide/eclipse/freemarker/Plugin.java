@@ -32,11 +32,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -51,7 +51,7 @@ import org.osgi.framework.Bundle;
 public class Plugin extends AbstractUIPlugin {
 
 	public static final String ID = "org.jboss.ide.eclipse.freemarker"; //$NON-NLS-1$
-	
+
 	//The shared instance.
 	private static Plugin plugin;
 	//Resource bundle.
@@ -65,14 +65,6 @@ public class Plugin extends AbstractUIPlugin {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
-	}
-
-	/**
-	 * The constructor.
-	 */
-	public Plugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
 	}
 
 	/**
@@ -99,22 +91,23 @@ public class Plugin extends AbstractUIPlugin {
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
 	}
-	
+
 	/**
 	 * Initializes the plugin preferences with default preference values for
 	 * this plug-in.
 	 */
+	@Override
 	protected void initializeDefaultPluginPreferences() {
-		Preferences prefs = getPluginPreferences();
-		prefs.setDefault(Constants.HIGHLIGHT_RELATED_ITEMS, true);
-		prefs.setDefault(Constants.COLOR_COMMENT, "170,0,0"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_TEXT, "0,0,0"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_INTERPOLATION, "255,0,128"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_DIRECTIVE, "0,0,255"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_STRING, "0,128,128"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_XML_COMMENT, "128,128,128"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_XML_TAG, "0,0,128"); //$NON-NLS-1$
-		prefs.setDefault(Constants.COLOR_RELATED_ITEM, "255,255,128"); //$NON-NLS-1$
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(ID);
+		prefs.putBoolean(Constants.HIGHLIGHT_RELATED_ITEMS, true);
+		prefs.put(Constants.COLOR_COMMENT, "170,0,0"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_TEXT, "0,0,0"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_INTERPOLATION, "255,0,128"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_DIRECTIVE, "0,0,255"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_STRING, "0,128,128"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_XML_COMMENT, "128,128,128"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_XML_TAG, "0,0,128"); //$NON-NLS-1$
+		prefs.put(Constants.COLOR_RELATED_ITEM, "255,255,128"); //$NON-NLS-1$
 	}
 
 	public static void error (Throwable t) {
@@ -133,7 +126,7 @@ public class Plugin extends AbstractUIPlugin {
 		IStatus status = new Status(IStatus.ERROR,ID,s);
 		Plugin.getDefault().getLog().log(status);
 	}
-	
+
 	public Image getImage(String key) {
 		ImageRegistry imageRegistry = getImageRegistry();
 		Image image = imageRegistry.get(key);
@@ -161,7 +154,7 @@ public class Plugin extends AbstractUIPlugin {
 		if (FileLocator.find(bundle,path,null) == null)
 			return null;
 		try {
-			return new URL( bundle.getEntry("/"), path.toString()); //$NON-NLS-1$ 
+			return new URL( bundle.getEntry("/"), path.toString()); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
 			log(exception);
 		}
