@@ -35,20 +35,19 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
-import org.jboss.ide.eclipse.freemarker.Constants;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class Configuration extends TextSourceViewerConfiguration {
-	private ColorManager colorManager;
 	private Editor editor;
 
-	public Configuration(IPreferenceStore preferenceStore, ColorManager colorManager, Editor editor) {
+	public Configuration(IPreferenceStore preferenceStore, Editor editor) {
 		super(preferenceStore);
 		this.editor = editor;
-		this.colorManager = colorManager;
 	}
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -66,8 +65,8 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 		defaultToken = new Token(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_DIRECTIVE)));
-		ContentScanner contentScanner = new ContentScanner(defaultToken, colorManager);
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_DIRECTIVE)));
+		ContentScanner contentScanner = new ContentScanner(defaultToken);
 
 		for (Directive directive : Directive.values()) {
 			if (directive != Directive.__ftl_interpolation) {
@@ -80,36 +79,36 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 		defaultToken = new Token(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_INTERPOLATION)));
-		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken, colorManager));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
+		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken));
 		reconciler.setDamager(dr, Directive.__ftl_interpolation.name());
 		reconciler.setRepairer(dr, Directive.__ftl_interpolation.name());
 
 		ndr =
 			new NonRuleBasedDamagerRepairer(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_XML_COMMENT)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_COMMENT)));
 		reconciler.setDamager(ndr, PartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(ndr, PartitionScanner.XML_COMMENT);
 
 		ndr =
 			new NonRuleBasedDamagerRepairer(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_STRING)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
 		reconciler.setDamager(ndr, PartitionScanner.STRING);
 		reconciler.setRepairer(ndr, PartitionScanner.STRING);
 
 		ndr =
 			new NonRuleBasedDamagerRepairer(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_COMMENT)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_COMMENT)));
 		reconciler.setDamager(ndr, PartitionScanner.FTL_COMMENT);
 		reconciler.setRepairer(ndr, PartitionScanner.FTL_COMMENT);
 
 		defaultToken = new Token(
 				new TextAttribute(
-					colorManager.getColor(Constants.COLOR_XML_TAG)));
-		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken, colorManager));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_TAG)));
+		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken));
 		reconciler.setDamager(dr, PartitionScanner.XML_TAG);
 		reconciler.setRepairer(dr, PartitionScanner.XML_TAG);
 

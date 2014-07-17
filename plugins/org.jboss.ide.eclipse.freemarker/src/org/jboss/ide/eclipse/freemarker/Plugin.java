@@ -35,15 +35,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -90,24 +90,6 @@ public class Plugin extends AbstractUIPlugin {
 	 */
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
-	}
-
-	/**
-	 * Initializes the plugin preferences with default preference values for
-	 * this plug-in.
-	 */
-	@Override
-	protected void initializeDefaultPluginPreferences() {
-		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(ID);
-		prefs.putBoolean(Constants.HIGHLIGHT_RELATED_ITEMS, true);
-		prefs.put(Constants.COLOR_COMMENT, "170,0,0"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_TEXT, "0,0,0"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_INTERPOLATION, "255,0,128"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_DIRECTIVE, "0,0,255"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_STRING, "0,128,128"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_XML_COMMENT, "128,128,128"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_XML_TAG, "0,0,128"); //$NON-NLS-1$
-		prefs.put(Constants.COLOR_RELATED_ITEM, "255,255,128"); //$NON-NLS-1$
 	}
 
 	public static void error (Throwable t) {
@@ -160,4 +142,12 @@ public class Plugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
+
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		Preferences.getInstance().dispose();
+		super.stop(context);
+	}
+	
+	
 }

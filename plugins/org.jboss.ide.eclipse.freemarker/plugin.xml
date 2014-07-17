@@ -17,7 +17,7 @@
       <page
             class="org.jboss.ide.eclipse.freemarker.preferences.PreferencePage"
             id="org.jboss.ide.eclipse.freemarker.preferences.OutlinePreferencePage"
-            name="%PreferencePage_FreeMarkerEditor"/>
+            name="%PreferencePage_FreeMarker"/>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -59,5 +59,8 @@
             class="org.jboss.ide.eclipse.freemarker.linetracker.ConsoleLineTracker"
             id="org.jboss.ide.eclipse.freemarker.linetracker.ConsoleLineTracker"
             processType="java"/>
+   </extension>
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.jboss.ide.eclipse.freemarker.preferences.PreferenceInitializer"/>
    </extension>
 </plugin>

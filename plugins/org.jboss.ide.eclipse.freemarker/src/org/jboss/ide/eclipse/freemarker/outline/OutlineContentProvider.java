@@ -31,23 +31,38 @@ import org.eclipse.jface.viewers.Viewer;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class OutlineContentProvider implements ITreeContentProvider {
+	public enum OutlineLevelOfDetail {
+		functionAndMacroDefinitions,
+		full;
+		public static OutlineLevelOfDetail getDefault() {
+			return functionAndMacroDefinitions;
+		}
+	}
+
 	/** Before JBIDE-15168, we have always shown the full AST.
 	 * Now, we normally show only macro and function definitions,
 	 * but an option to show the full AST is left here
 	 * so that the present plugin's devs can easily visualize the AST
 	 * to see if the code producing the AST works properly. */
-	private final boolean fullAstShown;
+	private boolean fullAstShown;
 
 	private Editor fEditor;
 
 	public OutlineContentProvider(Editor anEditor) {
 		fEditor = anEditor;
-		this.fullAstShown = false;
+		String level = Preferences.getInstance().getString(PreferenceKey.OUTLINE_LEVEL_OF_DETAIL);
+		try {
+			this.fullAstShown = level != null && OutlineContentProvider.OutlineLevelOfDetail.valueOf(level) == OutlineContentProvider.OutlineLevelOfDetail.full;
+		} catch (IllegalArgumentException e) {
+			this.fullAstShown = false;
+		}
 	}
 
 	@Override

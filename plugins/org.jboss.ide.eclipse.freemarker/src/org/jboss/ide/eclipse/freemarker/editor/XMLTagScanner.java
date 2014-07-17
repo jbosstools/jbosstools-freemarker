@@ -31,9 +31,10 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.jboss.ide.eclipse.freemarker.Constants;
 import org.jboss.ide.eclipse.freemarker.editor.rules.InterpolationRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.StringSubRule;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -41,7 +42,7 @@ import org.jboss.ide.eclipse.freemarker.editor.rules.StringSubRule;
 public class XMLTagScanner extends RuleBasedScanner {
 
 	private IToken lastToken;
-	
+
 	@Override
 	public IToken nextToken() {
 		lastToken = super.nextToken();
@@ -52,15 +53,15 @@ public class XMLTagScanner extends RuleBasedScanner {
 		return lastToken;
 	}
 
-	public XMLTagScanner(ColorManager manager) {
+	public XMLTagScanner() {
 		IToken string =
 			new Token(
 				new TextAttribute(
-						manager.getColor(Constants.COLOR_STRING)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
 		IToken interpolation =
 			new Token(
 				new TextAttribute(
-						manager.getColor(Constants.COLOR_INTERPOLATION)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
 
 		List<IRule> l = new ArrayList<IRule>();
 
@@ -71,7 +72,7 @@ public class XMLTagScanner extends RuleBasedScanner {
 		l.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		l.add(new WhitespaceRule(new WhitespaceDetector()));
-		
+
 		setRules(l.toArray(new IRule[l.size()]));
 	}
 }

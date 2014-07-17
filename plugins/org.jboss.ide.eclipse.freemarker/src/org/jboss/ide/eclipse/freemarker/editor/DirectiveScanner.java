@@ -28,29 +28,30 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.jboss.ide.eclipse.freemarker.Constants;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class DirectiveScanner extends RuleBasedScanner {
 
-	public DirectiveScanner(ColorManager manager) {
+	public DirectiveScanner() {
 		IToken string =
 			new Token(
 				new TextAttribute(
-						manager.getColor(Constants.COLOR_STRING)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
 
 		IRule[] result = new IRule[3];
 		int i = 0;
-		
+
 		// Add rule for double quotes
 		result[i++] = new SingleLineRule("\"", "\"", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
 	    // Add rule for single quotes
 		result[i++] = new SingleLineRule("'", "'", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add generic whitespace rule.
 		result[i++] = new WhitespaceRule(new WhitespaceDetector());
-	
+
 		setRules(result);
 	}
 }

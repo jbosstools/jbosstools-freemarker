@@ -29,7 +29,8 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.Token;
-import org.jboss.ide.eclipse.freemarker.Constants;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 public class ContentScanner implements ITokenScanner {
 
@@ -43,17 +44,17 @@ public class ContentScanner implements ITokenScanner {
 
 	private int currentOffset;
 
-	public ContentScanner (IToken defaultToken, ColorManager colorManager) {
+	public ContentScanner (IToken defaultToken) {
 		this.defaultToken = defaultToken;
 		STRING_TOKEN = new Token(
 				new TextAttribute(
-						colorManager.getColor(Constants.COLOR_STRING)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
 		INTERPOLATION_TOKEN = new Token(
 				new TextAttribute(
-						colorManager.getColor(Constants.COLOR_INTERPOLATION)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
 		DIRECTIVE_TOKEN = new Token(
 				new TextAttribute(
-						colorManager.getColor(Constants.COLOR_DIRECTIVE)));
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_DIRECTIVE)));
 	}
 
 	@Override
@@ -214,7 +215,7 @@ public class ContentScanner implements ITokenScanner {
 			else {
 				return Token.EOF;
 			}
-			
+
 		}
 		this.currentOffset = i+1;
 		this.tokenOffset = offsetStart;

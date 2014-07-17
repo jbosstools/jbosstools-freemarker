@@ -40,7 +40,11 @@ public class Messages extends NLS {
 	public static String FreemarkerMultiPageEditor_PAGE_TEXT_SOURCE;
 	public static String MacroHyperlink_TYPELABEL_MACRO_DEFINITION;
 	public static String OutlinePage_SetContextClassEntryAction;
+	public static String PreferencePage_GROUP_EDITOR_SYNTAX_COLORING;
 	public static String PreferencePage_DESCRIPTION_FREEMARKER_SETTINGS;
+	public static String PreferencePage_FIELD_OUTLINE_LEVEL_OF_DETAIL;
+	public static String PreferencePage_FIELD_OUTLINE_LEVEL_OF_DETAIL_FUNCTION_AND_MACRO_DEFINITIONS;
+	public static String PreferencePage_FIELD_OUTLINE_LEVEL_OF_DETAIL_FULL;
 	public static String PreferencePage_FIELD_COMMENT;
 	public static String PreferencePage_FIELD_DIRECTIVE;
 	public static String PreferencePage_FIELD_HIGHLIGHT_RELATED_DIRECTIVES;

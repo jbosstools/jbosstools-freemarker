@@ -51,12 +51,13 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.jboss.ide.eclipse.freemarker.Constants;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.outline.OutlinePage;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -69,7 +70,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	private OutlinePage fOutlinePage;
 	private org.jboss.ide.eclipse.freemarker.editor.Configuration configuration;
-	private ColorManager colorManager = new ColorManager();
 
 	private ItemSet itemSet;
 	private Item selectedItem;
@@ -83,7 +83,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	public Editor() {
 		super();
-		configuration = new org.jboss.ide.eclipse.freemarker.editor.Configuration(getPreferenceStore(), colorManager, this);
+		configuration = new org.jboss.ide.eclipse.freemarker.editor.Configuration(getPreferenceStore(), this);
 		setSourceViewerConfiguration(configuration);
 		setDocumentProvider(new DocumentProvider());
 	}
@@ -145,8 +145,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			int offset = getCaretOffset();
 			Item item = getItemSet().getSelectedItem(offset);
 			if (null == item && offset > 0) item = getItemSet().getSelectedItem(offset-1);
-			if (Plugin.getInstance().getPreferenceStore().getBoolean(
-					Constants.HIGHLIGHT_RELATED_ITEMS)) {
+			if (Preferences.getInstance().getBoolean(PreferenceKey.HIGHLIGHT_RELATED_ITEMS)) {
 				if (null != item && null != item.getRelatedItems() && item.getRelatedItems().length > 0) {
 					highlightRelatedRegions(item.getRelatedItems(), item);
 				}
@@ -189,9 +188,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	public ITextViewer getTextViewer() {
 		return getSourceViewer();
 	}
-	
+
 	public void addProblemMarker(String aMessage, int aLine) {
-		IFile file = ((IFileEditorInput)getEditorInput()).getFile(); 
+		IFile file = ((IFileEditorInput)getEditorInput()).getFile();
 		try {
 			Map<String, Object> attributes = new HashMap<String, Object>(5);
 			attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
@@ -200,7 +199,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			attributes.put(IMarker.TEXT, aMessage);
 			MarkerUtilities.createMarker(file, attributes, IMarker.PROBLEM);
 		} catch (Exception e) {
-			
+
 		}
 	}
 
@@ -231,9 +230,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					ITypedRegion region = items[i].getRegion();
 					getSourceViewer().getTextWidget().setStyleRange(
 							new StyleRange(region.getOffset(),
-									region.getLength(), null, 
-									colorManager.getColor(
-											Constants.COLOR_RELATED_ITEM)));
+									region.getLength(), null,
+									Preferences.getInstance().getColor(
+											PreferenceKey.COLOR_RELATED_ITEM)));
 				}
 			}
 		}
@@ -276,12 +275,12 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			else if (getEditorInput() instanceof JarEntryEditorInput) {
 				resource = null;
 			}
-			
+
 			this.itemSet = new ItemSet(
 					getSourceViewer(), resource);
 		}
 		return this.itemSet;
-			
+
 	}
 	public OutlinePage getOutlinePage() {
 		return fOutlinePage;
@@ -396,8 +395,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			int offset = getCaretOffset();
 			Item item = getItemSet().getSelectedItem(offset);
 			if (null == item && offset > 0) item = getItemSet().getSelectedItem(offset-1);
-			if (Plugin.getInstance().getPreferenceStore().getBoolean(
-					Constants.HIGHLIGHT_RELATED_ITEMS)) {
+			if (Preferences.getInstance().getBoolean(
+					PreferenceKey.HIGHLIGHT_RELATED_ITEMS)) {
 				if (null != item && null != item.getRelatedItems() && item.getRelatedItems().length > 0) {
 					highlightRelatedRegions(item.getRelatedItems(), item);
 				}
@@ -425,7 +424,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	}
 
 	public IFile getFile () {
-		return (null != getEditorInput()) ? 
+		return (null != getEditorInput()) ?
 				((IFileEditorInput) getEditorInput()).getFile() : null;
 	}
 
@@ -441,7 +440,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				if (null != getFile()) {
 					if (null == fmConfiguration) {
 						fmConfiguration = new Configuration();
-						fmConfiguration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX); 
+						fmConfiguration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
 					}
 					getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 					String pageContents = getDocument().get();

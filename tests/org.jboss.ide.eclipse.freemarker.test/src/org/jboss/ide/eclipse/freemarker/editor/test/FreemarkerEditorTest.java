@@ -3,6 +3,7 @@ package org.jboss.ide.eclipse.freemarker.editor.test;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.widgets.TreeItem;
@@ -11,10 +12,14 @@ import org.jboss.ide.eclipse.freemarker.editor.CompletionProcessor;
 import org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor;
 import org.jboss.ide.eclipse.freemarker.model.FunctionDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
+import org.jboss.ide.eclipse.freemarker.outline.OutlineContentProvider;
 import org.jboss.ide.eclipse.freemarker.outline.OutlinePage;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 import org.jboss.ide.eclipse.freemarker.test.Activator;
 import org.jboss.tools.test.util.ResourcesUtils;
 import org.jboss.tools.test.util.WorkbenchUtils;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class FreemarkerEditorTest extends TestCase {
 
@@ -52,7 +57,13 @@ public class FreemarkerEditorTest extends TestCase {
 		assertTrue(proposals.length>0);
 	}
 
-	public void testFreemarkerOutline() {
+	public void testFreemarkerOutline() throws BackingStoreException {
+
+		/* this pref is important for the items.length check to be what we expect */
+		Preferences prefs = InstanceScope.INSTANCE.getNode(org.jboss.ide.eclipse.freemarker.Plugin.ID);
+		prefs.put(PreferenceKey.OUTLINE_LEVEL_OF_DETAIL.toString(), OutlineContentProvider.OutlineLevelOfDetail.functionAndMacroDefinitions.name());
+		prefs.flush();
+
 		IEditorPart part = WorkbenchUtils.openEditor(TEST_EDITOR_PROJECT + IPath.SEPARATOR + MACRO_TXT_FTL);
 		assertEquals(FreemarkerMultiPageEditor.class, part.getClass());
 		FreemarkerMultiPageEditor multiEditor = (FreemarkerMultiPageEditor) part;

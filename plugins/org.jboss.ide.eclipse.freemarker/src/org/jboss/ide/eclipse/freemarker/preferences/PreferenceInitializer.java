@@ -19,43 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.editor;
+package org.jboss.ide.eclipse.freemarker.preferences;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 /**
- * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
+ * Freemarker Plugin preference initializer.
+ *
+ * @since 1.4.0
+ * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
+ *
  */
-public class ColorManager {
-	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	public void dispose() {
-		Iterator<Color> e = fColorTable.values().iterator();
-		while (e.hasNext())
-			 (e.next()).dispose();
-	}
-
-	public Color getColor (String colorName) {
-		RGB rgb = PreferenceConverter.getColor(
-				Plugin.getDefault().getPreferenceStore(),
-				colorName);
-		return getColor(rgb);
-	}
-
-	public Color getColor(RGB rgb) {
-		if(rgb==null) rgb = new RGB(0,0,0);
-		Color color = fColorTable.get(rgb);
-		if (color == null) {
-			color = new Color(Display.getCurrent(), rgb);
-			fColorTable.put(rgb, color);
+	@Override
+	public void initializeDefaultPreferences() {
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(Plugin.ID);
+		for (PreferenceKey preferenceKey : PreferenceKey.values()) {
+			prefs.put(preferenceKey.toString(), preferenceKey.getDefaultValue().toString());
 		}
-		return color;
 	}
+
 }
