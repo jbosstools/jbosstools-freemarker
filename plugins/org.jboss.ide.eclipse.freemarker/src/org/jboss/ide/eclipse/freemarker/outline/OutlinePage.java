@@ -170,6 +170,10 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 		return super.getTreeViewer();
 	}
 
+	public void refresh() {
+		getTreeViewer().refresh();
+	}
+
 	public class SetContextEntryAction extends Action {
 
 		public SetContextEntryAction (OutlinePage outlinePage) {

@@ -23,144 +23,57 @@ package org.jboss.ide.eclipse.freemarker.model;
 
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
-import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 
 public class ItemFactory {
 
-	public static Item getItem (ItemSet itemSet, ITypedRegion region, ISourceViewer viewer, IResource resource) {
+	public static Item getItem(ItemSet itemSet, ITypedRegion region, ISourceViewer viewer, IResource resource) {
 		if (null == region) {
 			return null;
 		}
 		else {
-			Directive directiveType = Directive.fastValueOf(region.getType());
-			if (directiveType == null) {
-				/* ignore non-directives */
-				return null;
+			Item directive = null;
+			String type = region.getType();
+			Directive directiveType = Directive.fastValueOf(type);
+			if (directiveType != null) {
+				directive = directiveType.createModelItem(itemSet);
 			}
 			else {
-				Item directive = null;
-				switch (directiveType) {
-				case __ftl_if_directive_start:
-					directive = new IfDirective(itemSet);
-					break;
-				case __ftl_if_directive_end:
-					directive = new IfEndDirective(itemSet);
-					break;
-				case __ftl_if_else_directive:
-					directive = new IfElseDirective(itemSet);
-					break;
-				case __ftl_else_if_directive:
-					directive = new ElseIfDirective(itemSet);
-					break;
-				case __ftl_list_directive_start:
-					directive = new ListDirective(itemSet);
-					break;
-				case __ftl_list_directive_end:
-					directive = new ListEndDirective(itemSet);
-					break;
-				case __ftl_function_directive_start:
-					directive = new FunctionDirective(itemSet);
-					break;
-				case __ftl_function_directive_end:
-					directive = new FunctionEndDirective(itemSet);
-					break;
-				case __ftl_macro_directive_start:
-					directive = new MacroDirective(itemSet);
-					break;
-				case __ftl_macro_directive_end:
-					directive = new MacroEndDirective(itemSet);
-					break;
-				case __ftl_macro_instance_start:
-					directive = new MacroInstance(itemSet);
-					break;
-				case __ftl_macro_instance_end:
-					directive = new MacroEndInstance(itemSet);
-					break;
-				case __ftl_include:
-					directive = new GenericDirective(itemSet, "include.png"); //$NON-NLS-1$
-					break;
-				case __ftl_import:
-					directive = new GenericDirective(itemSet, "import.png"); //$NON-NLS-1$
-					break;
-				case __ftl_assign:
-				case __ftl_local:
-				case __ftl_global:
-					directive = new AssignmentDirective(itemSet, directiveType);
-					break;
-				case __ftl_assign_end:
-				case __ftl_local_end:
-				case __ftl_global_end:
-					directive = new AssignmentEndDirective(itemSet, region.getType());
-					break;
-				case __ftl_break:
-					directive = new GenericDirective(itemSet, "break.png"); //$NON-NLS-1$
-					break;
-				case __ftl_nested:
-					directive = new GenericDirective(itemSet, "nested.png"); //$NON-NLS-1$
-					break;
-				case __ftl_stop:
-					directive = new GenericDirective(itemSet, "stop.png"); //$NON-NLS-1$
-					break;
-				case __ftl_return:
-					directive = new GenericDirective(itemSet, "return.png"); //$NON-NLS-1$
-					break;
-				case __ftl_switch_directive_start:
-					directive = new GenericNestableDirective(itemSet, "switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$
-					break;
-				case __ftl_switch_directive_end:
-					directive = new GenericNestableEndDirective(itemSet, "switch"); //$NON-NLS-1$
-					break;
-				case __ftl_case_directive_start:
-					directive = new CaseDirective(itemSet);
-					break;
-				case __ftl_case_default_start:
-					directive = new CaseDefaultDirective(itemSet);
-					break;
-				case __ftl_interpolation:
+				PartitionType partitionType = PartitionType.fastValueOf(type);
+				switch (partitionType) {
+				case DOLLAR_INTERPOLATION:
+				case HASH_INTERPOLATION:
 					directive = new Interpolation(itemSet);
 					break;
-				case __ftl_ftl_directive:
-					directive = new FtlDirective(itemSet);
+				case MACRO_INSTANCE_START:
+					directive = new MacroInstance(itemSet);
 					break;
-				case __ftl_directive:
-					String name = getDirectiveName(region, viewer);
-					directive = new GenericNestableDirective(itemSet, name, "element.png"); //$NON-NLS-1$
+				case MACRO_INSTANCE_END:
+					directive = new MacroEndInstance(itemSet);
 					break;
-				case __ftl_directive_end:
-					name = getDirectiveName(region, viewer);
-					directive = new GenericNestableEndDirective(itemSet, name);
-					break;
+				case DIRECTIVE_END:
+				case DIRECTIVE_START:
+					/* DIRECTIVE_START and DIRECTIVE_END should never happen here as
+					 * all directive regions should return a non null directive
+					 * from Directive.fastValueOf(type) which is checked earlier
+					 * in this method */
+				case COMMENT:
+				case TEXT:
+					/* COMMENT and TEXT have no representation in an ItemSet */
 				default:
-					Plugin.log("Unexpected "+ Directive.class.getName() + "'"+ region.getType() +"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
 				}
-				if (null != directive) {
-					directive.load(region, viewer, resource);
-				}
-				return directive;
 			}
+
+			if (null != directive) {
+				directive.load(region, viewer, resource);
+			}
+			return directive;
 		}
 	}
 
-	private static String getDirectiveName (ITypedRegion region, ISourceViewer viewer) {
-		StringBuilder sb = new StringBuilder();
-		try {
-			int offset = region.getOffset();
-			int stopIndex = offset + region.getLength();
-			char c = viewer.getDocument().getChar(offset);
-			while (c != LexicalConstants.SPACE && c != LexicalConstants.RIGHT_ANGLE_BRACKET && offset <= stopIndex) {
-				if (c != LexicalConstants.LEFT_ANGLE_BRACKET && c != LexicalConstants.HASH && c != LexicalConstants.SLASH)
-					sb.append(c);
-				c = viewer.getDocument().getChar(++offset);
-			}
-			return sb.toString();
-		}
-		catch (BadLocationException e) {}
-		return sb.toString();
-	}
 }

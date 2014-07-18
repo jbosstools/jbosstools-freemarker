@@ -21,6 +21,10 @@
  */
 package org.jboss.ide.eclipse.freemarker.model;
 
+import java.util.Collections;
+
+import org.eclipse.jface.text.ITypedRegion;
+
 
 public class LibraryMacroDirective extends MacroDirective {
 
@@ -34,7 +38,7 @@ public class LibraryMacroDirective extends MacroDirective {
 			String content = "#macro entries startIndex=1\r\n" + //$NON-NLS-1$
 			"data=\"data\" headerUrls=[] sortIndex=-1"; //$NON-NLS-1$
 
-			LibraryMacroDirective lmd = new LibraryMacroDirective(new ItemSet(null, null), "lib", content, 0, content.length()); //$NON-NLS-1$
+			LibraryMacroDirective lmd = new LibraryMacroDirective(new ItemSet(null, Collections.<ITypedRegion>emptyList(), null), "lib", content, 0, content.length()); //$NON-NLS-1$
 			String[] attributes = lmd.getAttributes();
 			for (int i=0; i<attributes.length; i++) {
 				System.out.println(attributes[i]);

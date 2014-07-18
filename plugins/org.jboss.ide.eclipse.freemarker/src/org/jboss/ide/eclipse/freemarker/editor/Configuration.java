@@ -23,21 +23,20 @@ package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
-import org.jboss.ide.eclipse.freemarker.lang.Directive;
-import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
-import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -49,88 +48,66 @@ public class Configuration extends TextSourceViewerConfiguration {
 		super(preferenceStore);
 		this.editor = editor;
 	}
+
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return PartitionScanner.PARTITIONS;
+		return PartitionType.PARTITION_TYPES;
 	}
-
 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
-		IToken defaultToken = null;
-		DefaultDamagerRepairer dr = null;
-		NonRuleBasedDamagerRepairer ndr = null;
-
-		defaultToken = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_DIRECTIVE)));
-		ContentScanner contentScanner = new ContentScanner(defaultToken);
-
-		for (Directive directive : Directive.values()) {
-			if (directive != Directive.__ftl_interpolation) {
-				/* skip interpolation here as it has a different color */
-				dr = new DefaultDamagerRepairer(contentScanner);
-				reconciler.setDamager(dr, directive.name());
-				reconciler.setRepairer(dr, directive.name());
+		PartitionType[] partitionTypes = PartitionType.values();
+		for (PartitionType partitionType : partitionTypes) {
+			ITokenScanner scanner = partitionType.createColoringTokenizer();
+			if (scanner != null) {
+				DefaultDamagerRepairer dr = new DefaultDamagerRepairer(scanner);
+				reconciler.setDamager(dr, partitionType.name());
+				reconciler.setRepairer(dr, partitionType.name());
 			}
 		}
-
-		defaultToken = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
-		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken));
-		reconciler.setDamager(dr, Directive.__ftl_interpolation.name());
-		reconciler.setRepairer(dr, Directive.__ftl_interpolation.name());
-
-		ndr =
-			new NonRuleBasedDamagerRepairer(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_COMMENT)));
-		reconciler.setDamager(ndr, PartitionScanner.XML_COMMENT);
-		reconciler.setRepairer(ndr, PartitionScanner.XML_COMMENT);
-
-		ndr =
-			new NonRuleBasedDamagerRepairer(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
-		reconciler.setDamager(ndr, PartitionScanner.STRING);
-		reconciler.setRepairer(ndr, PartitionScanner.STRING);
-
-		ndr =
-			new NonRuleBasedDamagerRepairer(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_COMMENT)));
-		reconciler.setDamager(ndr, PartitionScanner.FTL_COMMENT);
-		reconciler.setRepairer(ndr, PartitionScanner.FTL_COMMENT);
-
-		defaultToken = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_TAG)));
-		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken));
-		reconciler.setDamager(dr, PartitionScanner.XML_TAG);
-		reconciler.setRepairer(dr, PartitionScanner.XML_TAG);
+		//FIXME: Add back XML syntax coloring some day
+//		ndr =
+//			new NonRuleBasedDamagerRepairer(
+//				new TextAttribute(
+//						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_COMMENT)));
+//		reconciler.setDamager(ndr, PartitionScanner.XML_COMMENT);
+//		reconciler.setRepairer(ndr, PartitionScanner.XML_COMMENT);
+//
+//		ndr =
+//			new NonRuleBasedDamagerRepairer(
+//				new TextAttribute(
+//						Preferences.getInstance().getColor(PreferenceKey.COLOR_COMMENT)));
+//		reconciler.setDamager(ndr, PartitionScanner.FTL_COMMENT);
+//		reconciler.setRepairer(ndr, PartitionScanner.FTL_COMMENT);
+//
+//		defaultToken = new Token(
+//				new TextAttribute(
+//						Preferences.getInstance().getColor(PreferenceKey.COLOR_XML_TAG)));
+//		dr = new DefaultDamagerRepairer(new ContentScanner(defaultToken));
+//		reconciler.setDamager(dr, PartitionScanner.XML_TAG);
+//		reconciler.setRepairer(dr, PartitionScanner.XML_TAG);
 
 		return reconciler;
 	}
 
 	@Override
-    public IContentAssistant getContentAssistant(ISourceViewer aSourceViewer)
-    {
-        ContentAssistant assistant = new ContentAssistant();
-        CompletionProcessor completionProcessor = new CompletionProcessor(editor);
-        assistant.setContentAssistProcessor(completionProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-		for (Directive directive : Directive.values()) {
-        	assistant.setContentAssistProcessor(completionProcessor, directive.name());
-        }
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.FTL_COMMENT);
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_COMMENT);
-        assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_TAG);
-        assistant.enableAutoInsert(true);
-        assistant.enableAutoActivation(true);
-        return assistant;
-    }
+	public IContentAssistant getContentAssistant(ISourceViewer aSourceViewer)
+	{
+		ContentAssistant assistant = new ContentAssistant();
+		CompletionProcessor completionProcessor = new CompletionProcessor(editor);
+		assistant.setContentAssistProcessor(completionProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+		for (PartitionType partitionType : PartitionType.values()) {
+			assistant.setContentAssistProcessor(completionProcessor, partitionType.name());
+		}
+		//FIXME: Add back XML content assist some day
+//		assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_COMMENT);
+//		assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_TAG);
+		assistant.enableAutoInsert(true);
+		assistant.enableAutoActivation(true);
+		return assistant;
+	}
 
 	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
@@ -140,10 +117,21 @@ public class Configuration extends TextSourceViewerConfiguration {
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		IHyperlinkDetector[] detectors = super.getHyperlinkDetectors(sourceViewer);
-		if (null == detectors) detectors = new IHyperlinkDetector[0];
+		if (null == detectors) {
+			detectors = new IHyperlinkDetector[0];
+		}
 		IHyperlinkDetector[] detectorsNew = new IHyperlinkDetector[detectors.length+1];
 		System.arraycopy(detectors, 0, detectorsNew, 0, detectors.length);
 		detectorsNew[detectorsNew.length-1] = new MacroHyperlinkDetector(sourceViewer, editor);
 		return detectorsNew;
 	}
+
+	@Override
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		IReconcilingStrategy reconcilingStrategy= new ReconcilingStrategy(editor);
+		MonoReconciler reconciler= new MonoReconciler(reconcilingStrategy, false);
+		reconciler.setDelay(500);
+		return reconciler;
+	}
+
 }

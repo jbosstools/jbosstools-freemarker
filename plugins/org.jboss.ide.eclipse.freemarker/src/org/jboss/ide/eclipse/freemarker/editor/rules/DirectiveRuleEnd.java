@@ -23,11 +23,16 @@ package org.jboss.ide.eclipse.freemarker.editor.rules;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 
 /**
+ * A {@link MultiLineRule} that matches a particular FTL directive end and marks the
+ * region as the given {@link Directive}. Used for building an {@link ItemSet}.
+ *
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class DirectiveRuleEnd extends DirectiveRule {
@@ -38,6 +43,15 @@ public class DirectiveRuleEnd extends DirectiveRule {
 
 	public DirectiveRuleEnd(Directive directive, boolean nameOnly) {
 		super(directive, nameOnly);
+	}
+
+	public DirectiveRuleEnd(Directive directive, boolean nameOnly, char identifierChar) {
+		super(directive, nameOnly, identifierChar);
+	}
+
+	public DirectiveRuleEnd(String name,
+			String tokenData, boolean nameOnly, char identifierChar) {
+		super(name, tokenData, nameOnly, identifierChar);
 	}
 
 	/**
@@ -57,14 +71,12 @@ public class DirectiveRuleEnd extends DirectiveRule {
 				return fToken;
 		} else {
 			int c= scanner.read();
-			@SuppressWarnings("unused")
-			char cCheck = (char) c;
-			if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_ANGLE_BRACKET) {
+			if (c == syntaxMode.getStart()) {
 				int c2 = scanner.read();
 				if (c2 == LexicalConstants.SLASH) {
 					// check for the sequence identifier
 					c2 = scanner.read();
-					if (c2 == getIdentifierChar()) {
+					if (c2 == identifierChar) {
 						if (sequenceDetected(scanner, c, false)) {
 							if (endSequenceDetected(scanner, c))
 								return fToken;

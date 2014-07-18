@@ -36,6 +36,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorPart;
+import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor;
 import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
 import org.jboss.ide.eclipse.freemarker.model.GenericDirective;
@@ -72,7 +73,9 @@ public abstract class AbstractDirectiveTest extends TestCase {
 		IEditorPart part = WorkbenchUtils.openEditor(TEST_PROJECT + IPath.SEPARATOR + TEST_DIRECTORY + IPath.SEPARATOR + fileName);
 		assertEquals(FreemarkerMultiPageEditor.class, part.getClass());
 		FreemarkerMultiPageEditor multiEditor = (FreemarkerMultiPageEditor) part;
-		return multiEditor.getEditor().getItemSet().getDirectiveRegions().values();
+		Editor editor = multiEditor.getEditor();
+		editor.reconcileInstantly();
+		return editor.getItemSet().getDirectiveRegions().values();
 	}
 
 	protected void validateFtlTemplate(String fileName, Object model) throws IOException, TemplateException {

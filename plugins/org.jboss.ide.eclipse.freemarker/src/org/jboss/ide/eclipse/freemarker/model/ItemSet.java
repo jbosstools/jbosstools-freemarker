@@ -41,32 +41,14 @@ import org.jboss.ide.eclipse.freemarker.Plugin;
 public class ItemSet {
 
 	private ISourceViewer viewer;
-	private List<ITypedRegion> regions;
 	private List<Item> directives;
 	private List<Item> topLevelDirectives;
 	private Map<Integer, Item> directiveRegions;
 	private List<MacroDirective> macroDefinitions = new ArrayList<MacroDirective>();
 	private List<Item> outlineItems = Collections.emptyList();
 
-	public ItemSet (ISourceViewer viewer, IResource resource) {
+	public ItemSet (ISourceViewer viewer, List<ITypedRegion> regions, IResource resource) {
 		this.viewer = viewer;
-		this.regions = new ArrayList<ITypedRegion>();
-		// get all regions
-		int index = 0;
-		while (true) {
-			try {
-				ITypedRegion region = viewer.getDocument().getPartition(index);
-				regions.add(region);
-				index = region.getOffset() + region.getLength() + 1;
-			}
-			catch (BadLocationException e) {
-				break;
-			}
-		}
-		parse(viewer, resource);
-	}
-
-	private void parse (ISourceViewer viewer, IResource resource) {
 		List<Item> modifiableOutlineItems = new ArrayList<Item>();
 		Map<Integer, Item> modifiableDirectiveRegions = new TreeMap<Integer, Item>();
 		try {

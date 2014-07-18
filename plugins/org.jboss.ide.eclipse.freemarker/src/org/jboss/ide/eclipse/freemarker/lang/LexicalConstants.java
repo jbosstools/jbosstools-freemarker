@@ -67,6 +67,9 @@ public interface LexicalConstants {
 	char SLASH = '/';
 	char QUESTION_MARK = '?';
 	char EXCLAMATION_MARK = '!';
+	char MINUS = '-';
+	char COMMA = ',';
 	String QUOT_STRING = String.valueOf(QUOT);
 	String APOS_STRING = String.valueOf(APOS);
+	String SQUARE_SYNTAX_MARKER = new StringBuilder(6).append(LEFT_SQUARE_BRACKET).append(HASH).append(Keyword.ftl).toString();
 }

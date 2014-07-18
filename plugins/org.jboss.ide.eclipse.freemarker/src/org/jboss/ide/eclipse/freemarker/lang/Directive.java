@@ -25,7 +25,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
+import org.jboss.ide.eclipse.freemarker.model.AssignmentEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.CaseDefaultDirective;
+import org.jboss.ide.eclipse.freemarker.model.CaseDirective;
+import org.jboss.ide.eclipse.freemarker.model.ElseIfDirective;
+import org.jboss.ide.eclipse.freemarker.model.FtlDirective;
+import org.jboss.ide.eclipse.freemarker.model.FunctionDirective;
+import org.jboss.ide.eclipse.freemarker.model.FunctionEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.GenericDirective;
+import org.jboss.ide.eclipse.freemarker.model.GenericNestableDirective;
+import org.jboss.ide.eclipse.freemarker.model.GenericNestableEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.IfDirective;
+import org.jboss.ide.eclipse.freemarker.model.IfElseDirective;
+import org.jboss.ide.eclipse.freemarker.model.IfEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.Item;
+import org.jboss.ide.eclipse.freemarker.model.ItemSet;
+import org.jboss.ide.eclipse.freemarker.model.ListDirective;
+import org.jboss.ide.eclipse.freemarker.model.ListEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
+import org.jboss.ide.eclipse.freemarker.model.MacroEndDirective;
 
 /**
  * FTL directive tags.
@@ -36,97 +55,193 @@ import org.eclipse.jface.text.rules.Token;
  */
 public enum Directive {
 
-	__ftl_include(Keyword.include),
-	__ftl_import(Keyword.import_),
-	__ftl_assign(Keyword.assign),
-	__ftl_assign_end(Keyword.assign),
-	__ftl_local(Keyword.local),
-	__ftl_local_end(Keyword.local),
-	__ftl_global(Keyword.global),
-	__ftl_global_end(Keyword.global),
-	__ftl_break(Keyword.break_),
-	__ftl_nested(Keyword.nested),
-	__ftl_return(Keyword.return_),
-	__ftl_stop(Keyword.stop),
-	__ftl_list_directive_start(Keyword.list),
-	__ftl_list_directive_end(Keyword.list),
-	__ftl_if_directive_start(Keyword.if_),
-	__ftl_else_if_directive(Keyword.else_if),
-	__ftl_if_else_directive(Keyword.else_),
-	__ftl_if_directive_end(Keyword.if_),
-	__ftl_switch_directive_start(Keyword.switch_),
-	__ftl_switch_directive_end(Keyword.switch_),
-	__ftl_case_directive_start(Keyword.case_),
-	__ftl_case_default_start(Keyword.default_),
-	__ftl_macro_directive_start(Keyword.macro),
-	__ftl_macro_directive_end(Keyword.macro),
-	__ftl_macro_instance_start(Keyword.macro_instance),
-	__ftl_macro_instance_end(Keyword.macro_instance),
-	__ftl_ftl_directive(Keyword.ftl),
-	__ftl_function_directive_start(Keyword.function_),
-	__ftl_function_directive_end(Keyword.function_),
-
-	__ftl_directive(Keyword.directive),
-	__ftl_directive_end(Keyword.directive),
-	__ftl_interpolation(Keyword.interpolation)
+	INCLUDE(Keyword.include) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "include.png"); //$NON-NLS-1$;
+		}
+	},
+	IMPORT(Keyword.import_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "import.png"); //$NON-NLS-1$;
+		}
+	},
+	ASSIGN(Keyword.assign) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentDirective(itemSet, this);
+		}
+	},
+	ASSIGN_END(Keyword.assign) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentEndDirective(itemSet, this.name());
+		}
+	},
+	LOCAL(Keyword.local) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentDirective(itemSet, this);
+		}
+	},
+	LOCAL_END(Keyword.local) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentEndDirective(itemSet, this.name());
+		}
+	},
+	GLOBAL(Keyword.global) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentDirective(itemSet, this);
+		}
+	},
+	GLOBAL_END(Keyword.global) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new AssignmentEndDirective(itemSet, this.name());
+		}
+	},
+	BREAK(Keyword.break_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "break.png"); //$NON-NLS-1$;
+		}
+	},
+	NESTED(Keyword.nested) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "nested.png"); //$NON-NLS-1$;
+		}
+	},
+	RETURN(Keyword.return_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "return.png"); //$NON-NLS-1$;
+		}
+	},
+	STOP(Keyword.stop) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericDirective(itemSet, "stop.png"); //$NON-NLS-1$;
+		}
+	},
+	LIST(Keyword.list) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new ListDirective(itemSet);
+		}
+	},
+	LIST_END(Keyword.list) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new ListEndDirective(itemSet);
+		}
+	},
+	IF(Keyword.if_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new IfDirective(itemSet);
+		}
+	},
+	ELSEIF(Keyword.else_if) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new ElseIfDirective(itemSet);
+		}
+	},
+	ELSE(Keyword.else_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new IfElseDirective(itemSet);
+		}
+	},
+	IF_END(Keyword.if_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new IfEndDirective(itemSet);
+		}
+	},
+	SWITCH(Keyword.switch_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericNestableDirective(itemSet, "switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$;
+		}
+	},
+	SWITCH_END(Keyword.switch_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericNestableEndDirective(itemSet, "switch"); //$NON-NLS-1$;
+		}
+	},
+	CASE(Keyword.case_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new CaseDirective(itemSet);
+		}
+	},
+	DEFAULT(Keyword.default_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new CaseDefaultDirective(itemSet);
+		}
+	},
+	MACRO(Keyword.macro) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new MacroDirective(itemSet);
+		}
+	},
+	MACRO_END(Keyword.macro) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new MacroEndDirective(itemSet);
+		}
+	},
+	FTL(Keyword.ftl) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new FtlDirective(itemSet);
+		}
+	},
+	FUNCTION(Keyword.function_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new FunctionDirective(itemSet);
+		}
+	},
+	FUNCTION_END(Keyword.function_) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new FunctionEndDirective(itemSet);
+		}
+	}
 	;
 
 	private static final Map<String, Directive> FAST_LOOKUP;
+	static {
+		Map<String, Directive> fastLookUp = new HashMap<String, Directive>(64);
+		Directive[] directives = values();
+		for (Directive directive : directives) {
+			fastLookUp.put(directive.name(), directive);
+		}
+		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
+	}
+	public static Directive fastValueOf(String str) {
+		return FAST_LOOKUP.get(str);
+	}
+
 	private final Keyword keyword;
 
 	private Directive(Keyword keyword) {
 		this.keyword = keyword;
 	}
 
-	static {
-
-		Map<String, Directive> fastLookUp = new HashMap<String, Directive>(64);
-		fastLookUp.put(__ftl_include.name(), __ftl_include);
-		fastLookUp.put(__ftl_import.name(), __ftl_import);
-		fastLookUp.put(__ftl_assign.name(), __ftl_assign);
-		fastLookUp.put(__ftl_assign_end.name(), __ftl_assign_end);
-		fastLookUp.put(__ftl_local.name(), __ftl_local);
-		fastLookUp.put(__ftl_local_end.name(), __ftl_local_end);
-		fastLookUp.put(__ftl_global.name(), __ftl_global);
-		fastLookUp.put(__ftl_global_end.name(), __ftl_global_end);
-		fastLookUp.put(__ftl_break.name(), __ftl_break);
-		fastLookUp.put(__ftl_nested.name(), __ftl_nested);
-		fastLookUp.put(__ftl_return.name(), __ftl_return);
-		fastLookUp.put(__ftl_stop.name(), __ftl_stop);
-		fastLookUp.put(__ftl_list_directive_start.name(), __ftl_list_directive_start);
-		fastLookUp.put(__ftl_list_directive_end.name(), __ftl_list_directive_end);
-		fastLookUp.put(__ftl_if_directive_start.name(), __ftl_if_directive_start);
-		fastLookUp.put(__ftl_else_if_directive.name(), __ftl_else_if_directive);
-		fastLookUp.put(__ftl_if_else_directive.name(), __ftl_if_else_directive);
-		fastLookUp.put(__ftl_if_directive_end.name(), __ftl_if_directive_end);
-		fastLookUp.put(__ftl_switch_directive_start.name(), __ftl_switch_directive_start);
-		fastLookUp.put(__ftl_switch_directive_end.name(), __ftl_switch_directive_end);
-		fastLookUp.put(__ftl_case_directive_start.name(), __ftl_case_directive_start);
-		fastLookUp.put(__ftl_case_default_start.name(), __ftl_case_default_start);
-		fastLookUp.put(__ftl_macro_directive_start.name(), __ftl_macro_directive_start);
-		fastLookUp.put(__ftl_macro_directive_end.name(), __ftl_macro_directive_end);
-		fastLookUp.put(__ftl_macro_instance_start.name(), __ftl_macro_instance_start);
-		fastLookUp.put(__ftl_macro_instance_end.name(), __ftl_macro_instance_end);
-		fastLookUp.put(__ftl_ftl_directive.name(), __ftl_ftl_directive);
-		fastLookUp.put(__ftl_function_directive_start.name(), __ftl_function_directive_start);
-		fastLookUp.put(__ftl_function_directive_end.name(), __ftl_function_directive_end);
-
-		fastLookUp.put(__ftl_directive.name(), __ftl_directive);
-		fastLookUp.put(__ftl_directive_end.name(), __ftl_directive_end);
-		fastLookUp.put(__ftl_interpolation.name(), __ftl_interpolation);
-
-		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
-	}
-
-	public Token newToken() {
-		return new Token(this.name());
-	}
-
-	public static Directive fastValueOf(String str) {
-		return FAST_LOOKUP.get(str);
-	}
-
 	public Keyword getKeyword() {
 		return keyword;
 	}
+
+	public abstract Item createModelItem(ItemSet itemSet);
+
 }

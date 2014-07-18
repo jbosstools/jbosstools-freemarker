@@ -36,6 +36,7 @@ public class XmlRule extends MultiLineRule {
 	public XmlRule(IToken token) {
 		super(String.valueOf(LexicalConstants.LEFT_ANGLE_BRACKET), String.valueOf(LexicalConstants.RIGHT_ANGLE_BRACKET), token);
 	}
+
 	@Override
 	protected boolean sequenceDetected(
 		ICharacterScanner scanner,
@@ -67,10 +68,10 @@ public class XmlRule extends MultiLineRule {
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
-		char[][] delimiters= scanner.getLegalLineDelimiters();
+		char[][] delimiters = scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;
 		Stack<Character> stack = new Stack<Character>();
-		while ((c= scanner.read()) != ICharacterScanner.EOF) {
+		while ((c = scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
 				// Skip the escaped character.
 				scanner.read();
@@ -81,7 +82,7 @@ public class XmlRule extends MultiLineRule {
 				}
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
-				for (int i= 0; i < delimiters.length; i++) {
+				for (int i = 0; i < delimiters.length; i++) {
 					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true)) {
 						if (!fEscapeContinuesLine || !previousWasEscapeCharacter) {
 							return true;
@@ -117,7 +118,9 @@ public class XmlRule extends MultiLineRule {
 			}
 			previousWasEscapeCharacter = (c == fEscapeCharacter);
 		}
-		if (fBreaksOnEOF) return true;
+		if (fBreaksOnEOF) {
+			return true;
+		}
 		scanner.unread();
 		return false;
 	}

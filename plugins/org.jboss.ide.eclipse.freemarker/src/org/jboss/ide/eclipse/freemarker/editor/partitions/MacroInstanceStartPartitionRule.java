@@ -19,29 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.editor.rules;
+package org.jboss.ide.eclipse.freemarker.editor.partitions;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
- * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
+ * A {@link MultiLineRule} that matches an FTL macro instance start tags, such as {@code <@myMacro ...>} and marks them as
+ * the {@link PartitionType#MACRO_INSTANCE_START} partitions.
+ *
+ * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
+ * @since 1.4.0
  */
-public class StringRule extends SingleLineRule {
+public class MacroInstanceStartPartitionRule extends MultiLineRule implements SyntaxModeListener {
 
-	public StringRule(String rule, IToken token) {
-		super(rule, "", token); //$NON-NLS-1$
+	public MacroInstanceStartPartitionRule() {
+		super(SyntaxMode.getDefault().getMacroInstanceStart(), SyntaxMode.getDefault().getTagEnd(), new Token(PartitionType.MACRO_INSTANCE_START.name()));
 	}
 
 	@Override
-	protected boolean sequenceDetected(ICharacterScanner scanner,
-			char[] sequence, boolean eofAllowed) {
-		return true;
+	public void syntaxModeChanged(SyntaxMode syntaxMode) {
+		fStartSequence = syntaxMode.getMacroInstanceStart().toCharArray();
+		fEndSequence = syntaxMode.getTagEnd().toCharArray();
 	}
 
-	@Override
-	protected boolean endSequenceDetected(ICharacterScanner scanner) {
-		return true;
-	}
 }

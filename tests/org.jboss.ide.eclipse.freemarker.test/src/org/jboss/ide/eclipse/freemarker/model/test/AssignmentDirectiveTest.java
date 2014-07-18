@@ -52,7 +52,7 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 	}
 
 	private static void testNestable(boolean expected, String contents) throws ParseException {
-		Boolean nestable = AssignmentDirective.isNestable(contents, Directive.__ftl_assign);
+		Boolean nestable = AssignmentDirective.isNestable(contents, Directive.ASSIGN);
 		assertEquals(expected, nestable.booleanValue());
 	}
 

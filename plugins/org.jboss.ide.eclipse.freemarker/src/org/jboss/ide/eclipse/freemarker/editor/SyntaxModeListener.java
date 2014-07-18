@@ -19,22 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.editor.rules;
+package org.jboss.ide.eclipse.freemarker.editor;
 
-import org.jboss.ide.eclipse.freemarker.lang.Directive;
-import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
- * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
+ * A listener interface that should get notified when the
+ * {@link SyntaxMode} of a document changes.
+ *
+ * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
+ * @since 1.4.0
  */
-public class MacroInstanceRuleEnd extends DirectiveRuleEnd {
+public interface SyntaxModeListener {
 
-	public MacroInstanceRuleEnd(Directive directive) {
-		super(directive, false);
-	}
-
-	@Override
-	protected char getIdentifierChar() {
-		return LexicalConstants.AT;
-	}
+	/**
+	 * Notifies this listener, that the {@link SyntaxMode} of a document has changed.
+	 * @param syntaxMode the new {@link SyntaxMode}
+	 */
+	void syntaxModeChanged(SyntaxMode syntaxMode);
 }

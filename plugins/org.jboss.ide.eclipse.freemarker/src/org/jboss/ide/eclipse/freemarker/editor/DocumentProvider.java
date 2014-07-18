@@ -22,15 +22,22 @@
 package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionScanner;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class DocumentProvider extends FileDocumentProvider {
+
 
 	public DocumentProvider() {
 		super();
@@ -43,10 +50,33 @@ public class DocumentProvider extends FileDocumentProvider {
 			IDocumentPartitioner partitioner =
 				new FastPartitioner(
 					new PartitionScanner(),
-					PartitionScanner.PARTITIONS);
+					PartitionType.PARTITION_TYPES);
 			partitioner.connect(document);
 			document.setDocumentPartitioner(partitioner);
 		}
 		return document;
 	}
+
+	public static SyntaxMode findMode(IDocument document) {
+		int docLength = document.getLength();
+		if (docLength >= LexicalConstants.SQUARE_SYNTAX_MARKER.length()) {
+			try {
+				int i = 0;
+				for (; i < docLength && ParserUtils.isWhitespace(document.getChar(i)); i++) {
+					/* skip whitespace */
+				}
+				for (; i < docLength; i++) {
+					char ch = document.getChar(i);
+					if (ch != LexicalConstants.SQUARE_SYNTAX_MARKER.charAt(i)) {
+						return SyntaxMode.ANGLE;
+					}
+				}
+				return SyntaxMode.SQUARE;
+			} catch (BadLocationException ignore) {
+				return SyntaxMode.getDefault();
+			}
+		}
+		return SyntaxMode.getDefault();
+	}
+
 }

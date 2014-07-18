@@ -9,6 +9,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
 import org.jboss.ide.eclipse.freemarker.editor.CompletionProcessor;
+import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor;
 import org.jboss.ide.eclipse.freemarker.model.FunctionDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
@@ -67,7 +68,9 @@ public class FreemarkerEditorTest extends TestCase {
 		IEditorPart part = WorkbenchUtils.openEditor(TEST_EDITOR_PROJECT + IPath.SEPARATOR + MACRO_TXT_FTL);
 		assertEquals(FreemarkerMultiPageEditor.class, part.getClass());
 		FreemarkerMultiPageEditor multiEditor = (FreemarkerMultiPageEditor) part;
-		OutlinePage outline = multiEditor.getEditor().getOutlinePage();
+		Editor editor = multiEditor.getEditor();
+		editor.reconcileInstantly();
+		OutlinePage outline = editor.getOutlinePage();
 		TreeItem[] items = outline.getTreeViewer().getTree().getItems();
 		assertEquals(4, items.length);
 		int i = 0;

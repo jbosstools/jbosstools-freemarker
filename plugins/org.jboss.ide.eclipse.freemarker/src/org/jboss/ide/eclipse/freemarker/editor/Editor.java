@@ -23,7 +23,9 @@ package org.jboss.ide.eclipse.freemarker.editor;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -31,7 +33,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.ui.javaeditor.JarEntryEditorInput;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -46,6 +47,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -55,6 +57,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.outline.OutlinePage;
@@ -78,7 +81,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	private Item[] relatedItems;
 	private static final char[] VALIDATION_TOKENS = new char[] {
 			LexicalConstants.QUOT, LexicalConstants.LEFT_SQUARE_BRACKET,
-			LexicalConstants.RIGHT_SQUARE_BRACKET, ',',
+			LexicalConstants.RIGHT_SQUARE_BRACKET, LexicalConstants.COMMA,
 			LexicalConstants.PERIOD, LexicalConstants.LF, '4' };
 	private boolean readOnly = false;
 
@@ -92,6 +95,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				getPreferenceStore(), this);
 		setSourceViewerConfiguration(configuration);
 		setDocumentProvider(new DocumentProvider());
+
 	}
 
 	@Override
@@ -173,8 +177,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			if (null == item) {
 				item = getItemSet().getContextItem(getCaretOffset());
 			}
-			if (null != fOutlinePage)
+			if (null != fOutlinePage) {
 				fOutlinePage.update(item);
+			}
 		}
 	}
 
@@ -294,23 +299,28 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		return getSourceViewer().getTextWidget().getCaretOffset();
 	}
 
-	private void clearCache() {
-		this.itemSet = null;
-	}
-
 	public ItemSet getItemSet() {
 		if (null == this.itemSet) {
-			IResource resource = null;
-			if (getEditorInput() instanceof IFileEditorInput) {
-				resource = ((IFileEditorInput) getEditorInput()).getFile();
-			} else if (getEditorInput() instanceof JarEntryEditorInput) {
-				resource = null;
-			}
-
-			this.itemSet = new ItemSet(getSourceViewer(), resource);
+			this.itemSet = createItemSet(Collections.<ITypedRegion> emptyList());
 		}
 		return this.itemSet;
+	}
 
+	/**
+	 * Creates a new {@link ItemSet} based on the given {@link List} or regions.
+	 * This method is public for the sake of testing.
+	 *
+	 * @param regions
+	 * @return
+	 */
+	public ItemSet createItemSet(List<ITypedRegion> regions) {
+		IResource resource = null;
+		if (getEditorInput() instanceof IFileEditorInput) {
+			resource = ((IFileEditorInput) getEditorInput()).getFile();
+			// } else if (getEditorInput() instanceof JarEntryEditorInput) {
+			// resource = null;
+		}
+		return new ItemSet(getSourceViewer(), regions, resource);
 	}
 
 	public OutlinePage getOutlinePage() {
@@ -339,7 +349,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				char c = getDocument().getChar(getCaretOffset());
 				if (c == LexicalConstants.RIGHT_BRACE) {
 					// remove this
-					getDocument().replace(getCaretOffset(), 1, "}"); //$NON-NLS-1$
+					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
 				}
 			} catch (BadLocationException e1) {
 			}
@@ -354,62 +364,51 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			shiftDown = false;
 		}
 		try {
+			IDocument document = getSourceViewer().getDocument();
 			if (shiftDown && (e.keyCode == '3' || e.keyCode == '2')) {
 				int offset = getCaretOffset();
-				char c = getSourceViewer().getDocument().getChar(offset - 2);
+				char c = document.getChar(offset - 2);
 				if (c == LexicalConstants.LEFT_SQUARE_BRACKET
 						|| c == LexicalConstants.LEFT_ANGLE_BRACKET) {
 					// directive
-					char endChar = Character.MIN_VALUE;
-					if (c == LexicalConstants.LEFT_SQUARE_BRACKET)
-						endChar = LexicalConstants.RIGHT_SQUARE_BRACKET;
-					else
-						endChar = LexicalConstants.RIGHT_ANGLE_BRACKET;
-					if (getSourceViewer().getDocument().getLength() > offset) {
+					char endChar = ParserUtils.getMatchingRightBracket(c);
+					if (document.getLength() > offset) {
 						if (offset > 0) {
-							for (int i = offset + 1; i < getSourceViewer()
-									.getDocument().getLength(); i++) {
-								char c2 = getSourceViewer().getDocument()
-										.getChar(i);
-								if (i == endChar)
-									return; // FIXME: should we not preplace i
-											// with c2?
-								else if (i == LexicalConstants.LF)
-									break; // FIXME: should we not preplace i
-											// with c2?
+							for (int i = offset + 1; i < document.getLength(); i++) {
+								char c2 = document.getChar(i);
+								if (c2 == endChar) {
+									return;
+								} else if (c2 == LexicalConstants.LF) {
+									break;
+								}
 							}
-							getSourceViewer().getDocument().replace(offset, 0,
-									new String(new char[] { endChar }));
+							document.replace(offset, 0, String.valueOf(endChar));
 						}
 					} else {
-						getSourceViewer().getDocument().replace(offset, 0,
-								new String(new char[] { endChar }));
+						document.replace(offset, 0, String.valueOf(endChar));
 					}
 				}
-			} else if (shiftDown
-					&& e.keyCode == LexicalConstants.LEFT_SQUARE_BRACKET) {
+			} else if (shiftDown && e.keyCode == LexicalConstants.LEFT_BRACE) {
 				int offset = getCaretOffset();
-				char c = getSourceViewer().getDocument().getChar(offset - 2);
+				char c = document.getChar(offset - 2);
 				if (c == LexicalConstants.DOLLAR) {
 					// interpolation
-					if (getSourceViewer().getDocument().getLength() > offset) {
+					if (document.getLength() > offset) {
 						if (offset > 0) {
-							for (int i = offset + 1; i < getSourceViewer()
-									.getDocument().getLength(); i++) {
-								char c2 = getSourceViewer().getDocument()
-										.getChar(i);
-								if (i == LexicalConstants.RIGHT_BRACE)
-									return; // FIXME: should we not preplace i
-											// with c2?
-								else if (i == LexicalConstants.LF)
-									break; // FIXME: should we not preplace i
-											// with c2?
+							for (int i = offset + 1; i < document.getLength(); i++) {
+								char c2 = document.getChar(i);
+								if (c2 == LexicalConstants.RIGHT_BRACE) {
+									return;
+								} else if (c2 == LexicalConstants.LF) {
+									break;
+								}
 							}
-							getSourceViewer().getDocument().replace(offset, 0,
-									"}"); //$NON-NLS-1$
+							document.replace(offset, 0, String
+									.valueOf(LexicalConstants.RIGHT_BRACE));
 						}
 					} else {
-						getSourceViewer().getDocument().replace(offset, 0, "}"); //$NON-NLS-1$
+						document.replace(offset, 0,
+								String.valueOf(LexicalConstants.RIGHT_BRACE));
 					}
 				}
 			}
@@ -448,10 +447,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					highlightRelatedRegions(null, item);
 				}
 			}
-			clearCache();
 			validateContents();
-			if (null != fOutlinePage)
-				fOutlinePage.update(getSelectedItem());
 		}
 	}
 
@@ -495,7 +491,13 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 							IResource.DEPTH_INFINITE);
 					String pageContents = getDocument().get();
 					Reader reader = new StringReader(pageContents);
-					new Template(getFile().getName(), reader, fmConfiguration);
+					/*
+					 * dummy is here to be able to suppres the warning about the
+					 * unused new Template()
+					 */
+					@SuppressWarnings("unused")
+					Template dummy = new Template(getFile().getName(), reader,
+							fmConfiguration);
 					reader.close();
 				}
 			} catch (ParseException e) {
@@ -548,5 +550,50 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 * Reconciles in the current thread using a newly create
+	 * {@link ReconcilingStrategy}.
+	 * <p>
+	 * For test purposes. Useful when testing functionality related to
+	 * {@link #getItemSet()} The {@link ReconcilingStrategy} configured inside
+	 * presentation reconciler works asynchronously and therefore
+	 * {@link #getItemSet()} returns an empty {@link ItemSet} when called from
+	 * the UI thread just after opening the editor. Calling this method before
+	 * {@link #getItemSet()} fixes the problem.
+	 * <p>
+	 * This method can be called from the UI thread.
+	 *
+	 */
+	public void reconcileInstantly() {
+		ReconcilingStrategy s = new ReconcilingStrategy(this);
+		s.setDocument(getDocument());
+		List<ITypedRegion> regions = s.parseRegions();
+		reconcile(regions);
+	}
+
+	public void reconcile(List<ITypedRegion> regions) {
+		/* re-create the model in the reconciler thread */
+		final ItemSet newItemSet = createItemSet(regions);
+
+		Runnable newItemSetTask = new Runnable() {
+			@Override
+			public void run() {
+				Editor.this.itemSet = newItemSet;
+				if (null != Editor.this.fOutlinePage) {
+					Editor.this.fOutlinePage.refresh();
+				}
+			}
+		};
+		/* make sure to run in the UI thread */
+		if (Thread.currentThread() == Display.getCurrent().getThread()) {
+			/* we are in the UI thread - run synchrounously */
+			newItemSetTask.run();
+		} else {
+			/* run asynchronously */
+			Display.getDefault().asyncExec(newItemSetTask);
+		}
+
 	}
 }

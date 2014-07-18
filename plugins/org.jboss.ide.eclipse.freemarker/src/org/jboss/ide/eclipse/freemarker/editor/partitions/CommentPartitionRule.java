@@ -19,57 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.lang;
+package org.jboss.ide.eclipse.freemarker.editor.partitions;
+
+import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
- * FTL keywords.
+ * A {@link MultiLineRule} that matches an FTL comments and marks them as
+ * the {@link PartitionType#DIRECTIVE_END} partition.
  *
- * @since 1.4.0
  * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
- *
+ * @since 1.4.0
  */
-public enum Keyword {
-	include,
-	import_("import"), //$NON-NLS-1$
-	assign,
-	local,
-	global,
-	break_("break"), //$NON-NLS-1$
-	nested,
-	return_("return"), //$NON-NLS-1$
-	stop,
-	list,
-	if_("if"), //$NON-NLS-1$
-	else_("else"), //$NON-NLS-1$
-	else_if,
-	switch_("switch"), //$NON-NLS-1$
-	case_("case"), //$NON-NLS-1$
-	default_("default"), //$NON-NLS-1$
-	macro,
-	ftl,
-	function_("function"), //$NON-NLS-1$
-	true_("true"), //$NON-NLS-1$
-	false_("false"), //$NON-NLS-1$
-	gt,
-	gte,
-	lt,
-	lte,
-	as,
-	in,
-	using
-	;
+public class CommentPartitionRule extends MultiLineRule implements SyntaxModeListener {
 
-	private final String keyword;
-
-	private Keyword(String keyword) {
-		this.keyword = keyword;
-	}
-	private Keyword() {
-		this.keyword = this.name();
+	public CommentPartitionRule() {
+		super(SyntaxMode.getDefault().getCommentStart(), SyntaxMode.getDefault().getCommentEnd(), new Token(PartitionType.COMMENT.name()));
 	}
 
+	/**
+	 * @see org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener#syntaxModeChanged(org.jboss.ide.eclipse.freemarker.lang.SyntaxMode)
+	 */
 	@Override
-	public String toString() {
-		return keyword;
+	public void syntaxModeChanged(SyntaxMode syntaxMode) {
+		fStartSequence = syntaxMode.getCommentStart().toCharArray();
+		fEndSequence = syntaxMode.getCommentEnd().toCharArray();
 	}
+
 }

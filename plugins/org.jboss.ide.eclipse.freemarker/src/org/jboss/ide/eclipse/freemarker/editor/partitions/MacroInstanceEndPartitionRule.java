@@ -19,22 +19,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.editor.rules;
+package org.jboss.ide.eclipse.freemarker.editor.partitions;
 
-import org.jboss.ide.eclipse.freemarker.lang.Directive;
-import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
- * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
+ * A {@link MultiLineRule} that matches an FTL macro instance end tags, such as {@code </@myMacro>} and marks them as
+ * the {@link PartitionType#MACRO_INSTANCE_END} partitions.
+ *
+ * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
+ * @since 1.4.0
  */
-public class MacroInstanceRule extends DirectiveRule {
+public class MacroInstanceEndPartitionRule extends MultiLineRule implements SyntaxModeListener {
 
-	public MacroInstanceRule(Directive directive) {
-		super(directive, false);
+	public MacroInstanceEndPartitionRule() {
+		super(SyntaxMode.getDefault().getMacroInstanceEnd(), SyntaxMode.getDefault().getTagEnd(), new Token(PartitionType.MACRO_INSTANCE_END.name()));
 	}
 
 	@Override
-	protected char getIdentifierChar() {
-		return LexicalConstants.AT;
+	public void syntaxModeChanged(SyntaxMode syntaxMode) {
+		fStartSequence = syntaxMode.getMacroInstanceEnd().toCharArray();
+		fEndSequence = syntaxMode.getTagEnd().toCharArray();
 	}
+
 }
