@@ -52,7 +52,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	private static final String CHECK_LINE2 = "on line "; //$NON-NLS-1$
 	private static final String CHECK_TEMPLATE = "template:"; //$NON-NLS-1$
 	private static final String CHECK_TEMPLATE2 = " in "; //$NON-NLS-1$
-	
+
 	@Override
 	public void init(IConsole cons) {
 		this.console = cons;
@@ -102,13 +102,13 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 					catch (Exception e) {
 						// we can still proceed if we don't get the line number
 					}
-					
+
 					IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-					
+
 					List<IResource> files = new ArrayList<IResource>();
 					for (int i = 0; i < projects.length; i++) {
 						IProject project = projects[i];
-						//FIXME: javaProject is not used. Fid out if it can be removed or if it should be 
+						//FIXME: javaProject is not used. Fid out if it can be removed or if it should be
 						// used in populateMatchingFiles()
 						IJavaProject javaProject = JavaCore.create(project);
 						fileName = fileName.replace('\\', '/');

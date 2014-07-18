@@ -33,6 +33,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 public abstract class AbstractItem implements Item {
 
@@ -162,7 +163,7 @@ public abstract class AbstractItem implements Item {
 		int cursorPos = getCursorPosition(offset);
 		List<String> arr = new ArrayList<String>();
 		StringBuilder current = new StringBuilder();
-		Stack<String> currentStack = new Stack<String>();
+		Stack<Character> currentStack = new Stack<Character>();
 		boolean escape = false;
 		boolean doEscape = false;
 		boolean doAppend = true;
@@ -176,17 +177,17 @@ public abstract class AbstractItem implements Item {
 				actualOffset = totalOffsetCount;
 				indexOffset = offsetCount;
 				actualIndexOffset = offset - cursorPos - indexOffset;
-				if (c == ' ') nextCharSpace = true;
+				if (c == LexicalConstants.SPACE) nextCharSpace = true;
 			}
 			totalOffsetCount++;
-			if (c == ' ' || c == '=' || c == '\r' || c == '\n') {
+			if (c == LexicalConstants.SPACE || c == LexicalConstants.EQUALS || c == LexicalConstants.CR || c == LexicalConstants.LF) {
 				// we're probably going to split here
 				if (current.length() != 0) {
 					if (currentStack.size() == 0) {
 						arr.add(current.toString());
 						current = new StringBuilder();
 						offsetCount = 0;
-						if (c == '=') {
+						if (c == LexicalConstants.EQUALS) {
 							arr.add("="); //$NON-NLS-1$
 							current = new StringBuilder();
 						}
@@ -203,32 +204,32 @@ public abstract class AbstractItem implements Item {
 				}
 			}
 			if (!escape) {
-				if (c == '\"') {
+				if (c == LexicalConstants.QUOT) {
 					if (currentStack.size() > 0) {
-						if (currentStack.peek() == "\"") //$NON-NLS-1$
+						if (currentStack.peek().charValue() == LexicalConstants.QUOT)
 							currentStack.pop();
 						else
-							currentStack.push("\""); //$NON-NLS-1$
+							currentStack.push(Character.valueOf(c));
 					}
 					else
-						currentStack.push("\""); //$NON-NLS-1$
+						currentStack.push(Character.valueOf(c));
 
 				}
-				else if (c == '(') {
-					currentStack.push("("); //$NON-NLS-1$
+				else if (c == LexicalConstants.LEFT_PARENTHESIS) {
+					currentStack.push(Character.valueOf(c));
 				}
-				else if (c == ')') {
-					if (currentStack.size() > 0 && currentStack.peek().equals(")")) //$NON-NLS-1$
+				else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
+					if (currentStack.size() > 0 && currentStack.peek().charValue() == LexicalConstants.RIGHT_PARENTHESIS)
 						currentStack.pop();
 				}
-				else if (c == '{') {
-					currentStack.push("{"); //$NON-NLS-1$
+				else if (c == LexicalConstants.LEFT_BRACE) {
+					currentStack.push(Character.valueOf(c));
 				}
-				else if (c == '}') {
-					if (currentStack.size() > 0 && currentStack.peek().equals("}")) //$NON-NLS-1$
+				else if (c == LexicalConstants.RIGHT_BRACE) {
+					if (currentStack.size() > 0 && currentStack.peek().charValue() == LexicalConstants.LEFT_BRACE)
 						currentStack.pop();
 				}
-				else if (c == '\\') {
+				else if (c == LexicalConstants.BACKSLASH) {
 					doEscape = true;
 				}
 				else {
@@ -412,7 +413,7 @@ public abstract class AbstractItem implements Item {
 		return null;
 	}
 
-	private static final char[] descriptorTokens = new char[]{'/','#','@','[',']','<','>'};
+	private static final char[] descriptorTokens = new char[]{LexicalConstants.SLASH,LexicalConstants.HASH,LexicalConstants.AT,LexicalConstants.LEFT_SQUARE_BRACKET,LexicalConstants.RIGHT_SQUARE_BRACKET,LexicalConstants.LEFT_ANGLE_BRACKET,LexicalConstants.RIGHT_ANGLE_BRACKET};
 	public char[] getDescriptors () {
 		return descriptorTokens;
 	}
@@ -447,14 +448,14 @@ public abstract class AbstractItem implements Item {
 			String content = getContents();
 			for (int i=0; i<content.length(); i++) {
 				char c = content.charAt(i);
-				if (c == '\"') {
+				if (c == LexicalConstants.QUOT) {
 					return null;
 				}
-				else if (c == '?') {
+				else if (c == LexicalConstants.QUESTION_MARK) {
 					firstToken = sb.toString();
 					break;
 				}
-				else if (c == ' ' || c == '(' || c == ')' && sb.length() > 0) {
+				else if (c == LexicalConstants.SPACE || c == LexicalConstants.LEFT_PARENTHESIS || c == LexicalConstants.RIGHT_PARENTHESIS && sb.length() > 0) {
 					firstToken = sb.toString();
 					break;
 				}

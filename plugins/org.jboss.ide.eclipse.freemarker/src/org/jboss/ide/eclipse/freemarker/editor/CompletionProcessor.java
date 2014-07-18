@@ -21,7 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +39,7 @@ import org.eclipse.swt.graphics.Image;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.model.CompletionDirective;
 import org.jboss.ide.eclipse.freemarker.model.CompletionInterpolation;
 import org.jboss.ide.eclipse.freemarker.model.CompletionMacroInstance;
@@ -50,128 +50,159 @@ import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
-public class CompletionProcessor extends TemplateCompletionProcessor implements IContentAssistProcessor {
+public class CompletionProcessor extends TemplateCompletionProcessor implements
+		IContentAssistProcessor {
 
 	private Editor editor;
 
 	private static final ICompletionProposal[] NO_COMPLETIONS = new ICompletionProposal[0];
 
-	public CompletionProcessor (Editor editor) {
+	public CompletionProcessor(Editor editor) {
 		this.editor = editor;
 	}
 
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
+			int offset) {
 		try {
 			ItemSet directiveSet = editor.getItemSet();
 
 			Map<String, Class<?>> context = new HashMap<String, Class<?>>();
-			ContextValue[] values = ConfigurationManager.getInstance(editor.getProject()).getContextValues(editor.getFile(), true);
-			for (int i=0; i<values.length; i++) {
+			ContextValue[] values = ConfigurationManager.getInstance(
+					editor.getProject()).getContextValues(editor.getFile(),
+					true);
+			for (int i = 0; i < values.length; i++) {
 				context.put(values[i].name, values[i].objClass);
 			}
 
 			Item directive = directiveSet.getSelectedItem(offset);
 			if (null != directive) {
 				return directive.getCompletionProposals(offset, context);
-			}
-			else {
+			} else {
 				// we might be starting something
 				Item item = editor.getItemSet().getPreviousItem(offset);
 				int topOffset = 0;
-				if (null != item) topOffset = item.getRegion().getOffset() + item.getRegion().getLength();
+				if (null != item)
+					topOffset = item.getRegion().getOffset()
+							+ item.getRegion().getLength();
 				// check for directives and macro calls
 				try {
-					for (int i=offset-1; i>=topOffset; i--) {
+					for (int i = offset - 1; i >= topOffset; i--) {
 						char c = editor.getDocument().getChar(i);
-						if (c == '>' || c == ']') break;
-						if (c == '<' || c == '[') {
+						if (c == LexicalConstants.RIGHT_ANGLE_BRACKET || c == LexicalConstants.RIGHT_SQUARE_BRACKET)
+							break;
+						if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
 							if (editor.getDocument().getLength() > i) {
-								char c2 = editor.getDocument().getChar(i+1);
-								if (c2 == '#') {
-									CompletionDirective completionDirective = new CompletionDirective(editor.getItemSet(),
-											i, offset - i, (ISourceViewer) viewer, (IResource) editor.getFile());
-									return completionDirective.getCompletionProposals(offset, context);
-								}
-								else if (c2 == '@') {
+								char c2 = editor.getDocument().getChar(i + 1);
+								if (c2 == LexicalConstants.HASH) {
+									CompletionDirective completionDirective = new CompletionDirective(
+											editor.getItemSet(), i, offset - i,
+											(ISourceViewer) viewer,
+											(IResource) editor.getFile());
+									return completionDirective
+											.getCompletionProposals(offset,
+													context);
+								} else if (c2 == LexicalConstants.AT) {
 									CompletionMacroInstance completionMacroInstance = new CompletionMacroInstance(
-											editor.getItemSet(), editor.getDocument().get(i, offset - i), i, editor.getFile());
-									return completionMacroInstance.getCompletionProposals(offset, context);
-								}
-								else if (c2 == '/') {
-									if (editor.getDocument().getLength() < i+3
-											|| editor.getDocument().getChar(i+2) == ' '
-												|| editor.getDocument().getChar(i+2) == '\r'
-													|| editor.getDocument().getChar(i+2) == '\n') {
-										Item stackItem = editor.getItemSet().getPreviousStartItem(offset);
+											editor.getItemSet(), editor
+													.getDocument().get(i,
+															offset - i), i,
+											editor.getFile());
+									return completionMacroInstance
+											.getCompletionProposals(offset,
+													context);
+								} else if (c2 == LexicalConstants.SLASH) {
+									if (editor.getDocument().getLength() < i + 3
+											|| editor.getDocument().getChar(
+													i + 2) == LexicalConstants.SPACE
+											|| editor.getDocument().getChar(
+													i + 2) == LexicalConstants.CR
+											|| editor.getDocument().getChar(
+													i + 2) == LexicalConstants.LF) {
+										Item stackItem = editor.getItemSet()
+												.getPreviousStartItem(offset);
 										StringBuilder value = new StringBuilder();
-										if (null != stackItem && stackItem instanceof MacroInstance)
-											value.append('@');
+										if (null != stackItem
+												&& stackItem instanceof MacroInstance)
+											value.append(LexicalConstants.AT);
 										else
-											value.append('#');
+											value.append(LexicalConstants.HASH);
 										String name = null;
-										if (null != stackItem) name = stackItem.getFirstToken();
+										if (null != stackItem)
+											name = stackItem.getFirstToken();
 										if (null != name)
 											value.append(name);
-										if (c == '<')
-											value.append('>');
+										if (c == LexicalConstants.LEFT_ANGLE_BRACKET)
+											value.append(LexicalConstants.RIGHT_ANGLE_BRACKET);
 										else
-											value.append(']');
+											value.append(LexicalConstants.RIGHT_SQUARE_BRACKET);
 										ICompletionProposal completionProposal = new CompletionProposal(
-												value.toString(), offset, 0, offset+value.toString().length());
-										return new ICompletionProposal[]{completionProposal};
+												value.toString(), offset, 0,
+												offset
+														+ value.toString()
+																.length());
+										return new ICompletionProposal[] { completionProposal };
 									}
-								}
-								else {
+								} else {
 									return NO_COMPLETIONS;
 								}
 							}
 						}
 					}
-				}
-				catch (BadLocationException e) {
+				} catch (BadLocationException e) {
 					return NO_COMPLETIONS;
 				}
 				// check for interpolations
 				try {
-					for (int i=offset-1; i>=topOffset; i--) {
+					for (int i = offset - 1; i >= topOffset; i--) {
 						char c = editor.getDocument().getChar(i);
-						if (c == '\n') break;
-						else if (c == '$') {
+						if (c == LexicalConstants.LF)
+							break;
+						else if (c == LexicalConstants.DOLLAR) {
 							if (editor.getDocument().getLength() > i) {
-								char c2 = editor.getDocument().getChar(i+1);
-								if (c2 == '{') {
+								char c2 = editor.getDocument().getChar(i + 1);
+								if (c2 == LexicalConstants.LEFT_BRACE) {
 									int j = offset;
 									while (editor.getDocument().getLength() > j) {
-										char c3 = editor.getDocument().getChar(j);
-										if (Character.isWhitespace(c3) || c3 == '(' || c3 == '.' || c3 == ')' || c3 == '}' || c3 == '?') {
+										char c3 = editor.getDocument().getChar(
+												j);
+										if (Character.isWhitespace(c3)
+												|| c3 == LexicalConstants.LEFT_PARENTHESIS || c3 == LexicalConstants.PERIOD
+												|| c3 == LexicalConstants.RIGHT_PARENTHESIS || c3 == LexicalConstants.RIGHT_BRACE
+												|| c3 == LexicalConstants.QUESTION_MARK) {
 											// j = j-1;
 											break;
 										}
 										j++;
 									}
 									CompletionInterpolation interpolation = new CompletionInterpolation(
-											editor.getItemSet(), editor.getDocument().get(i, j - i), i, editor.getFile());
-									interpolation.setParentItem(editor.getItemSet().getPreviousStartItem(offset));
-									return interpolation.getCompletionProposals(offset, context);
+											editor.getItemSet(), editor
+													.getDocument()
+													.get(i, j - i), i,
+											editor.getFile());
+									interpolation.setParentItem(editor
+											.getItemSet().getPreviousStartItem(
+													offset));
+									return interpolation
+											.getCompletionProposals(offset,
+													context);
 								}
 							}
 						}
 					}
-				}
-				catch (BadLocationException e) {
+				} catch (BadLocationException e) {
 					return NO_COMPLETIONS;
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			Plugin.log(e);
 		}
 		return NO_COMPLETIONS;
 	}
 
 	@Override
-	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
+	protected TemplateContextType getContextType(ITextViewer viewer,
+			IRegion region) {
 		return null;
 	}
 
@@ -187,6 +218,6 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements 
 
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[]{'.', '$', '#', '@', '/', '?', '{'};
+		return new char[] { LexicalConstants.PERIOD, LexicalConstants.DOLLAR, LexicalConstants.HASH, LexicalConstants.AT, LexicalConstants.SLASH, LexicalConstants.QUESTION_MARK, LexicalConstants.LEFT_BRACE };
 	}
 }

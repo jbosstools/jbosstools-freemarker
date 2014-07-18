@@ -21,27 +21,19 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor.rules;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class GenericDirectiveRule extends MultiLineRule {
-
-	protected static final char[] START_SEQUENCES = {'<', '['};
-	protected static Map<Character, Character> END_SEQUENCES = new HashMap<Character, Character>(START_SEQUENCES.length);
-	
-	static {
-		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[0]), Character.valueOf('>'));
-		END_SEQUENCES.put(Character.valueOf(START_SEQUENCES[1]), Character.valueOf(']'));
-	}
 
 	public GenericDirectiveRule(IToken token) {
 		super("!", "!", token); //$NON-NLS-1$ //$NON-NLS-2$
@@ -55,42 +47,41 @@ public class GenericDirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = END_SEQUENCES.get(Character.valueOf((char) startChar)).charValue();
+		char endChar = ParserUtils.getMatchingRightBracket(startChar);
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
-		boolean previousWasEscapeCharacter = false;	
-		Stack<String> keyStack = new Stack<String>();
+		boolean previousWasEscapeCharacter = false;
+		Stack<Character> keyStack = new Stack<Character>();
 		int charsRead = 0;
-		while ((c= scanner.read()) != ICharacterScanner.EOF) {
+		while ((c = scanner.read()) != ICharacterScanner.EOF) {
 			charsRead ++;
-			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (c == startChar) {
 				if (keyStack.size() == 0) {
 					break;
 				}
 			}
-			else if (c == '\"') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.QUOT) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					keyStack.pop();
 				}
 				else {
-					keyStack.push("\""); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == '(') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.LEFT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
 				else {
-					keyStack.push("("); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == ')') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
-				else if (keyStack.size() > 0 && keyStack.peek().equals("(")) { //$NON-NLS-1$
+				else if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.LEFT_PARENTHESIS) {
 					keyStack.pop();
 				}
 			}
@@ -139,9 +130,7 @@ public class GenericDirectiveRule extends MultiLineRule {
 				return fToken;
 		} else {
 			int c= scanner.read();
-			@SuppressWarnings("unused")
-			char cCheck = (char) c;
-			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
+			if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
 				// check for the sequence identifier
 				int c2 = scanner.read();
 				if (c2 == getIdentifierChar()) {
@@ -158,6 +147,6 @@ public class GenericDirectiveRule extends MultiLineRule {
 	}
 
 	protected char getIdentifierChar() {
-		return '#';
+		return LexicalConstants.HASH;
 	}
 }

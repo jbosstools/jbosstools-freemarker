@@ -33,6 +33,7 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.InterpolationRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.StringSubRule;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
@@ -41,6 +42,9 @@ import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
  */
 public class XMLTagScanner extends RuleBasedScanner {
 
+	private static final String DOLLAR_LEFT_BRACE = new StringBuilder(2)
+			.append(LexicalConstants.DOLLAR)
+			.append(LexicalConstants.LEFT_BRACE).toString();
 	private IToken lastToken;
 
 	@Override
@@ -49,28 +53,29 @@ public class XMLTagScanner extends RuleBasedScanner {
 		return lastToken;
 	}
 
-	public IToken getLastToken () {
+	public IToken getLastToken() {
 		return lastToken;
 	}
 
 	public XMLTagScanner() {
-		IToken string =
-			new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
-		IToken interpolation =
-			new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
+		IToken string = new Token(new TextAttribute(Preferences.getInstance()
+				.getColor(PreferenceKey.COLOR_STRING)));
+		IToken interpolation = new Token(new TextAttribute(Preferences
+				.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
 
 		List<IRule> l = new ArrayList<IRule>();
 
-		l.add(new StringSubRule("\"", "${", 2, string)); //$NON-NLS-1$ //$NON-NLS-2$
-		l.add(new InterpolationRule('$', interpolation));
-		l.add(new InterpolationRule('#', interpolation));
+		l.add(new StringSubRule(LexicalConstants.QUOT_STRING,
+				DOLLAR_LEFT_BRACE, 2, string));
+		l.add(new InterpolationRule(LexicalConstants.DOLLAR, interpolation));
+		l.add(new InterpolationRule(LexicalConstants.HASH, interpolation));
 
-		l.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-		l.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		l.add(new SingleLineRule(LexicalConstants.QUOT_STRING,
+				LexicalConstants.QUOT_STRING, string,
+				LexicalConstants.BACKSLASH));
+		l.add(new SingleLineRule(LexicalConstants.APOS_STRING,
+				LexicalConstants.APOS_STRING, string,
+				LexicalConstants.BACKSLASH));
 		l.add(new WhitespaceRule(new WhitespaceDetector()));
 
 		setRules(l.toArray(new IRule[l.size()]));

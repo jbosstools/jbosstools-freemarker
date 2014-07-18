@@ -53,5 +53,20 @@ public interface LexicalConstants {
 	char a = 'a';
 	char DOLLAR = '$';
 	char LEFT_BRACE = '{';
+	char RIGHT_BRACE = '}';
 	char x = 'x';
+	char PERIOD = '.';
+	char HASH = '#';
+	char LEFT_ANGLE_BRACKET = '<';
+	char LEFT_SQUARE_BRACKET = '[';
+	char RIGHT_ANGLE_BRACKET = '>';
+	char RIGHT_SQUARE_BRACKET = ']';
+	char LEFT_PARENTHESIS = '(';
+	char RIGHT_PARENTHESIS = ')';
+	char AT = '@';
+	char SLASH = '/';
+	char QUESTION_MARK = '?';
+	char EXCLAMATION_MARK = '!';
+	String QUOT_STRING = String.valueOf(QUOT);
+	String APOS_STRING = String.valueOf(APOS);
 }

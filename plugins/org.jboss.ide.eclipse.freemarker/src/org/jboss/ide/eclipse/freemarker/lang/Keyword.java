@@ -41,11 +41,12 @@ public enum Keyword {
 	list("list"), //$NON-NLS-1$
 	if_("if"), //$NON-NLS-1$
 	else_("else"), //$NON-NLS-1$
-	else_if("else if"), //$NON-NLS-1$
+	else_if("elseif"), //$NON-NLS-1$
 	switch_("switch"), //$NON-NLS-1$
 	case_("case"), //$NON-NLS-1$
 	default_("default"), //$NON-NLS-1$
 	macro("macro"), //$NON-NLS-1$
+	macro_instance(""), //$NON-NLS-1$
 	ftl("ftl"), //$NON-NLS-1$
 	function_("function"), //$NON-NLS-1$
 

@@ -28,6 +28,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 
 public class ItemFactory {
@@ -152,8 +153,8 @@ public class ItemFactory {
 			int offset = region.getOffset();
 			int stopIndex = offset + region.getLength();
 			char c = viewer.getDocument().getChar(offset);
-			while (c != ' ' && c != '>' && offset <= stopIndex) {
-				if (c != '<' && c != '#' && c != '/')
+			while (c != LexicalConstants.SPACE && c != LexicalConstants.RIGHT_ANGLE_BRACKET && offset <= stopIndex) {
+				if (c != LexicalConstants.LEFT_ANGLE_BRACKET && c != LexicalConstants.HASH && c != LexicalConstants.SLASH)
 					sb.append(c);
 				c = viewer.getDocument().getChar(++offset);
 			}

@@ -24,18 +24,20 @@ package org.jboss.ide.eclipse.freemarker.editor.rules;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class DirectiveRuleEnd extends DirectiveRule {
 
-	public DirectiveRuleEnd(String name, IToken token) {
-		super(name, token, true);
+	public DirectiveRuleEnd(Directive directive) {
+		super(directive, true);
 	}
 
-	public DirectiveRuleEnd(String name, IToken token, boolean nameOnly) {
-		super(name, token, nameOnly);
+	public DirectiveRuleEnd(Directive directive, boolean nameOnly) {
+		super(directive, nameOnly);
 	}
 
 	/**
@@ -57,9 +59,9 @@ public class DirectiveRuleEnd extends DirectiveRule {
 			int c= scanner.read();
 			@SuppressWarnings("unused")
 			char cCheck = (char) c;
-			if (c == START_ANGLE_BRACKET || c == START_ANGLE_BRACKET) {
+			if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_ANGLE_BRACKET) {
 				int c2 = scanner.read();
-				if (c2 == '/') {
+				if (c2 == LexicalConstants.SLASH) {
 					// check for the sequence identifier
 					c2 = scanner.read();
 					if (c2 == getIdentifierChar()) {

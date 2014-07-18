@@ -43,6 +43,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -179,7 +180,7 @@ public class NameFragment extends AbstractFragment {
 				if (m.getParameterTypes().length > 0 && mName.startsWith("get") && mName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
 					StringBuilder display = new StringBuilder();
 					display.append(mName);
-					display.append('(');
+					display.append(LexicalConstants.LEFT_PARENTHESIS);
 					for (int j=0; j<m.getParameterTypes().length; j++) {
 						if (j > 0) display.append(", "); //$NON-NLS-1$
 						display.append(m.getParameterTypes()[j].getName());

@@ -523,4 +523,19 @@ public class ParserUtils implements LexicalConstants {
 		return input.charAt(offset) == ch;
 	}
 
+	public static char getMatchingRightBracket(int startCharacter) {
+		switch (startCharacter) {
+		case LexicalConstants.LEFT_ANGLE_BRACKET:
+			return LexicalConstants.RIGHT_ANGLE_BRACKET;
+		case LexicalConstants.LEFT_SQUARE_BRACKET:
+			return LexicalConstants.RIGHT_SQUARE_BRACKET;
+		default:
+			throw new IllegalArgumentException("getMatchingEndCharacter() supported only for startCharacter '"+ LexicalConstants.LEFT_ANGLE_BRACKET +"' or '"+ LexicalConstants.LEFT_SQUARE_BRACKET +"'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+
+	public static boolean isWhitespace(char c) {
+		return (c == LexicalConstants.SPACE || c == LexicalConstants.TAB || c == LexicalConstants.LF || c == LexicalConstants.CR);
+	}
+
 }

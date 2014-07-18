@@ -27,36 +27,25 @@ import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class DirectiveRule extends MultiLineRule {
 
-	protected static final char START_ANGLE_BRACKET = '<';
-	protected static final char START_SQUARE_BRACKET = '[';
-	protected static final char END_ANGLE_BRACKET = '>';
-	protected static final char END_SQUARE_BRACKET = ']';
-
 	protected String name;
 	protected boolean nameOnly = false;
 
-	public static char getMatchingEndCharacter(int startCharacter) {
-		switch (startCharacter) {
-		case START_ANGLE_BRACKET:
-			return END_ANGLE_BRACKET;
-		case START_SQUARE_BRACKET:
-			return END_SQUARE_BRACKET;
-		default:
-			throw new IllegalArgumentException("getMatchingEndCharacter() supported only for startCharacter '"+ START_ANGLE_BRACKET +"' or '"+ START_SQUARE_BRACKET +"'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+	public DirectiveRule(Directive directive) {
+		this(directive.getKeyword().toString(), new Token(directive.name()), false);
 	}
-
-	public DirectiveRule(String name, IToken token) {
-		this(name, token, false);
+	public DirectiveRule(Directive directive, boolean nameOnly) {
+		this(directive.getKeyword().toString(), new Token(directive.name()), nameOnly);
 	}
-
-	public DirectiveRule(String name, IToken token, boolean nameOnly) {
+	private DirectiveRule(String name, IToken token, boolean nameOnly) {
 		super("!", "!", token); //$NON-NLS-1$ //$NON-NLS-2$
 		this.name = name;
 		this.nameOnly = nameOnly;
@@ -86,15 +75,14 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner, int startChar) {
-		char endChar = getMatchingEndCharacter(startChar);
+		char endChar = ParserUtils.getMatchingRightBracket(startChar);
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
 		boolean previousWasEscapeCharacter = false;
-		Stack<String> keyStack = new Stack<String>();
+		Stack<Character> keyStack = new Stack<Character>();
 		int charsRead = 0;
-		while ((c= scanner.read()) != ICharacterScanner.EOF) {
+		while ((c = scanner.read()) != ICharacterScanner.EOF) {
 			charsRead ++;
-			@SuppressWarnings("unused")
 			char cCheck = (char) c;
 			if (nameOnly) {
 				if (c != endChar) {
@@ -108,37 +96,37 @@ public class DirectiveRule extends MultiLineRule {
 			else if (c == startChar) {
 				int cNext = scanner.read();
 				if (cNext == ICharacterScanner.EOF) break;
-				if (cNext == '#' || cNext == '@') {
+				if (cNext == LexicalConstants.HASH || cNext == LexicalConstants.AT) {
 					if (keyStack.size() == 0) {
 						break;
 					}
 				}
 				else {
-					keyStack.push(new String(new char[]{(char) c}));
+					keyStack.push(Character.valueOf(cCheck));
 					scanner.unread();
 				}
 			}
-			else if (c == '\"') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.QUOT) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					keyStack.pop();
 				}
 				else {
-					keyStack.push("\""); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == '(') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.LEFT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
 				else {
-					keyStack.push("("); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == ')') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
-				else if (keyStack.size() > 0 && keyStack.peek().equals("(")) { //$NON-NLS-1$
+				else if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.LEFT_PARENTHESIS) {
 					keyStack.pop();
 				}
 			}
@@ -151,7 +139,7 @@ public class DirectiveRule extends MultiLineRule {
 				if (keyStack.size() == 0) {
 					return true;
 				}
-				else if (keyStack.peek().equals(new String(new char[]{(char) startChar}))) {
+				else if (keyStack.peek().charValue() == startChar) {
 					keyStack.pop();
 				}
 			}
@@ -168,8 +156,9 @@ public class DirectiveRule extends MultiLineRule {
 			previousWasEscapeCharacter = (c == fEscapeCharacter);
 		}
 		if (fBreaksOnEOF) return true;
-		for (int i=0; i<charsRead; i++)
+		for (int i=0; i<charsRead; i++) {
 			scanner.unread();
+		}
 		return false;
 	}
 
@@ -192,7 +181,7 @@ public class DirectiveRule extends MultiLineRule {
 			int c= scanner.read();
 			@SuppressWarnings("unused")
 			char cCheck = (char) c;
-			if (c == START_ANGLE_BRACKET || c == START_ANGLE_BRACKET) {
+			if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
 				// check for the sequence identifier
 				int c2 = scanner.read();
 				if (c2 == getIdentifierChar()) {
@@ -209,6 +198,6 @@ public class DirectiveRule extends MultiLineRule {
 	}
 
 	protected char getIdentifierChar() {
-		return '#';
+		return LexicalConstants.HASH;
 	}
 }

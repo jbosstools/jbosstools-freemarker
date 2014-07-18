@@ -46,6 +46,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.jboss.ide.eclipse.freemarker.Messages;
 import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -161,9 +162,9 @@ public class ConfigurationManager {
 	private void writeMacroLibrary(StringBuilder sb) {
 		for (Iterator<MacroLibrary> i=macroLibrary.values().iterator(); i.hasNext(); ) {
 			MacroLibrary ml = i.next();
-			sb.append('\t').append('\t');
+			sb.append(LexicalConstants.TAB).append(LexicalConstants.TAB);
 			ml.toXML(sb);
-			sb.append('\n');
+			sb.append(LexicalConstants.LF);
 		}
 	}
 

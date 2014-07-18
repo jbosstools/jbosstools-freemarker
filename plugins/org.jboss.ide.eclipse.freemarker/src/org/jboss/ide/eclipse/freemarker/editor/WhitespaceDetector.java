@@ -22,6 +22,7 @@
 package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -30,6 +31,6 @@ public class WhitespaceDetector implements IWhitespaceDetector {
 
 	@Override
 	public boolean isWhitespace(char c) {
-		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+		return ParserUtils.isWhitespace(c);
 	}
 }

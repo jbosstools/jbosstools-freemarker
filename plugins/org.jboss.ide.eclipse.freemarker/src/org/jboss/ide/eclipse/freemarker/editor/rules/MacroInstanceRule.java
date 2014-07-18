@@ -21,19 +21,20 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor.rules;
 
-import org.eclipse.jface.text.rules.IToken;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class MacroInstanceRule extends DirectiveRule {
 
-	public MacroInstanceRule(IToken token) {
-		super("", token, false); //$NON-NLS-1$
+	public MacroInstanceRule(Directive directive) {
+		super(directive, false);
 	}
 
 	@Override
 	protected char getIdentifierChar() {
-		return '@';
+		return LexicalConstants.AT;
 	}
 }

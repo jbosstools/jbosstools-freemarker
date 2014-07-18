@@ -40,13 +40,14 @@ import org.jboss.ide.eclipse.freemarker.editor.rules.MacroInstanceRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.MacroInstanceRuleEnd;
 import org.jboss.ide.eclipse.freemarker.editor.rules.XmlRule;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class PartitionScanner extends RuleBasedPartitionScanner {
 
-	public final static String FTL_COMMENT = "Directive.__ftl_comment"; //$NON-NLS-1$
+	public final static String FTL_COMMENT = "__ftl_comment"; //$NON-NLS-1$
 	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
 	public final static String STRING = "__string"; //$NON-NLS-1$
@@ -94,47 +95,47 @@ public class PartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new MultiLineRule("<#--", "-->", ftlComment)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MultiLineRule("[#--", "--]", ftlComment)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		rules.add(new DirectiveRule("ftl", new Token(Directive.__ftl_ftl_directive.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("if", new Token(Directive.__ftl_if_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("elseif", new Token(Directive.__ftl_else_if_directive.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("else", new Token(Directive.__ftl_if_else_directive.name()), true)); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("if", new Token(Directive.__ftl_if_directive_end.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_ftl_directive));
+		rules.add(new DirectiveRule(Directive.__ftl_if_directive_start));
+		rules.add(new DirectiveRule(Directive.__ftl_else_if_directive));
+		rules.add(new DirectiveRule(Directive.__ftl_if_else_directive, true));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_if_directive_end));
 
-		rules.add(new DirectiveRule("function", new Token(Directive.__ftl_function_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("function", new Token(Directive.__ftl_function_directive_end.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_function_directive_start));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_function_directive_end));
 
-		rules.add(new DirectiveRule("list", new Token(Directive.__ftl_list_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("list", new Token(Directive.__ftl_list_directive_end.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_list_directive_start));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_list_directive_end));
 
-		rules.add(new DirectiveRule("macro", new Token(Directive.__ftl_macro_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("macro", new Token(Directive.__ftl_macro_directive_end.name()))); //$NON-NLS-1$
-		rules.add(new MacroInstanceRule(new Token(Directive.__ftl_macro_instance_start.name())));
-		rules.add(new MacroInstanceRuleEnd(new Token(Directive.__ftl_macro_instance_end.name())));
+		rules.add(new DirectiveRule(Directive.__ftl_macro_directive_start));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_macro_directive_end));
+		rules.add(new MacroInstanceRule(Directive.__ftl_macro_instance_start));
+		rules.add(new MacroInstanceRuleEnd(Directive.__ftl_macro_instance_end));
 
-		rules.add(new DirectiveRule("switch", new Token(Directive.__ftl_switch_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("switch", new Token(Directive.__ftl_switch_directive_end.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("case", new Token(Directive.__ftl_case_directive_start.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("default", new Token(Directive.__ftl_case_default_start.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_switch_directive_start));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_switch_directive_end));
+		rules.add(new DirectiveRule(Directive.__ftl_case_directive_start));
+		rules.add(new DirectiveRule(Directive.__ftl_case_default_start));
 
-		rules.add(new DirectiveRule("assign", new Token(Directive.__ftl_assign.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("assign", new Token(Directive.__ftl_assign_end.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("local", new Token(Directive.__ftl_local.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("local", new Token(Directive.__ftl_local_end.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("global", new Token(Directive.__ftl_global.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRuleEnd("global", new Token(Directive.__ftl_global_end.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_assign));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_assign_end));
+		rules.add(new DirectiveRule(Directive.__ftl_local));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_local_end));
+		rules.add(new DirectiveRule(Directive.__ftl_global));
+		rules.add(new DirectiveRuleEnd(Directive.__ftl_global_end));
 
-		rules.add(new DirectiveRule("include", new Token(Directive.__ftl_include.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("import", new Token(Directive.__ftl_import.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("break", new Token(Directive.__ftl_break.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("stop", new Token(Directive.__ftl_stop.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("nested", new Token(Directive.__ftl_nested.name()))); //$NON-NLS-1$
-		rules.add(new DirectiveRule("return", new Token(Directive.__ftl_return.name()))); //$NON-NLS-1$
+		rules.add(new DirectiveRule(Directive.__ftl_include));
+		rules.add(new DirectiveRule(Directive.__ftl_import));
+		rules.add(new DirectiveRule(Directive.__ftl_break));
+		rules.add(new DirectiveRule(Directive.__ftl_stop));
+		rules.add(new DirectiveRule(Directive.__ftl_nested));
+		rules.add(new DirectiveRule(Directive.__ftl_return));
 
 		rules.add(new GenericDirectiveRule(new Token(Directive.__ftl_directive.name())));
 		rules.add(new GenericDirectiveRuleEnd(new Token(Directive.__ftl_directive_end.name())));
 
-		rules.add(new InterpolationRule('$', new Token(Directive.__ftl_interpolation.name())));
-		rules.add(new InterpolationRule('#', new Token(Directive.__ftl_interpolation.name())));
+		rules.add(new InterpolationRule(LexicalConstants.DOLLAR, new Token(Directive.__ftl_interpolation.name())));
+		rules.add(new InterpolationRule(LexicalConstants.HASH, new Token(Directive.__ftl_interpolation.name())));
 
 		rules.add(new XmlRule(new Token(XML_TAG)));
 

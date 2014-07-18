@@ -26,6 +26,7 @@ import java.util.Stack;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.MultiLineRule;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -33,7 +34,7 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 public class XmlRule extends MultiLineRule {
 
 	public XmlRule(IToken token) {
-		super("<", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
+		super(String.valueOf(LexicalConstants.LEFT_ANGLE_BRACKET), String.valueOf(LexicalConstants.RIGHT_ANGLE_BRACKET), token);
 	}
 	@Override
 	protected boolean sequenceDetected(
@@ -41,72 +42,78 @@ public class XmlRule extends MultiLineRule {
 		char[] sequence,
 		boolean eofAllowed) {
 		int c = scanner.read();
-		if (sequence[0] == '<') {
-			if (c == '?') {
+		if (sequence[0] == LexicalConstants.LEFT_ANGLE_BRACKET) {
+			if (c == LexicalConstants.QUESTION_MARK) {
 				// processing instruction - abort
 				scanner.unread();
 				return false;
 			}
-			if (c == '!') {
+			if (c == LexicalConstants.EXCLAMATION_MARK) {
 				scanner.unread();
 				// comment - abort
 				return false;
 			}
-			if (c == '#') {
+			if (c == LexicalConstants.HASH) {
 				scanner.unread();
 				// directive - abort
 				return false;
 			}
-		} else if (sequence[0] == '>') {
+		} else if (sequence[0] == LexicalConstants.RIGHT_ANGLE_BRACKET) {
 			scanner.unread();
 		}
 		return super.sequenceDetected(scanner, sequence, eofAllowed);
 	}
 
-	private static final int LT = '<';
-	private static final int LB = '[';
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
-		boolean previousWasEscapeCharacter = false;	
-		Stack<String> stack = new Stack<String>();
+		boolean previousWasEscapeCharacter = false;
+		Stack<Character> stack = new Stack<Character>();
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
 				// Skip the escaped character.
 				scanner.read();
 			} else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
-				if (sequenceDetected(scanner, fEndSequence, true))
+				if (sequenceDetected(scanner, fEndSequence, true)) {
 					return true;
+				}
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
 				for (int i= 0; i < delimiters.length; i++) {
 					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true)) {
-						if (!fEscapeContinuesLine || !previousWasEscapeCharacter)
+						if (!fEscapeContinuesLine || !previousWasEscapeCharacter) {
 							return true;
+						}
 					}
 				}
 			}
-			else if (c == '\"') {
-				if (stack.size() > 0 && stack.peek().equals("\"")) //$NON-NLS-1$
+			else if (c == LexicalConstants.QUOT) {
+				if (stack.size() > 0 && stack.peek().charValue() == LexicalConstants.QUOT) {
 					stack.pop();
+				}
 			}
-			else if (c == LT || c == LB) {
+			else if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
 				break;
 			}
-			else if (c == '$') {
+			else if (c == LexicalConstants.DOLLAR) {
 				int cNext = scanner.read();
-				if (cNext == ICharacterScanner.EOF) break;
-				else if (cNext == '{') {
-					stack.push(new String(new char[]{(char) c}));
+				if (cNext == ICharacterScanner.EOF) {
+					break;
+				}
+				else if (cNext == LexicalConstants.LEFT_BRACE) {
+					stack.push(Character.valueOf((char) c));
 					scanner.unread();
 				}
-				if (stack.size() == 0) break;
+				if (stack.size() == 0) {
+					break;
+				}
 			}
-			else if (c == '}') {
-				if (stack.size() > 0 && stack.peek().equals("{")) //$NON-NLS-1$
+			else if (c == LexicalConstants.RIGHT_BRACE) {
+				if (stack.size() > 0 && stack.peek().charValue() == LexicalConstants.LEFT_BRACE) {
 					stack.pop();
+				}
 			}
 			previousWasEscapeCharacter = (c == fEscapeCharacter);
 		}

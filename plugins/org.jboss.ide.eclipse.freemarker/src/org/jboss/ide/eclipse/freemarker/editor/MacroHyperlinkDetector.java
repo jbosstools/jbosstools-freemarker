@@ -30,6 +30,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.MacroLibrary;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
@@ -46,7 +47,7 @@ public class MacroHyperlinkDetector implements IHyperlinkDetector {
 		Item item = editor.getItemSet().getItem(region.getOffset());
 		if (null != item && item instanceof MacroInstance) {
 			MacroInstance instance = (MacroInstance) item;
-			int index = instance.getName().indexOf('.');
+			int index = instance.getName().indexOf(LexicalConstants.PERIOD);
 			if (index > 0) {
 				// it is from a macro library
 				String namespace = instance.getName().substring(0, index);

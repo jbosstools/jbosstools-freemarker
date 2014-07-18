@@ -124,7 +124,7 @@ public class AssignmentDirective extends AbstractDirective {
 			if (values.length >= 4) value = values[3];
 			Class<?> valueClass = null;
 			if (null != value && value.length() > 0) {
-				if (value.charAt(0) == '\"') valueClass = String.class;
+				if (value.charAt(0) == LexicalConstants.QUOT) valueClass = String.class;
 				else if (Character.isDigit(value.charAt(0))) valueClass = Number.class;
 				else {
 					CompletionInterpolation completionInterpolation =

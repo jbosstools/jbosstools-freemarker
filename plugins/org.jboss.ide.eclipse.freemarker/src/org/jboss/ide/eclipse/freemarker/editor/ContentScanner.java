@@ -29,14 +29,27 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
 public class ContentScanner implements ITokenScanner {
+	enum TokenType {
+		TYPE_UNKNOWN, TYPE_INTERPOLATION, TYPE_DIRECTIVE, TYPE_STRING, TYPE_BRACKET_EXPRESSION
+	}
+
+	private static final IToken STRING_TOKEN = createColoredToken(PreferenceKey.COLOR_STRING);
+	private static final IToken INTERPOLATION_TOKEN = createColoredToken(PreferenceKey.COLOR_INTERPOLATION);
+	private static final IToken DIRECTIVE_TOKEN = createColoredToken(PreferenceKey.COLOR_DIRECTIVE);
+
+	public static IToken createColoredToken(PreferenceKey preferenceKey) {
+		return new Token(new TextAttribute(Preferences.getInstance().getColor(
+				preferenceKey)));
+	}
 
 	private IDocument document;
 	private int endOffset;
-	private Stack<String> stack = new Stack<String>();
+	private Stack<TokenType> stack = new Stack<TokenType>();
 	private IToken defaultToken;
 	private int tokenOffset;
 	private int tokenLength;
@@ -44,17 +57,8 @@ public class ContentScanner implements ITokenScanner {
 
 	private int currentOffset;
 
-	public ContentScanner (IToken defaultToken) {
+	public ContentScanner(IToken defaultToken) {
 		this.defaultToken = defaultToken;
-		STRING_TOKEN = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_STRING)));
-		INTERPOLATION_TOKEN = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
-		DIRECTIVE_TOKEN = new Token(
-				new TextAttribute(
-						Preferences.getInstance().getColor(PreferenceKey.COLOR_DIRECTIVE)));
 	}
 
 	@Override
@@ -66,15 +70,6 @@ public class ContentScanner implements ITokenScanner {
 		this.stringTypes.clear();
 	}
 
-	private static String TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
-	private static String TYPE_INTERPOLATION = "INTERPOLATION"; //$NON-NLS-1$
-	private static String TYPE_DIRECTIVE = "DIRECTIVE"; //$NON-NLS-1$
-	private static String TYPE_STRING = "STRING"; //$NON-NLS-1$
-
-	private static IToken STRING_TOKEN;
-	private static IToken INTERPOLATION_TOKEN;
-	private static IToken DIRECTIVE_TOKEN;
-
 	@Override
 	public IToken nextToken() {
 		int offsetStart = currentOffset;
@@ -85,104 +80,102 @@ public class ContentScanner implements ITokenScanner {
 		try {
 			char c = document.getChar(i);
 			char cNext = Character.MIN_VALUE;
-			if (document.getLength() > i + 2)
-				cNext = document.getChar(i+1);
+			if (document.getLength() > i + 2) {
+				cNext = document.getChar(i + 1);
+			}
 			if (i >= endOffset) {
 				return Token.EOF;
 			}
 			while (i < endOffset) {
 				doEscape = false;
 				if (!escape) {
-					String type = peek();
-					if (c == '\\') {
-						if (type.equals(TYPE_STRING)) doEscape = true;
-					}
-					else if (c == '\"' || c == '\'') {
-						if (type.equals(TYPE_STRING)) {
-							if (stringTypes.size() > 0 && c == stringTypes.peek().charValue()) {
+					TokenType type = peek();
+					if (c == LexicalConstants.BACKSLASH) {
+						if (type.equals(TokenType.TYPE_STRING)) {
+							doEscape = true;
+						}
+					} else if (c == LexicalConstants.QUOT || c == LexicalConstants.APOS) {
+						if (type.equals(TokenType.TYPE_STRING)) {
+							if (stringTypes.size() > 0
+									&& c == stringTypes.peek().charValue()) {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart + 1;
 								this.currentOffset = i + 1;
 								pop();
 								return STRING_TOKEN;
 							}
-						}
-						else {
+						} else {
 							if (i == offsetStart) {
-								push(TYPE_STRING);
+								push(TokenType.TYPE_STRING);
 								stringTypes.push(Character.valueOf(c));
-							}
-							else {
+							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart;
 								this.currentOffset = i;
 								return getToken(type);
 							}
 						}
-					}
-					else if (c == '$') {
-						if (cNext == '{') {
+					} else if (c == LexicalConstants.DOLLAR) {
+						if (cNext == LexicalConstants.LEFT_BRACE) {
 							// interpolation
 							this.tokenOffset = offsetStart;
 							this.tokenLength = i - offsetStart;
 							this.currentOffset = i;
 							if (i == offsetStart) {
-								push(TYPE_INTERPOLATION);
-							}
-							else {
+								push(TokenType.TYPE_INTERPOLATION);
+							} else {
 								return getToken(type);
 							}
 						}
-					}
-					else if (c == '}') {
-						if (type.equals(TYPE_INTERPOLATION)) {
+					} else if (c == LexicalConstants.RIGHT_BRACE) {
+						if (type.equals(TokenType.TYPE_INTERPOLATION)) {
 							this.tokenOffset = offsetStart;
 							this.tokenLength = i - offsetStart + 1;
 							this.currentOffset = i + 1;
 							pop();
 							return INTERPOLATION_TOKEN;
 						}
-					}
-					else if (c == '(') {
-						if (type.equals(TYPE_INTERPOLATION)) {
-							push("("); //$NON-NLS-1$
+					} else if (c == LexicalConstants.LEFT_PARENTHESIS) {
+						if (type.equals(TokenType.TYPE_INTERPOLATION)) {
+							push(TokenType.TYPE_BRACKET_EXPRESSION);
 						}
-					}
-					else if (c == ')') {
-						if (type.equals("(")) { //$NON-NLS-1$
+					} else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
+						if (type.equals(TokenType.TYPE_BRACKET_EXPRESSION)) {
 							pop();
 						}
-					}
-					else if ((c == '<' || c == '[') && !((stack.contains(TYPE_DIRECTIVE) || stack.contains(TYPE_INTERPOLATION)) && stack.contains(TYPE_STRING))) {
-						if (cNext == '#') {
+					} else if ((c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET)
+							&& !((stack.contains(TokenType.TYPE_DIRECTIVE) || stack
+									.contains(TokenType.TYPE_INTERPOLATION)) && stack
+									.contains(TokenType.TYPE_STRING))) {
+						if (cNext == LexicalConstants.HASH) {
 							// directive
 							if (i == offsetStart) {
 								directiveTypeChar = c;
-								push(TYPE_DIRECTIVE);
-							}
-							else {
+								push(TokenType.TYPE_DIRECTIVE);
+							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart - 1;
 								this.currentOffset = i;
 								return getToken(type);
 							}
-						}
-						else if (cNext == '@') {
+						} else if (cNext == LexicalConstants.AT) {
 							// macro
 							if (i == offsetStart) {
 								directiveTypeChar = c;
-								push(TYPE_DIRECTIVE);
-							}
-							else {
+								push(TokenType.TYPE_DIRECTIVE);
+							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart - 1;
 								this.currentOffset = i;
 								return getToken(type);
 							}
 						}
-					}
-					else if ((c == ']' || c == '>') && !((stack.contains(TYPE_DIRECTIVE) || stack.contains(TYPE_INTERPOLATION)) && stack.contains(TYPE_STRING))) {
-						if ((c == ']' && directiveTypeChar == '[') || (c == '>' && directiveTypeChar == '<')
+					} else if ((c == LexicalConstants.RIGHT_SQUARE_BRACKET || c == LexicalConstants.RIGHT_ANGLE_BRACKET)
+							&& !((stack.contains(TokenType.TYPE_DIRECTIVE) || stack
+									.contains(TokenType.TYPE_INTERPOLATION)) && stack
+									.contains(TokenType.TYPE_STRING))) {
+						if ((c == LexicalConstants.RIGHT_SQUARE_BRACKET && directiveTypeChar == LexicalConstants.LEFT_SQUARE_BRACKET)
+								|| (c == LexicalConstants.RIGHT_ANGLE_BRACKET && directiveTypeChar == LexicalConstants.LEFT_ANGLE_BRACKET)
 								|| directiveTypeChar == Character.MIN_VALUE) {
 							this.tokenOffset = offsetStart;
 							this.tokenLength = i - offsetStart + 1;
@@ -190,8 +183,7 @@ public class ContentScanner implements ITokenScanner {
 							if (directiveTypeChar != Character.MIN_VALUE) {
 								pop();
 								return DIRECTIVE_TOKEN;
-							}
-							else {
+							} else {
 								return defaultToken;
 							}
 						}
@@ -199,49 +191,66 @@ public class ContentScanner implements ITokenScanner {
 				}
 				c = document.getChar(++i);
 				cNext = Character.MIN_VALUE;
-				if (document.getLength() > i + 2)
-					cNext = document.getChar(i+1);
+				if (document.getLength() > i + 2) {
+					cNext = document.getChar(i + 1);
+				}
 				escape = doEscape;
 			}
-		}
-		catch (BadLocationException e) {
+		} catch (BadLocationException e) {
 			this.currentOffset = i;
 			this.tokenOffset = offsetStart;
 			this.tokenLength = endOffset - tokenOffset;
 			if (tokenLength > 0) {
 				// last token
 				return defaultToken;
-			}
-			else {
+			} else {
 				return Token.EOF;
 			}
 
 		}
-		this.currentOffset = i+1;
+		this.currentOffset = i + 1;
 		this.tokenOffset = offsetStart;
 		this.tokenLength = endOffset - tokenOffset;
 		return getToken(peek());
 	}
 
-	private String peek () {
-		if (stack.size() > 0) return stack.peek();
-		else return TYPE_UNKNOWN;
+	private TokenType peek() {
+		if (stack.size() > 0) {
+			return stack.peek();
+		}
+		else {
+			return TokenType.TYPE_UNKNOWN;
+		}
 	}
 
-	private void push (String s) {
+	private void push(TokenType s) {
 		stack.push(s);
 	}
 
-	private String pop () {
-		if (stack.size() > 0) return stack.pop();
-		else return TYPE_UNKNOWN;
+	private TokenType pop() {
+		if (stack.size() > 0)
+			return stack.pop();
+		else
+			return TokenType.TYPE_UNKNOWN;
 	}
 
-	private IToken getToken (String type) {
-		if (type.equals(TYPE_DIRECTIVE)) return DIRECTIVE_TOKEN;
-		else if (type.equals(TYPE_INTERPOLATION) || type.equals("(")) return INTERPOLATION_TOKEN; //$NON-NLS-1$
-		else if (type.equals(TYPE_STRING)) return STRING_TOKEN;
-		else return defaultToken;
+	private IToken getToken(TokenType type) {
+		switch (type) {
+		case TYPE_DIRECTIVE:
+			return DIRECTIVE_TOKEN;
+		case TYPE_INTERPOLATION:
+		case TYPE_BRACKET_EXPRESSION:
+			return INTERPOLATION_TOKEN;
+		case TYPE_STRING:
+			return STRING_TOKEN;
+		case TYPE_UNKNOWN:
+		default:
+			return defaultToken;
+		}
+		// if (type.equals(TokenType.TYPE_DIRECTIVE)) return DIRECTIVE_TOKEN;
+		//		else if (type.equals(TokenType.TYPE_INTERPOLATION) || type.equals("(")) return INTERPOLATION_TOKEN; //$NON-NLS-1$
+		// else if (type.equals(TokenType.TYPE_STRING)) return STRING_TOKEN;
+		// else return defaultToken;
 	}
 
 	@Override

@@ -28,24 +28,26 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
-public class MacroDirective extends AbstractDirective implements Comparable<MacroDirective> {
+public class MacroDirective extends AbstractDirective implements
+		Comparable<MacroDirective> {
 
 	private MacroEndDirective endDirective;
 	private String name;
-
 
 	public MacroDirective(ItemSet itemSet) {
 		super(itemSet);
 	}
 
-	public MacroDirective (ItemSet itemSet, String contents) {
+	public MacroDirective(ItemSet itemSet, String contents) {
 		super(itemSet);
 		this.contents = contents;
 	}
 
 	@Override
-	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
+	protected void init(ITypedRegion region, ISourceViewer viewer,
+			IResource resource) throws Exception {
 	}
 
 	@Override
@@ -83,6 +85,7 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 		}
 		return relatedItems;
 	}
+
 	private Item[] relatedItems;
 
 	@Override
@@ -96,22 +99,31 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 	}
 
 	private String[] attributes;
-	public String[] getAttributes () {
+
+	public String[] getAttributes() {
 		if (null == attributes) {
 			List<String> l = new ArrayList<String>();
 			String[] contents = splitContents();
 			int i = 2;
-			while (i<contents.length) {
+			while (i < contents.length) {
 				String att = contents[i];
-				int index = att.indexOf("="); //$NON-NLS-1$
+				int index = att.indexOf(LexicalConstants.EQUALS);
 				if (index < 0) {
 					att = att.trim();
-					if (att.endsWith("]") || att.endsWith(">")) att = att.substring(0, att.length()-1); //$NON-NLS-1$ //$NON-NLS-2$
+					if (att.length() > 0) {
+						switch (att.charAt(att.length() - 1)) {
+						case LexicalConstants.RIGHT_ANGLE_BRACKET:
+						case LexicalConstants.RIGHT_SQUARE_BRACKET:
+							att = att.substring(0, att.length() - 1);
+							break;
+						default:
+							break;
+						}
+					}
 					l.add(att);
 					i++;
-				}
-				else {
-					i+=2;
+				} else {
+					i += 2;
 				}
 			}
 			attributes = l.toArray(new String[l.size()]);
@@ -132,9 +144,13 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 		return endDirective;
 	}
 
-	private static final char[] descriptorTokens = new char[]{'/','#','@','<','>'};
+	private static final char[] descriptorTokens = new char[] {
+			LexicalConstants.SLASH, LexicalConstants.HASH, LexicalConstants.AT,
+			LexicalConstants.LEFT_ANGLE_BRACKET,
+			LexicalConstants.RIGHT_ANGLE_BRACKET };
+
 	@Override
-	public char[] getDescriptors () {
+	public char[] getDescriptors() {
 		return descriptorTokens;
 	}
 
@@ -149,7 +165,7 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 
 	@Override
 	public void addToContext(Map<String, Class<?>> context) {
-		for (int i=0; i<getAttributes().length; i++) {
+		for (int i = 0; i < getAttributes().length; i++) {
 			if (null == context.get(getAttributes()[i]))
 				context.put(getAttributes()[i], Object.class);
 		}
@@ -157,7 +173,7 @@ public class MacroDirective extends AbstractDirective implements Comparable<Macr
 
 	@Override
 	public void removeFromContext(Map<String, Class<?>> context) {
-		for (int i=0; i<getAttributes().length; i++) {
+		for (int i = 0; i < getAttributes().length; i++) {
 			Object obj = context.get(getAttributes()[i]);
 			if (null != obj && obj.equals(Object.class))
 				context.remove(getAttributes()[i]);

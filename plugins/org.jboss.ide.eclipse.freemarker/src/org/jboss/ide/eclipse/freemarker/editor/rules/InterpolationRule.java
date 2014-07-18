@@ -26,6 +26,7 @@ import java.util.Stack;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.SingleLineRule;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -33,44 +34,43 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 public class InterpolationRule extends SingleLineRule {
 
     public InterpolationRule(char startChar, IToken token) {
-        super(startChar + "{", "}", token); //$NON-NLS-1$ //$NON-NLS-2$
+        super(""+ startChar + LexicalConstants.LEFT_BRACE, String.valueOf(LexicalConstants.RIGHT_BRACE), token); //$NON-NLS-1$
     }
 
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
-		Stack<String> keyStack = new Stack<String>();
+		Stack<Character> keyStack = new Stack<Character>();
 		int charsRead = 0;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			charsRead ++;
-			@SuppressWarnings("unused")
 			char cCheck = (char) c;
-			if (c == '{') {
+			if (c == LexicalConstants.LEFT_BRACE) {
 				if (keyStack.size() == 0) {
 					break;
 				}
 			}
-			else if (c == '\"') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.QUOT) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					keyStack.pop();
 				}
 				else {
-					keyStack.push("\""); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == '(') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.LEFT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
 				else {
-					keyStack.push("("); //$NON-NLS-1$
+					keyStack.push(Character.valueOf(cCheck));
 				}
 			}
-			else if (c == ')') {
-				if (keyStack.size() > 0 && keyStack.peek().equals("\"")) { //$NON-NLS-1$
+			else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
+				if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.QUOT) {
 					// string... don't add to stack
 				}
-				else if (keyStack.size() > 0 && keyStack.peek().equals("(")) { //$NON-NLS-1$
+				else if (keyStack.size() > 0 && keyStack.peek().charValue() == LexicalConstants.LEFT_PARENTHESIS) {
 					keyStack.pop();
 				}
 			}
@@ -79,12 +79,12 @@ public class InterpolationRule extends SingleLineRule {
 				scanner.read();
 				charsRead ++;
 			}
-			else if (c == '}') {
+			else if (c == LexicalConstants.RIGHT_BRACE) {
 				if (keyStack.size() == 0) {
 					return true;
 				}
 			}
-			else if (c == '\n') {
+			else if (c == LexicalConstants.LF) {
 				break;
 			}
 		}

@@ -28,6 +28,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
 
@@ -46,9 +47,9 @@ public class DirectiveScanner extends RuleBasedScanner {
 		int i = 0;
 
 		// Add rule for double quotes
-		result[i++] = new SingleLineRule("\"", "\"", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		result[i++] = new SingleLineRule(LexicalConstants.QUOT_STRING, LexicalConstants.QUOT_STRING, string, LexicalConstants.BACKSLASH);
 	    // Add rule for single quotes
-		result[i++] = new SingleLineRule("'", "'", string,'\\'); //$NON-NLS-1$ //$NON-NLS-2$
+		result[i++] = new SingleLineRule(LexicalConstants.APOS_STRING, LexicalConstants.APOS_STRING, string, LexicalConstants.BACKSLASH);
 		// Add generic whitespace rule.
 		result[i++] = new WhitespaceRule(new WhitespaceDetector());
 

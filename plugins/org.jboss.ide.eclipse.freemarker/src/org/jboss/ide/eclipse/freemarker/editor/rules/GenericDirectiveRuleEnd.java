@@ -24,6 +24,7 @@ package org.jboss.ide.eclipse.freemarker.editor.rules;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -51,17 +52,16 @@ public class GenericDirectiveRuleEnd extends GenericDirectiveRule {
 				return fToken;
 		} else {
 			int c= scanner.read();
-			@SuppressWarnings("unused")
-			char cCheck = (char) c;
-			if (c == START_SEQUENCES[0] || c == START_SEQUENCES[1]) {
+			if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
 				int c2 = scanner.read();
-				if (c2 == '/') {
+				if (c2 == LexicalConstants.HASH) {
 					// check for the sequence identifier
 					c2 = scanner.read();
 					if (c2 == getIdentifierChar()) {
 						if (sequenceDetected(scanner, c, false)) {
-							if (endSequenceDetected(scanner, c))
+							if (endSequenceDetected(scanner, c)) {
 								return fToken;
+							}
 						}
 					}
 					scanner.unread();

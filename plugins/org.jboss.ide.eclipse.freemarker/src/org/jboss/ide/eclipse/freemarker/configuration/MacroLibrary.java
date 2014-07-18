@@ -21,7 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.configuration;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,6 +32,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.lang.Keyword;
+import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 import org.jboss.ide.eclipse.freemarker.model.LibraryMacroDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
 import org.jboss.ide.eclipse.freemarker.util.StringUtil;
@@ -42,6 +44,10 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class MacroLibrary {
+
+	private static final String HASH_MACRO_SPACE = new StringBuilder(7)
+			.append(LexicalConstants.HASH).append(Keyword.macro.toString())
+			.append(LexicalConstants.SPACE).toString();
 
 	public static final String TYPE_FILE = "file"; //$NON-NLS-1$
 	public static final String TYPE_JAR_ENTRY = "jarEntry"; //$NON-NLS-1$
@@ -54,47 +60,46 @@ public class MacroLibrary {
 	private String type;
 	private MacroDirective[] macros;
 
-	public MacroLibrary (String namespace, IFile file) throws IOException, CoreException {
+	public MacroLibrary(String namespace, IFile file) throws IOException,
+			CoreException {
 		this.namespace = namespace;
 		this.file = file;
 		this.content = StringUtil.getStringFromStream(file.getContents(true));
 		this.type = TYPE_FILE;
 	}
 
-	public MacroLibrary (String namespace, InputStream is, String path, String type) throws IOException {
+	public MacroLibrary(String namespace, InputStream is, String path,
+			String type) throws IOException {
 		this.namespace = namespace;
 		this.content = StringUtil.getStringFromStream(is);
 		this.type = type;
 		this.path = path;
-		if (null == this.type) this.type = TYPE_FILE;
+		if (null == this.type)
+			this.type = TYPE_FILE;
 	}
 
 	public synchronized MacroDirective[] getMacros() {
-		if (null == macros
-				|| isStale()) {
-				load();
+		if (null == macros || isStale()) {
+			load();
 		}
 		return macros;
 	}
 
-	public boolean isStale () {
+	public boolean isStale() {
 		return (null != file && file.getModificationStamp() > lastUpdatedTime);
 	}
 
-	public IFile getFile () {
+	public IFile getFile() {
 		return file;
 	}
 
-	private void load () {
+	private void load() {
 		try {
 			List<MacroDirective> macroDirectives = new ArrayList<MacroDirective>();
-			String search = "#macro "; //$NON-NLS-1$
-			int index = content.indexOf(search);
+			int index = content.indexOf(HASH_MACRO_SPACE);
 			int startIndex = index;
-			char startChar = content.charAt(index-1);
-			char endChar;
-			if (startChar == '[') endChar = ']';
-			else endChar = '>';
+			char startChar = content.charAt(index - 1);
+			char endChar = ParserUtils.getMatchingRightBracket(startChar);
 			while (startIndex > 0) {
 				int stackCount = 0;
 				boolean inString = false;
@@ -105,13 +110,17 @@ public class MacroLibrary {
 					boolean doEscape = false;
 					char c = content.charAt(index++);
 					if (!escape) {
-						if (c == '\"') inString = !inString;
-						else if (c == '\\' && inString) doEscape = true;
-						else if (c == startChar) stackCount ++;
+						if (c == LexicalConstants.QUOT)
+							inString = !inString;
+						else if (c == LexicalConstants.BACKSLASH && inString)
+							doEscape = true;
+						else if (c == startChar)
+							stackCount++;
 						else if (c == endChar) {
-							if (stackCount > 0) stackCount --;
+							if (stackCount > 0)
+								stackCount--;
 							else {
-								endIndex = index-1;
+								endIndex = index - 1;
 								break;
 							}
 						}
@@ -120,23 +129,24 @@ public class MacroLibrary {
 				}
 				if (endIndex > 0) {
 					String sub = content.substring(startIndex, endIndex);
-					MacroDirective macroDirective =
-						new LibraryMacroDirective(null, namespace, sub, startIndex-1, endIndex-index+2);
+					MacroDirective macroDirective = new LibraryMacroDirective(
+							null, namespace, sub, startIndex - 1, endIndex
+									- index + 2);
 					macroDirectives.add(macroDirective);
-					index = content.indexOf(startChar + search, endIndex);
-					if (index >= 0) index++;
+					index = content.indexOf(startChar + HASH_MACRO_SPACE, endIndex);
+					if (index >= 0)
+						index++;
 					startIndex = index;
 					endIndex = Integer.MIN_VALUE;
-				}
-				else {
+				} else {
 					break;
 				}
 			}
-			this.macros = macroDirectives.toArray(new MacroDirective[macroDirectives.size()]);
+			this.macros = macroDirectives
+					.toArray(new MacroDirective[macroDirectives.size()]);
 			if (null != file)
 				this.lastUpdatedTime = file.getModificationStamp();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			macros = new MacroDirective[0];
 			Plugin.log(e);
 		}
@@ -154,8 +164,8 @@ public class MacroLibrary {
 		this.type = type;
 	}
 
-	public void toXML (StringBuilder sb) {
-		sb.append("<entry namespace=\"").append( getNamespace()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
+	public void toXML(StringBuilder sb) {
+		sb.append("<entry namespace=\"").append(getNamespace()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append("path=\"").append(getPath()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (null != file) {
 			sb.append("project=\"").append(file.getProject().getName()).append("\" "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,31 +173,31 @@ public class MacroLibrary {
 		sb.append("type=\"").append(getType()).append("\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	public String getPath () {
+	public String getPath() {
 		if (null != file)
 			return file.getProjectRelativePath().toString();
 		else
 			return path;
 	}
 
-	public static MacroLibrary fromXML (IProject project, Element node, ClassLoader classLoader) throws CoreException, IOException {
+	public static MacroLibrary fromXML(IProject project, Element node,
+			ClassLoader classLoader) throws CoreException, IOException {
 		String namespace = node.getAttribute("namespace"); //$NON-NLS-1$
 		String path = node.getAttribute("path"); //$NON-NLS-1$
 		String projectName = node.getAttribute("project"); //$NON-NLS-1$
 		String type = node.getAttribute("type"); //$NON-NLS-1$
 		if (null == type || type.length() == 0 || type.equals(TYPE_FILE)) {
 			if (null != projectName && projectName.length() > 0) {
-				project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				project = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(projectName);
 			}
 			IFile file = project.getFile(new Path(path));
 			if (null == file || !file.exists()) {
 				return null;
-			}
-			else {
+			} else {
 				return new MacroLibrary(namespace, file);
 			}
-		}
-		else if (type.equals(TYPE_JAR_ENTRY)) {
+		} else if (type.equals(TYPE_JAR_ENTRY)) {
 			InputStream is = null;
 			try {
 				is = classLoader.getResourceAsStream(path);
@@ -201,8 +211,7 @@ public class MacroLibrary {
 					is.close();
 				}
 			}
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
