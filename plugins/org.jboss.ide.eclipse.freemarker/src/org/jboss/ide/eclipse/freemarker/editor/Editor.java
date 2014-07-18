@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.JarEntryEditorInput;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -219,8 +220,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			attributes.put(IMarker.MESSAGE, aMessage);
 			attributes.put(IMarker.TEXT, aMessage);
 			MarkerUtilities.createMarker(file, attributes, IMarker.PROBLEM);
-		} catch (Exception e) {
-
+		} catch (CoreException e) {
+			Plugin.log(e);
 		}
 	}
 
