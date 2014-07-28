@@ -60,7 +60,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 		PartitionType[] partitionTypes = PartitionType.values();
 		for (PartitionType partitionType : partitionTypes) {
-			ITokenScanner scanner = partitionType.createColoringTokenizer();
+			ITokenScanner scanner = partitionType.createColoringTokenizer(editor);
 			if (scanner != null) {
 				DefaultDamagerRepairer dr = new DefaultDamagerRepairer(scanner);
 				reconciler.setDamager(dr, partitionType.name());

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.editor.rules;
+package org.jboss.ide.eclipse.freemarker.editor.partitions;
 
 import java.util.Stack;
 
@@ -93,4 +93,5 @@ public class InterpolationRule extends SingleLineRule {
 			scanner.unread();
 		return false;
 	}
+
 }

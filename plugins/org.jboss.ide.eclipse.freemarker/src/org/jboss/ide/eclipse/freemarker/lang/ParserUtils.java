@@ -161,8 +161,8 @@ public class ParserUtils implements LexicalConstants {
 				|| isBetween(ch, '\uf900', '\ufaff');
 	}
 
-	public static char getMatchingRightBracket(int startCharacter) {
-		switch (startCharacter) {
+	public static char getMatchingRightBracket(int leftBracket) {
+		switch (leftBracket) {
 		case LexicalConstants.LEFT_ANGLE_BRACKET:
 			return LexicalConstants.RIGHT_ANGLE_BRACKET;
 		case LexicalConstants.LEFT_SQUARE_BRACKET:
@@ -172,8 +172,23 @@ public class ParserUtils implements LexicalConstants {
 		}
 	}
 
+	public static char getMatchingLeftBracket(int rightBracket) {
+		switch (rightBracket) {
+		case LexicalConstants.RIGHT_ANGLE_BRACKET:
+			return LexicalConstants.LEFT_ANGLE_BRACKET;
+		case LexicalConstants.RIGHT_SQUARE_BRACKET:
+			return LexicalConstants.LEFT_SQUARE_BRACKET;
+		default:
+			throw new IllegalArgumentException("getMatchingEndCharacter() supported only for startCharacter '"+ LexicalConstants.LEFT_ANGLE_BRACKET +"' or '"+ LexicalConstants.LEFT_SQUARE_BRACKET +"'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+
 	public static boolean isWhitespace(char c) {
 		return (c == LexicalConstants.SPACE || c == LexicalConstants.TAB || c == LexicalConstants.LF || c == LexicalConstants.CR);
+	}
+
+	public static boolean isClosingDirectiveBracket(char c) {
+		return c  == LexicalConstants.RIGHT_SQUARE_BRACKET || c == LexicalConstants.RIGHT_ANGLE_BRACKET;
 	}
 
 	/** The Freemarker document to parse. */

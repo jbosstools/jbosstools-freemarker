@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.swt.custom.StyleRange;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
 import org.jboss.ide.eclipse.freemarker.lang.ParserUtils.ParseException;
 import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
@@ -43,6 +44,11 @@ import freemarker.template.TemplateException;
 public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 
 	private static final String TEST_FTL_FILE = "assign.txt.ftl"; //$NON-NLS-1$
+
+	@Override
+	protected String getTestFileName() {
+		return TEST_FTL_FILE;
+	}
 
 	public void testAssignFtl() throws IOException, TemplateException {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -67,9 +73,12 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 	}
 
 	public void testAssignModel() {
-		Collection<Item> items = load(TEST_FTL_FILE);
-		assertEquals(15, items.size());
+		Collection<Item> items = load();
+		assertEquals(16, items.size());
 		Iterator<Item> i = items.iterator();
+
+		/* <#assign key="val"> */
+		assertAssignment(i);
 
 		/* <#assign seasons = ["winter", "spring", "summer", "autumn"]> */
 		assertAssignment(i);
@@ -112,6 +121,71 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 		 * ${hello} */
 		assertAssignment(i);
 		assertInterpolation(i);
+	}
+
+	public void testAssignColoring() {
+		StyleRange[] expected = new StyleRangeArrayBuilder()
+		.directive(13) // <#assign key=
+		.string(5) // "val"
+		.directive(1) // >
+		.text(1) // <whitespace>
+		.directive(20) // <#assign seasons = [
+		.string(8) // "winter"
+		.directive(2) // ,
+		.string(8) // "spring"
+		.directive(2) // ,
+		.string(8) // "summer"
+		.directive(2) // ,
+		.string(8) // "autumn"
+		.directive(2) // ]>
+		.text(1) // <whitespace>
+		.directive(31) // <#assign counter = counter + 1>
+		.text(1) // <whitespace>
+		.directive(19) // <#assign   days = [
+		.string(4) // "Mo"
+		.directive(2) // ,
+		.string(4) // "Tu"
+		.directive(2) // ,
+		.string(4) // "We"
+		.directive(2) // ,
+		.string(4) // "Th"
+		.directive(2) // ,
+		.string(4) // "Fr"
+		.directive(2) // ,
+		.string(4) // "Sa"
+		.directive(2) // ,
+		.string(4) // "Su"
+		.directive(27) // ]   counter = counter + 1 >
+		.text(1) // <whitespace>
+		.directive(16) // <#macro myMacro>
+		.text(3) // foo
+		.directive(9) // </#macro>
+		.text(1) // <whitespace>
+		.directive(26) // <#assign formattedSeasons>
+		.text(3) // <whitespace>
+		.directive(20) // <#list seasons as s>
+		.text(5) // <whitespace>
+		.interpolation(4) // ${s}
+		.text(1) // <whitespace>
+		.directive(12) // <@myMacro />
+		.text(3) // <whitespace>
+		.directive(8) // </#list>
+		.text(1) // <whitespace>
+		.directive(10) // </#assign>
+		.text(18) // Number of words:
+		.interpolation(34) // ${formattedSeasons?word_list?size}
+		.text(1) // <whitespace>
+		.interpolation(19) // ${formattedSeasons}
+		.text(1) // <whitespace>
+		.directive(15) // <#assign hello=
+		.string(7) // "Hello
+		.interpolation(7) // ${user}
+		.string(2) // !"
+		.directive(1) // >
+		.text(1) // <whitespace>
+		.interpolation(8) // ${hello}
+		.build();
+		validateColoring(expected);
 	}
 
 }

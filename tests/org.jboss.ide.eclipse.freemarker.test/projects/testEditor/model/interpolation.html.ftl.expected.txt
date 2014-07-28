@@ -1,0 +1,7 @@
+<h1>Welcome Joe!</h1>
+<p style="font-weight: bold">Our latest product:</p>
+<a href="http://example.com">Example Inc.<!-- comment 1 --></a>
+<a href="https://example.com">Example Inc.</a>
+<a href="https://example.com" target="_blank" >Example Inc.</a>!
+<!-- <p style="font-weight:bold">Our latest product:</p> -->
+<!-- Example Inc. -->

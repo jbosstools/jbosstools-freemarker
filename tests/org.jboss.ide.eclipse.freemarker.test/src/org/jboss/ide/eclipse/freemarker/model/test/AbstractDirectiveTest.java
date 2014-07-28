@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorPart;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor;
@@ -58,24 +61,42 @@ public abstract class AbstractDirectiveTest extends TestCase {
 	private static final String TEST_DIRECTORY = "model"; //$NON-NLS-1$
 
 	private IProject project;
+	private Editor editor;
 
 	@Override
 	protected void setUp() throws Exception {
 		this.project = ResourcesUtils.importProject(Activator.PLUGIN_ID,"projects/"+TEST_PROJECT); //$NON-NLS-1$
+		IEditorPart part = WorkbenchUtils.openEditor(TEST_PROJECT + IPath.SEPARATOR + TEST_DIRECTORY + IPath.SEPARATOR + getTestFileName());
+		assertEquals(FreemarkerMultiPageEditor.class, part.getClass());
+		FreemarkerMultiPageEditor multiEditor = (FreemarkerMultiPageEditor) part;
+		this.editor = multiEditor.getEditor();
 	}
+
+	/**
+	 * @return Test file name relative to test directory.
+	 */
+	protected abstract String getTestFileName();
 
 	@Override
 	protected void tearDown() throws Exception {
 		ResourcesUtils.deleteProject(TEST_PROJECT);
 	}
 
-	protected static Collection<Item> load(String fileName) {
-		IEditorPart part = WorkbenchUtils.openEditor(TEST_PROJECT + IPath.SEPARATOR + TEST_DIRECTORY + IPath.SEPARATOR + fileName);
-		assertEquals(FreemarkerMultiPageEditor.class, part.getClass());
-		FreemarkerMultiPageEditor multiEditor = (FreemarkerMultiPageEditor) part;
-		Editor editor = multiEditor.getEditor();
+	protected Collection<Item> load() {
 		editor.reconcileInstantly();
 		return editor.getItemSet().getDirectiveRegions().values();
+	}
+
+	protected void validateColoring(StyleRange[] expected) {
+		StyledText st = editor.getTextViewer().getTextWidget();
+		StyleRange[] actual = st.getStyleRanges();
+		if (!Arrays.equals(expected, actual)) {
+			System.out.println(StyleRangeArrayBuilder.propose(actual, editor.getDocument()));
+		}
+		assertEquals(expected.length, actual.length);
+		for (int i = 0; i < actual.length; i++) {
+			assertEquals("Mismatch at index "+ i, expected[i], actual[i]); //$NON-NLS-1$
+		}
 	}
 
 	protected void validateFtlTemplate(String fileName, Object model) throws IOException, TemplateException {

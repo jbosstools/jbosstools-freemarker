@@ -35,14 +35,16 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.jboss.ide.eclipse.freemarker.editor.ContentScanner;
+import org.jboss.ide.eclipse.freemarker.editor.Editor;
+import org.jboss.ide.eclipse.freemarker.editor.SingleTokenScanner;
 import org.jboss.ide.eclipse.freemarker.editor.rules.DirectiveRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.DirectiveRuleEnd;
-import org.jboss.ide.eclipse.freemarker.editor.rules.InterpolationRule;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
+import org.jboss.ide.eclipse.freemarker.target.TargetColoringScanner;
 
 /**
  * The partition types that we want to distinguish in FTL documents. Partitions
@@ -55,11 +57,10 @@ import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
  * @since 1.4.0
  */
 public enum PartitionType {
-	TEXT(PreferenceKey.COLOR_TEXT) {
+	COMMENT(PreferenceKey.COLOR_COMMENT) {
 		@Override
 		public IPredicateRule createPartitioningRule() {
-			/* there is no explicit rule for FTL text */
-			return null;
+			return new CommentPartitionRule();
 		}
 	},
 	DOLLAR_INTERPOLATION(PreferenceKey.COLOR_INTERPOLATION) {
@@ -111,6 +112,11 @@ public enum PartitionType {
 			return new DirectiveStartPartitionRule();
 		}
 
+		@Override
+		public ITokenScanner createColoringTokenizer(Editor editor) {
+			return new ContentScanner(createColoringToken(foregroundPreferenceKey));
+		}
+
 	},
 	DIRECTIVE_END(PreferenceKey.COLOR_DIRECTIVE) {
 		@Override
@@ -142,6 +148,11 @@ public enum PartitionType {
 		public IPredicateRule createPartitioningRule() {
 			return new MacroInstanceStartPartitionRule();
 		}
+
+		@Override
+		public ITokenScanner createColoringTokenizer(Editor editor) {
+			return new ContentScanner(createColoringToken(foregroundPreferenceKey));
+		}
 	},
 	MACRO_INSTANCE_END(PreferenceKey.COLOR_DIRECTIVE) {
 		@Override
@@ -149,11 +160,18 @@ public enum PartitionType {
 			return new MacroInstanceEndPartitionRule();
 		}
 	},
-	COMMENT(PreferenceKey.COLOR_COMMENT) {
+	TEXT(PreferenceKey.COLOR_TEXT) {
 		@Override
 		public IPredicateRule createPartitioningRule() {
-			return new CommentPartitionRule();
+			/* there is no explicit rule for FTL text */
+			return null;
 		}
+
+		@Override
+		public ITokenScanner createColoringTokenizer(Editor editor) {
+			return new TargetColoringScanner(editor);
+		}
+
 	};
 
 	/** Partitions as a static array for convenience. */
@@ -174,7 +192,7 @@ public enum PartitionType {
 		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
 	}
 
-	private static IToken createToken(PreferenceKey foregroundPreferenceKey) {
+	public static IToken createColoringToken(PreferenceKey foregroundPreferenceKey) {
 		return new Token(new TextAttribute(Preferences.getInstance().getColor(
 				foregroundPreferenceKey)));
 	}
@@ -204,8 +222,8 @@ public enum PartitionType {
 	 *
 	 * @return never {@code null}.
 	 */
-	public ITokenScanner createColoringTokenizer() {
-		return new ContentScanner(createToken(foregroundPreferenceKey));
+	public ITokenScanner createColoringTokenizer(Editor editor) {
+		return new SingleTokenScanner(createColoringToken(foregroundPreferenceKey));
 	}
 
 	/**

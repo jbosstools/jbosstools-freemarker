@@ -23,7 +23,7 @@ package org.jboss.ide.eclipse.freemarker.lang;
 
 /**
  * An enumeration containing the two Freemarker syntax modes, i.e. the angle
- * bracket {@code <} one and the square bracket {@code [} one.
+ * bracket {@code <} mode and the square bracket {@code [} mode.
  * See <a href="http://freemarker.org/docs/dgui_misc_alternativesyntax.html">Alternative
  * (square bracket) syntax</a> of the FreeMarker Template Author's Guide.
  *

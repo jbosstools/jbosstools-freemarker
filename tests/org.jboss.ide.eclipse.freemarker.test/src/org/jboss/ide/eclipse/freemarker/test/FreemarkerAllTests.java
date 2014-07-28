@@ -7,6 +7,7 @@ import junit.framework.TestSuite;
 import org.jboss.ide.eclipse.freemarker.editor.test.FreemarkerEditorTest;
 import org.jboss.ide.eclipse.freemarker.lang.test.ParserUtilsTest;
 import org.jboss.ide.eclipse.freemarker.model.test.AssignmentDirectiveTest;
+import org.jboss.ide.eclipse.freemarker.model.test.InterpolationTest;
 import org.jboss.ide.eclipse.freemarker.model.test.ListDirectiveTest;
 import org.jboss.ide.eclipse.freemarker.preferences.test.FreemarkerPreferencePageTest;
 import org.jboss.tools.tests.AbstractPluginsLoadTest;
@@ -21,6 +22,7 @@ public class FreemarkerAllTests extends TestCase {
 		suite.addTestSuite(ParserUtilsTest.class);
 		suite.addTestSuite(AssignmentDirectiveTest.class);
 		suite.addTestSuite(ListDirectiveTest.class);
+		suite.addTestSuite(InterpolationTest.class);
 		return suite;
 	}
 

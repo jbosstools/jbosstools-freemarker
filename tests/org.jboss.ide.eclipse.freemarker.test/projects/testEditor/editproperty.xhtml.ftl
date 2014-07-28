@@ -1,3 +1,5 @@
+<!-- sasasas -->
+
 <#include "../util/TypeInfo.ftl">
 
 <#if !c2h.isCollection(property) && !isToOne(property) && property != pojo.versionProperty!>

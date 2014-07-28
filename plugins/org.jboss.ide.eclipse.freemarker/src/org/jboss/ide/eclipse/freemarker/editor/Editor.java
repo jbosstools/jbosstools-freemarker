@@ -63,6 +63,8 @@ import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.outline.OutlinePage;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
+import org.jboss.ide.eclipse.freemarker.target.TargetLanguageSupport;
+import org.jboss.ide.eclipse.freemarker.target.TargetLanguages;
 
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -470,6 +472,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	}
 
 	private Configuration fmConfiguration;
+	private TargetLanguageSupport targetLanguageSupport;
 
 	public class Validator extends Thread {
 		Editor editor;
@@ -587,7 +590,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			}
 		};
 		/* make sure to run in the UI thread */
-		if (Thread.currentThread() == Display.getCurrent().getThread()) {
+		if (Thread.currentThread() == Display.getDefault().getThread()) {
 			/* we are in the UI thread - run synchrounously */
 			newItemSetTask.run();
 		} else {
@@ -595,5 +598,12 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			Display.getDefault().asyncExec(newItemSetTask);
 		}
 
+	}
+
+	public TargetLanguageSupport getTargetLanguageSupport() {
+		if (targetLanguageSupport == null) {
+			targetLanguageSupport = TargetLanguages.findSupport(getEditorInput());
+		}
+		return targetLanguageSupport;
 	}
 }

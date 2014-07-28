@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.jboss.ide.eclipse.freemarker.editor.DocumentProvider;
@@ -37,15 +39,42 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
-public class PartitionScanner extends RuleBasedPartitionScanner implements SyntaxModeListener {
+public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListener {
+
+	private static class ScannerState {
+		private final int offset;
+		private int length;
+		private final IToken token;
+		public ScannerState(int offset, int length, IToken token) {
+			super();
+			this.offset = offset;
+			this.length = length;
+			this.token = token;
+		}
+		public int getOffset() {
+			return offset;
+		}
+		public int getLength() {
+			return length;
+		}
+		public IToken getToken() {
+			return token;
+		}
+	}
 
 	private SyntaxMode syntaxMode = SyntaxMode.getDefault();
+	private ScannerState nextState;
+	private ScannerState currentState;
+	private final RuleBasedPartitionScanner delegate;
+	private final IToken defaultReturnToken;
+	private IPredicateRule[] predicateRules;
 
 	/**
 	 * Creates a new partition scanner.
 	 */
 	public PartitionScanner() {
 
+		this.delegate = new RuleBasedPartitionScanner();
 		PartitionType[] partitionTypes = PartitionType.values();
 		List<IPredicateRule> rules = new ArrayList<IPredicateRule>(partitionTypes.length);
 		for (PartitionType partitionType : partitionTypes) {
@@ -56,61 +85,14 @@ public class PartitionScanner extends RuleBasedPartitionScanner implements Synta
 			}
 		}
 		setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
+		this.defaultReturnToken = new Token(PartitionType.TEXT.name());
+		this.delegate.setDefaultReturnToken(defaultReturnToken);
 
-		/* because there is no explicit rule for FTL text, we will return TEXT
-		 * as default from the partition scanner */
-		setDefaultReturnToken(new Token(PartitionType.TEXT.name()));
+	}
 
-//		IToken ftlComment = new Token(FTL_COMMENT);
-//
-//		rules.add(new MultiLineRule("<!--", "-->", new Token(XML_COMMENT))); //$NON-NLS-1$ //$NON-NLS-2$
-//		rules.add(); //$NON-NLS-1$ //$NON-NLS-2$
-//		rules.add(new MultiLineRule("[#--", "--]", ftlComment)); //$NON-NLS-1$ //$NON-NLS-2$
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_ftl_directive));
-//		rules.add(new DirectiveRule(Directive.__ftl_if_directive_start));
-//		rules.add(new DirectiveRule(Directive.__ftl_else_if_directive));
-//		rules.add(new DirectiveRule(Directive.__ftl_if_else_directive, true));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_if_directive_end));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_function_directive_start));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_function_directive_end));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_list_directive_start));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_list_directive_end));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_macro_directive_start));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_macro_directive_end));
-//		rules.add(new MacroInstanceRule(Directive.__ftl_macro_instance_start));
-//		rules.add(new MacroInstanceRuleEnd(Directive.__ftl_macro_instance_end));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_switch_directive_start));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_switch_directive_end));
-//		rules.add(new DirectiveRule(Directive.__ftl_case_directive_start));
-//		rules.add(new DirectiveRule(Directive.__ftl_case_default_start));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_assign));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_assign_end));
-//		rules.add(new DirectiveRule(Directive.__ftl_local));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_local_end));
-//		rules.add(new DirectiveRule(Directive.__ftl_global));
-//		rules.add(new DirectiveRuleEnd(Directive.__ftl_global_end));
-//
-//		rules.add(new DirectiveRule(Directive.__ftl_include));
-//		rules.add(new DirectiveRule(Directive.__ftl_import));
-//		rules.add(new DirectiveRule(Directive.__ftl_break));
-//		rules.add(new DirectiveRule(Directive.__ftl_stop));
-//		rules.add(new DirectiveRule(Directive.__ftl_nested));
-//		rules.add(new DirectiveRule(Directive.__ftl_return));
-//
-//		rules.add(new GenericDirectiveRule(new Token(Directive.__ftl_directive.name())));
-//		rules.add(new GenericDirectiveRuleEnd(new Token(Directive.__ftl_directive_end.name())));
-//
-//		rules.add(new InterpolationRule(LexicalConstants.DOLLAR, new Token(Directive.__ftl_interpolation.name())));
-//		rules.add(new InterpolationRule(LexicalConstants.HASH, new Token(Directive.__ftl_interpolation.name())));
-//
-//		rules.add(new XmlRule(new Token(XML_TAG)));
-
+	private void setPredicateRules(IPredicateRule[] rules) {
+		this.predicateRules = rules;
+		delegate.setPredicateRules(rules);
 	}
 
 	@Override
@@ -125,14 +107,14 @@ public class PartitionScanner extends RuleBasedPartitionScanner implements Synta
 				 * the reparsing of the whole document. Not sure if expanding
 				 * offset and length to the whole document is safe enough */
 			}
-			super.setPartialRange(document, offset, length, contentType, partitionOffset);
 		}
+		delegate.setPartialRange(document, offset, length, contentType, partitionOffset);
 	}
 
 	@Override
 	public void syntaxModeChanged(SyntaxMode syntaxMode) {
-		if (fRules != null) {
-			for (IRule rule : fRules) {
+		if (predicateRules != null) {
+			for (IRule rule : predicateRules) {
 				if (rule instanceof SyntaxModeListener) {
 					((SyntaxModeListener) rule).syntaxModeChanged(syntaxMode);
 				}
@@ -140,4 +122,41 @@ public class PartitionScanner extends RuleBasedPartitionScanner implements Synta
 		}
 		this.syntaxMode = syntaxMode;
 	}
+
+	@Override
+	public IToken nextToken() {
+		/* first shift next to current */
+		this.currentState = this.nextState;
+
+		/* Then populate the next, but try to merge with current as far as possible */
+		IToken nextToken = delegate.nextToken();
+		while (this.currentState.token == this.defaultReturnToken && nextToken == this.defaultReturnToken) {
+			int newOffset = delegate.getTokenOffset();
+			int newLength = delegate.getTokenLength();
+			this.currentState.length = newOffset - this.currentState.offset + newLength;
+			nextToken = delegate.nextToken();
+		}
+		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken);
+
+		/* and return current */
+		return currentState.getToken();
+	}
+
+	@Override
+	public int getTokenOffset() {
+		return currentState.getOffset();
+	}
+
+	@Override
+	public int getTokenLength() {
+		return currentState.getLength();
+	}
+
+	@Override
+	public void setRange(IDocument document, int offset, int length) {
+		delegate.setRange(document, offset, length);
+		IToken nextToken = delegate.nextToken();
+		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
+	}
+
 }

@@ -21,26 +21,36 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-import java.util.Stack;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
+import org.jboss.ide.eclipse.freemarker.util.RobustStack;
 
 public class ContentScanner implements ITokenScanner {
-	enum TokenType {
-		TYPE_UNKNOWN, TYPE_INTERPOLATION, TYPE_DIRECTIVE, TYPE_STRING, TYPE_BRACKET_EXPRESSION
-	}
+	enum ColoringStyle {
+		UNKNOWN(PartitionType.createColoringToken(PreferenceKey.COLOR_TEXT)),
+		INTERPOLATION(PartitionType.createColoringToken(PreferenceKey.COLOR_INTERPOLATION)),
+		DIRECTIVE(PartitionType.createColoringToken(PreferenceKey.COLOR_DIRECTIVE)),
+		STRING(PartitionType.createColoringToken(PreferenceKey.COLOR_STRING)),
+		BRACKET_EXPRESSION(PartitionType.createColoringToken(PreferenceKey.COLOR_INTERPOLATION));
 
-	private static final IToken STRING_TOKEN = createColoredToken(PreferenceKey.COLOR_STRING);
-	private static final IToken INTERPOLATION_TOKEN = createColoredToken(PreferenceKey.COLOR_INTERPOLATION);
-	private static final IToken DIRECTIVE_TOKEN = createColoredToken(PreferenceKey.COLOR_DIRECTIVE);
+		private ColoringStyle(IToken token) {
+			this.token = token;
+		}
+		private final IToken token;
+
+		public IToken getToken() {
+			return token;
+		}
+	}
 
 	public static IToken createColoredToken(PreferenceKey preferenceKey) {
 		return new Token(new TextAttribute(Preferences.getInstance().getColor(
@@ -49,11 +59,11 @@ public class ContentScanner implements ITokenScanner {
 
 	private IDocument document;
 	private int endOffset;
-	private Stack<TokenType> stack = new Stack<TokenType>();
+	private RobustStack<ColoringStyle> styleStack = new RobustStack<ColoringStyle>(ColoringStyle.UNKNOWN);
 	private IToken defaultToken;
 	private int tokenOffset;
 	private int tokenLength;
-	private Stack<Character> stringTypes = new Stack<Character>();
+	private RobustStack<Character> expressionStack = new RobustStack<Character>(Character.valueOf(Character.MIN_VALUE));
 
 	private int currentOffset;
 
@@ -66,15 +76,14 @@ public class ContentScanner implements ITokenScanner {
 		this.document = document;
 		this.currentOffset = offset;
 		this.endOffset = offset + length;
-		this.stack.clear();
-		this.stringTypes.clear();
+		this.styleStack.clear();
+		this.expressionStack.clear();
 	}
 
 	@Override
 	public IToken nextToken() {
 		int offsetStart = currentOffset;
 		int i = currentOffset;
-		char directiveTypeChar = Character.MIN_VALUE;
 		boolean escape = false;
 		boolean doEscape = false;
 		try {
@@ -89,30 +98,29 @@ public class ContentScanner implements ITokenScanner {
 			while (i < endOffset) {
 				doEscape = false;
 				if (!escape) {
-					TokenType type = peek();
+					ColoringStyle type = styleStack.peek();
 					if (c == LexicalConstants.BACKSLASH) {
-						if (type.equals(TokenType.TYPE_STRING)) {
+						if (type.equals(ColoringStyle.STRING)) {
 							doEscape = true;
 						}
 					} else if (c == LexicalConstants.QUOT || c == LexicalConstants.APOS) {
-						if (type.equals(TokenType.TYPE_STRING)) {
-							if (stringTypes.size() > 0
-									&& c == stringTypes.peek().charValue()) {
+						if (type == ColoringStyle.STRING) {
+							if (c == expressionStack.peek().charValue()) {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart + 1;
 								this.currentOffset = i + 1;
-								pop();
-								return STRING_TOKEN;
+								styleStack.pop();
+								return type.getToken();
 							}
 						} else {
 							if (i == offsetStart) {
-								push(TokenType.TYPE_STRING);
-								stringTypes.push(Character.valueOf(c));
+								styleStack.push(ColoringStyle.STRING);
+								expressionStack.push(Character.valueOf(c));
 							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart;
 								this.currentOffset = i;
-								return getToken(type);
+								return type.getToken();
 							}
 						}
 					} else if (c == LexicalConstants.DOLLAR) {
@@ -122,69 +130,69 @@ public class ContentScanner implements ITokenScanner {
 							this.tokenLength = i - offsetStart;
 							this.currentOffset = i;
 							if (i == offsetStart) {
-								push(TokenType.TYPE_INTERPOLATION);
+								styleStack.push(ColoringStyle.INTERPOLATION);
 							} else {
-								return getToken(type);
+								return type.getToken();
 							}
 						}
 					} else if (c == LexicalConstants.RIGHT_BRACE) {
-						if (type.equals(TokenType.TYPE_INTERPOLATION)) {
+						if (type == ColoringStyle.INTERPOLATION) {
 							this.tokenOffset = offsetStart;
 							this.tokenLength = i - offsetStart + 1;
 							this.currentOffset = i + 1;
-							pop();
-							return INTERPOLATION_TOKEN;
+							styleStack.pop();
+							return type.getToken();
 						}
 					} else if (c == LexicalConstants.LEFT_PARENTHESIS) {
-						if (type.equals(TokenType.TYPE_INTERPOLATION)) {
-							push(TokenType.TYPE_BRACKET_EXPRESSION);
+						if (type == ColoringStyle.INTERPOLATION) {
+							styleStack.push(ColoringStyle.BRACKET_EXPRESSION);
 						}
 					} else if (c == LexicalConstants.RIGHT_PARENTHESIS) {
-						if (type.equals(TokenType.TYPE_BRACKET_EXPRESSION)) {
-							pop();
+						if (type == ColoringStyle.BRACKET_EXPRESSION) {
+							styleStack.pop();
 						}
 					} else if ((c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET)
-							&& !((stack.contains(TokenType.TYPE_DIRECTIVE) || stack
-									.contains(TokenType.TYPE_INTERPOLATION)) && stack
-									.contains(TokenType.TYPE_STRING))) {
+							&& !((styleStack.contains(ColoringStyle.DIRECTIVE) || styleStack
+									.contains(ColoringStyle.INTERPOLATION)) && styleStack
+									.contains(ColoringStyle.STRING))) {
 						if (cNext == LexicalConstants.HASH) {
 							// directive
 							if (i == offsetStart) {
-								directiveTypeChar = c;
-								push(TokenType.TYPE_DIRECTIVE);
+								expressionStack.push(Character.valueOf(c));
+								styleStack.push(ColoringStyle.DIRECTIVE);
 							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart - 1;
 								this.currentOffset = i;
-								return getToken(type);
+								return type.getToken();
 							}
 						} else if (cNext == LexicalConstants.AT) {
 							// macro
 							if (i == offsetStart) {
-								directiveTypeChar = c;
-								push(TokenType.TYPE_DIRECTIVE);
+								expressionStack.push(Character.valueOf(c));
+								styleStack.push(ColoringStyle.DIRECTIVE);
 							} else {
 								this.tokenOffset = offsetStart;
 								this.tokenLength = i - offsetStart - 1;
 								this.currentOffset = i;
-								return getToken(type);
+								return type.getToken();
 							}
 						}
-					} else if ((c == LexicalConstants.RIGHT_SQUARE_BRACKET || c == LexicalConstants.RIGHT_ANGLE_BRACKET)
-							&& !((stack.contains(TokenType.TYPE_DIRECTIVE) || stack
-									.contains(TokenType.TYPE_INTERPOLATION)) && stack
-									.contains(TokenType.TYPE_STRING))) {
-						if ((c == LexicalConstants.RIGHT_SQUARE_BRACKET && directiveTypeChar == LexicalConstants.LEFT_SQUARE_BRACKET)
-								|| (c == LexicalConstants.RIGHT_ANGLE_BRACKET && directiveTypeChar == LexicalConstants.LEFT_ANGLE_BRACKET)
-								|| directiveTypeChar == Character.MIN_VALUE) {
+					} else if (ParserUtils.isClosingDirectiveBracket(c)
+							&& !((styleStack.contains(ColoringStyle.DIRECTIVE)
+									|| styleStack.contains(ColoringStyle.INTERPOLATION))
+								&& styleStack.contains(ColoringStyle.STRING))) {
+						char expressionStackPeek = expressionStack.peek().charValue();
+						if (expressionStackPeek == ParserUtils.getMatchingLeftBracket(c)
+								|| expressionStackPeek == Character.MIN_VALUE) {
 							this.tokenOffset = offsetStart;
 							this.tokenLength = i - offsetStart + 1;
 							this.currentOffset = i + 1;
-							if (directiveTypeChar != Character.MIN_VALUE) {
-								pop();
-								return DIRECTIVE_TOKEN;
+							if (expressionStackPeek != Character.MIN_VALUE) {
+								styleStack.pop();
+								return ColoringStyle.DIRECTIVE.getToken();
 							} else {
-								return defaultToken;
+								return ColoringStyle.UNKNOWN.getToken();
 							}
 						}
 					}
@@ -211,46 +219,7 @@ public class ContentScanner implements ITokenScanner {
 		this.currentOffset = i + 1;
 		this.tokenOffset = offsetStart;
 		this.tokenLength = endOffset - tokenOffset;
-		return getToken(peek());
-	}
-
-	private TokenType peek() {
-		if (stack.size() > 0) {
-			return stack.peek();
-		}
-		else {
-			return TokenType.TYPE_UNKNOWN;
-		}
-	}
-
-	private void push(TokenType s) {
-		stack.push(s);
-	}
-
-	private TokenType pop() {
-		if (stack.size() > 0)
-			return stack.pop();
-		else
-			return TokenType.TYPE_UNKNOWN;
-	}
-
-	private IToken getToken(TokenType type) {
-		switch (type) {
-		case TYPE_DIRECTIVE:
-			return DIRECTIVE_TOKEN;
-		case TYPE_INTERPOLATION:
-		case TYPE_BRACKET_EXPRESSION:
-			return INTERPOLATION_TOKEN;
-		case TYPE_STRING:
-			return STRING_TOKEN;
-		case TYPE_UNKNOWN:
-		default:
-			return defaultToken;
-		}
-		// if (type.equals(TokenType.TYPE_DIRECTIVE)) return DIRECTIVE_TOKEN;
-		//		else if (type.equals(TokenType.TYPE_INTERPOLATION) || type.equals("(")) return INTERPOLATION_TOKEN; //$NON-NLS-1$
-		// else if (type.equals(TokenType.TYPE_STRING)) return STRING_TOKEN;
-		// else return defaultToken;
+		return styleStack.peek().getToken();
 	}
 
 	@Override

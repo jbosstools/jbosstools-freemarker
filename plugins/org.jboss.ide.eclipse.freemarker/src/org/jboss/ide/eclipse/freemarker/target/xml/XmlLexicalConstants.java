@@ -19,57 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.ide.eclipse.freemarker.lang;
+package org.jboss.ide.eclipse.freemarker.target.xml;
 
 /**
- * Character constants used in FTL parser.
+ * XML/HTML lexical constants.
  *
- * @since 1.4.0
  * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
- *
+ * @since 1.4.0
  */
-public interface LexicalConstants {
-	char SPACE = ' ';
-	char TAB = '\t';
-	char CR = '\r';
-	char LF = '\n';
-	char QUOT = '"';
-	char APOS = '\'';
-	char r = 'r';
-	char EQUALS = '=';
-	char BACKSLASH = '\\';
-	char DIGIT_0 = '0';
-	char DIGIT_9 = '9';
-	char DIGIT_a = 'a';
-	char DIGIT_A = 'A';
-	char DIGIT_f = 'f';
-	char DIGIT_F = 'F';
-	char n = 'n';
-	char t = 't';
-	char f = 'f';
-	char b = 'b';
-	char g = 'g';
-	char l = 'l';
-	char a = 'a';
-	char DOLLAR = '$';
-	char LEFT_BRACE = '{';
-	char RIGHT_BRACE = '}';
-	char x = 'x';
-	char PERIOD = '.';
-	char HASH = '#';
-	char LEFT_ANGLE_BRACKET = '<';
-	char LEFT_SQUARE_BRACKET = '[';
-	char RIGHT_ANGLE_BRACKET = '>';
-	char RIGHT_SQUARE_BRACKET = ']';
-	char LEFT_PARENTHESIS = '(';
-	char RIGHT_PARENTHESIS = ')';
-	char AT = '@';
-	char SLASH = '/';
+public interface XmlLexicalConstants {
+
+	String XML_COMMENT_END = "-->"; //$NON-NLS-1$
+	String XML_COMMENT_START = "<!--"; //$NON-NLS-1$
 	char QUESTION_MARK = '?';
+	char BACKSLASH = '\\';
+	char LEFT_ANGLE_BRACKET = '<';
+	char RIGHT_ANGLE_BRACKET = '>';
 	char EXCLAMATION_MARK = '!';
-	char MINUS = '-';
-	char COMMA = ',';
-	String QUOT_STRING = String.valueOf(QUOT);
-	String APOS_STRING = String.valueOf(APOS);
-	String SQUARE_SYNTAX_MARKER = "" + LEFT_SQUARE_BRACKET + HASH + Keyword.ftl; //$NON-NLS-1$
+
 }

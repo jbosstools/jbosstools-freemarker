@@ -1,3 +1,4 @@
+<#assign key="val">
 <#assign seasons = ["winter", "spring", "summer", "autumn"]>
 <#assign counter = counter + 1>
 <#assign
