@@ -145,9 +145,11 @@ public class Plugin extends AbstractUIPlugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		Preferences.getInstance().dispose();
-		super.stop(context);
+		try {
+			Preferences.getInstance().dispose();
+		} finally {
+			super.stop(context);
+		}
 	}
-	
-	
+
 }

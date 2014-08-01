@@ -21,9 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -42,9 +39,7 @@ import org.jboss.ide.eclipse.freemarker.preferences.Preferences.PreferenceKey;
  */
 public class XMLTagScanner extends RuleBasedScanner {
 
-	private static final String DOLLAR_LEFT_BRACE = new StringBuilder(2)
-			.append(LexicalConstants.DOLLAR)
-			.append(LexicalConstants.LEFT_BRACE).toString();
+	private static final String DOLLAR_LEFT_BRACE = "" + LexicalConstants.DOLLAR + LexicalConstants.LEFT_BRACE; //$NON-NLS-1$
 	private IToken lastToken;
 
 	@Override
@@ -63,21 +58,17 @@ public class XMLTagScanner extends RuleBasedScanner {
 		IToken interpolation = new Token(new TextAttribute(Preferences
 				.getInstance().getColor(PreferenceKey.COLOR_INTERPOLATION)));
 
-		List<IRule> l = new ArrayList<IRule>();
-
-		l.add(new StringSubRule(LexicalConstants.QUOT_STRING,
-				DOLLAR_LEFT_BRACE, 2, string));
-		l.add(new InterpolationRule(LexicalConstants.DOLLAR, interpolation));
-		l.add(new InterpolationRule(LexicalConstants.HASH, interpolation));
-
-		l.add(new SingleLineRule(LexicalConstants.QUOT_STRING,
-				LexicalConstants.QUOT_STRING, string,
-				LexicalConstants.BACKSLASH));
-		l.add(new SingleLineRule(LexicalConstants.APOS_STRING,
-				LexicalConstants.APOS_STRING, string,
-				LexicalConstants.BACKSLASH));
-		l.add(new WhitespaceRule(new WhitespaceDetector()));
-
-		setRules(l.toArray(new IRule[l.size()]));
+		setRules(new IRule[] {
+				new StringSubRule(LexicalConstants.QUOT_STRING,
+						DOLLAR_LEFT_BRACE, 2, string),
+				new InterpolationRule(LexicalConstants.DOLLAR, interpolation),
+				new InterpolationRule(LexicalConstants.HASH, interpolation),
+				new SingleLineRule(LexicalConstants.QUOT_STRING,
+						LexicalConstants.QUOT_STRING, string,
+						LexicalConstants.BACKSLASH),
+				new SingleLineRule(LexicalConstants.APOS_STRING,
+						LexicalConstants.APOS_STRING, string,
+						LexicalConstants.BACKSLASH),
+				new WhitespaceRule(new WhitespaceDetector()) });
 	}
 }
