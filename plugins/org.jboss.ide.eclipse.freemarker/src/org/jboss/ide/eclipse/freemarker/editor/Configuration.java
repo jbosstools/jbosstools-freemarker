@@ -42,6 +42,7 @@ import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class Configuration extends TextSourceViewerConfiguration {
+
 	private Editor editor;
 
 	public Configuration(IPreferenceStore preferenceStore, Editor editor) {
@@ -57,6 +58,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
+		reconciler.setDocumentPartitioning(DocumentProvider.FTL_PARTITIONING);
 
 		PartitionType[] partitionTypes = PartitionType.values();
 		for (PartitionType partitionType : partitionTypes) {
@@ -67,6 +69,8 @@ public class Configuration extends TextSourceViewerConfiguration {
 				reconciler.setRepairer(dr, partitionType.name());
 			}
 		}
+
+
 		//FIXME: Add back XML syntax coloring some day
 //		ndr =
 //			new NonRuleBasedDamagerRepairer(

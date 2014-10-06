@@ -30,12 +30,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
@@ -124,7 +126,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 				if (monitor != null) {
 					monitor.worked(index);
 				}
-				ITypedRegion region = doc.getPartition(index);
+				ITypedRegion region = TextUtilities.getPartition(doc, DocumentProvider.FTL_PARTITIONING, index, false);
 				PartitionType partitionType = PartitionType.fastValueOf(region
 						.getType());
 				if (partitionType != null) {
@@ -161,7 +163,8 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 				}
 				index = region.getOffset() + region.getLength() + 1;
 			}
-		} catch (BadLocationException ignored) {
+		} catch (BadLocationException e) {
+			Plugin.log(e);
 		} finally {
 			this.syntaxMode = newMode;
 			if (monitor != null) {

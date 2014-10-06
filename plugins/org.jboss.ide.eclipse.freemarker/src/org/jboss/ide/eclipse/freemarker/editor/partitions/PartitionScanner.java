@@ -109,6 +109,9 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 			}
 		}
 		delegate.setPartialRange(document, offset, length, contentType, partitionOffset);
+		IToken nextToken = delegate.nextToken();
+		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
+		this.currentState = null;
 	}
 
 	@Override
@@ -157,6 +160,7 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 		delegate.setRange(document, offset, length);
 		IToken nextToken = delegate.nextToken();
 		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
+		this.currentState = null;
 	}
 
 }
