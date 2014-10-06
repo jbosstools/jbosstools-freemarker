@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>freemarker</artifactId>
 	<version>1.4.0-SNAPSHOT</version>
-	<name>freemarker.all</name>
+	<name>jbosstools-freemarker</name>
 	<packaging>pom</packaging>
 	<properties>
  		<tycho.scmUrl>scm:git:https://github.com/jbosstools/jbosstools-freemarker.git</tycho.scmUrl>
