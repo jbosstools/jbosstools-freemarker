@@ -96,7 +96,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		configuration = new org.jboss.ide.eclipse.freemarker.editor.Configuration(
 				getPreferenceStore(), this);
 		setSourceViewerConfiguration(configuration);
-		setDocumentProvider(new DocumentProvider());
+		setDocumentProvider(Plugin.getDefault().getDocumentProvider());
 
 	}
 
