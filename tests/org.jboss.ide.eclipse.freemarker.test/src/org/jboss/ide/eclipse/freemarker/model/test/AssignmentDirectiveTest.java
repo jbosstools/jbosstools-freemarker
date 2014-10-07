@@ -21,13 +21,11 @@
  */
 package org.jboss.ide.eclipse.freemarker.model.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.eclipse.swt.custom.StyleRange;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
 import org.jboss.ide.eclipse.freemarker.lang.ParserUtils.ParseException;
 import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
@@ -38,12 +36,13 @@ import org.jboss.ide.eclipse.freemarker.model.ListDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroEndDirective;
 import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
+import org.jboss.ide.eclipse.freemarker.test.FreemarkerTestUtils;
 
 import freemarker.template.TemplateException;
 
 public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 
-	private static final String TEST_FTL_FILE = "assign.txt.ftl"; //$NON-NLS-1$
+	public static final String TEST_FTL_FILE = "assign.txt.ftl"; //$NON-NLS-1$
 
 	@Override
 	protected String getTestFileName() {
@@ -51,10 +50,7 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 	}
 
 	public void testAssignFtl() throws IOException, TemplateException {
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("user", "Joe"); //$NON-NLS-1$ //$NON-NLS-2$
-		model.put("counter", Integer.valueOf(0)); //$NON-NLS-1$
-		validateFtlTemplate(TEST_FTL_FILE, model);
+		FreemarkerTestUtils.validateFtlTemplate(new File(project.getFile(TEST_DIRECTORY).getLocationURI()), TEST_FTL_FILE);
 	}
 
 	private static void testNestable(boolean expected, String contents) throws ParseException {
@@ -121,71 +117,6 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 		 * ${hello} */
 		assertAssignment(i);
 		assertInterpolation(i);
-	}
-
-	public void testAssignColoring() {
-		StyleRange[] expected = new StyleRangeArrayBuilder()
-		.directive(13) // <#assign key=
-		.string(5) // "val"
-		.directive(1) // >
-		.text(1) // <whitespace>
-		.directive(20) // <#assign seasons = [
-		.string(8) // "winter"
-		.directive(2) // ,
-		.string(8) // "spring"
-		.directive(2) // ,
-		.string(8) // "summer"
-		.directive(2) // ,
-		.string(8) // "autumn"
-		.directive(2) // ]>
-		.text(1) // <whitespace>
-		.directive(31) // <#assign counter = counter + 1>
-		.text(1) // <whitespace>
-		.directive(19) // <#assign   days = [
-		.string(4) // "Mo"
-		.directive(2) // ,
-		.string(4) // "Tu"
-		.directive(2) // ,
-		.string(4) // "We"
-		.directive(2) // ,
-		.string(4) // "Th"
-		.directive(2) // ,
-		.string(4) // "Fr"
-		.directive(2) // ,
-		.string(4) // "Sa"
-		.directive(2) // ,
-		.string(4) // "Su"
-		.directive(27) // ]   counter = counter + 1 >
-		.text(1) // <whitespace>
-		.directive(16) // <#macro myMacro>
-		.text(3) // foo
-		.directive(9) // </#macro>
-		.text(1) // <whitespace>
-		.directive(26) // <#assign formattedSeasons>
-		.text(3) // <whitespace>
-		.directive(20) // <#list seasons as s>
-		.text(5) // <whitespace>
-		.interpolation(4) // ${s}
-		.text(1) // <whitespace>
-		.directive(12) // <@myMacro />
-		.text(3) // <whitespace>
-		.directive(8) // </#list>
-		.text(1) // <whitespace>
-		.directive(10) // </#assign>
-		.text(18) // Number of words:
-		.interpolation(34) // ${formattedSeasons?word_list?size}
-		.text(1) // <whitespace>
-		.interpolation(19) // ${formattedSeasons}
-		.text(1) // <whitespace>
-		.directive(15) // <#assign hello=
-		.string(7) // "Hello
-		.interpolation(7) // ${user}
-		.string(2) // !"
-		.directive(1) // >
-		.text(1) // <whitespace>
-		.interpolation(8) // ${hello}
-		.build();
-		validateColoring(expected);
 	}
 
 }

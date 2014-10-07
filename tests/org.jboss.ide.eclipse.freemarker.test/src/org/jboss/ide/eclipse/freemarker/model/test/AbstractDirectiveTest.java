@@ -21,12 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.model.test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,6 +35,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorPart;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.StyleRangeArrayBuilder;
 import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
 import org.jboss.ide.eclipse.freemarker.model.GenericDirective;
 import org.jboss.ide.eclipse.freemarker.model.IfEndDirective;
@@ -51,17 +46,13 @@ import org.jboss.ide.eclipse.freemarker.test.Activator;
 import org.jboss.tools.test.util.ResourcesUtils;
 import org.jboss.tools.test.util.WorkbenchUtils;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
 public abstract class AbstractDirectiveTest extends TestCase {
 
-	private static final String TEST_PROJECT = "testEditor"; //$NON-NLS-1$
-	private static final String TEST_DIRECTORY = "model"; //$NON-NLS-1$
+	public static final String TEST_PROJECT = "testEditor"; //$NON-NLS-1$
+	public static final String TEST_DIRECTORY = "model"; //$NON-NLS-1$
 
-	private IProject project;
-	private Editor editor;
+	protected IProject project;
+	protected Editor editor;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -96,24 +87,6 @@ public abstract class AbstractDirectiveTest extends TestCase {
 		assertEquals(expected.length, actual.length);
 		for (int i = 0; i < actual.length; i++) {
 			assertEquals("Mismatch at index "+ i, expected[i], actual[i]); //$NON-NLS-1$
-		}
-	}
-
-	protected void validateFtlTemplate(String fileName, Object model) throws IOException, TemplateException {
-		String fileNameExpected = fileName + ".expected.txt"; //$NON-NLS-1$
-		Configuration config = new Configuration();
-		File testDirectory = new File(project.getFile(TEST_DIRECTORY).getLocationURI());
-		config.setDirectoryForTemplateLoading(testDirectory);
-		Template temp = config.getTemplate(fileName);
-		StringWriter found = new StringWriter();
-		temp.process(model, found);
-		File expectedFile = new File(testDirectory, fileNameExpected);
-		if (expectedFile.exists()) {
-			String expected = readFile(expectedFile);
-			assertEquals(expected, found.toString());
-		}
-		else {
-			fail("You may want to create "+ expectedFile.getAbsolutePath() +":\n"+ found.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -155,23 +128,6 @@ public abstract class AbstractDirectiveTest extends TestCase {
 			assertEquals("Child #"+ i +" found "+ childItems.get(j).getClass() + " expected "+expectedChildren[j], expectedChildren[j], childItems.get(j).getClass()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return item;
-	}
-	private static String readFile(File f) throws IOException {
-		StringBuilder result = new StringBuilder();
-		Reader in = null;
-
-		try {
-			in = new InputStreamReader(new FileInputStream(f), "utf-8"); //$NON-NLS-1$
-			int c = 0;
-			while ((c = in.read()) >= 0) {
-				result.append((char) c);
-			}
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-		}
-		return result.toString();
 	}
 
 }
