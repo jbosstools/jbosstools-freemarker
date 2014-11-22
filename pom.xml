@@ -8,7 +8,7 @@
 		<version>4.2.0.Final-SNAPSHOT</version>
 	</parent>
 	<artifactId>freemarker</artifactId>
-	<version>1.4.0-SNAPSHOT</version>
+	<version>1.4.1-SNAPSHOT</version>
 	<name>freemarker.all</name>
 	<packaging>pom</packaging>
 	<properties>
