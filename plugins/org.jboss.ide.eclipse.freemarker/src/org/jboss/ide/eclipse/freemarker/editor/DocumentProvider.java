@@ -59,19 +59,44 @@ public class DocumentProvider extends FileDocumentProvider {
 
 	public static SyntaxMode findMode(IDocument document) {
 		int docLength = document.getLength();
-		if (docLength >= LexicalConstants.SQUARE_SYNTAX_MARKER.length()) {
+		if (docLength >= 2 ) { 
 			try {
-				int i = 0;
-				for (; i < docLength && ParserUtils.isWhitespace(document.getChar(i)); i++) {
-					/* skip whitespace */
-				}
-				for (; i < docLength; i++) {
+				// s represents a state machine that recognize '[#' or '<#', whatever comes first.
+				// 0 -> nothing found
+				// 1 -> < found
+				// 2 -> [ found
+				// 3 -> # found after 1 (angle mode found)
+				// 4 -> # found after 2 (square mode found)
+				int s = 0;
+				
+				for (int i = 0; i < docLength && s < 3 ; i++) {
 					char ch = document.getChar(i);
-					if (ch != LexicalConstants.SQUARE_SYNTAX_MARKER.charAt(i)) {
-						return SyntaxMode.ANGLE;
+					switch(ch){
+						case LexicalConstants.LEFT_ANGLE_BRACKET:
+							s = 1;
+							break;
+						case LexicalConstants.LEFT_SQUARE_BRACKET:
+							s = 2;
+							break;
+						case LexicalConstants.HASH:
+							if(s == 1) 
+								s = 3;
+							else if(s == 2) 
+								s = 4;
+							else 
+								s = 0;
+							break;
+						default:
+							s = 0;
+							break;
 					}
 				}
-				return SyntaxMode.SQUARE;
+				if( s == 3) 
+					return SyntaxMode.ANGLE;
+				else if( s == 4) 
+					return SyntaxMode.SQUARE;
+				else 
+					return SyntaxMode.getDefault();
 			} catch (BadLocationException ignore) {
 				return SyntaxMode.getDefault();
 			}
