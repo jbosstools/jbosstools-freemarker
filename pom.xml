@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
-		<version>4.3.0.Alpha2-SNAPSHOT</version>
+		<version>4.3.0.Beta1-SNAPSHOT</version>
 	</parent>
 	<artifactId>freemarker</artifactId>
 	<version>1.4.1-SNAPSHOT</version>
@@ -40,4 +40,3 @@
 		</repository>
 	</repositories>
 </project>
-	
