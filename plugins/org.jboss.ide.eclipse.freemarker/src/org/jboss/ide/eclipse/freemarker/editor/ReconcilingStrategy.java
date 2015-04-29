@@ -36,6 +36,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
@@ -162,6 +163,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 				index = region.getOffset() + region.getLength() + 1;
 			}
 		} catch (BadLocationException ignored) {
+			Plugin.log(ignored);
 		} finally {
 			this.syntaxMode = newMode;
 			if (monitor != null) {

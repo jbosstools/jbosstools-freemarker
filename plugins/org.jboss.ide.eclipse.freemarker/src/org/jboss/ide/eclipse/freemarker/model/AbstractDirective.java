@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 
 public abstract class AbstractDirective extends AbstractItem {
@@ -48,6 +49,7 @@ public abstract class AbstractDirective extends AbstractItem {
 					contents = contents.substring(2, contents.length()-1);
 				}
 				catch (StringIndexOutOfBoundsException e) {
+					Plugin.log(e);
 				}
 			}
 		}
@@ -97,7 +99,9 @@ public abstract class AbstractDirective extends AbstractItem {
 			try {
 				value = contentWithOffset.getContents()[index].substring(0, contentWithOffset.getOffsetInIndex());
 			}
-			catch (Exception e) {}
+			catch (Exception e) {
+				Plugin.log(e);
+			}
 			CompletionInterpolation completionInterpolation = new CompletionInterpolation(
 					getItemSet() , "${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getResource()); //$NON-NLS-1$
 			return completionInterpolation.getCompletionProposals(offset, context);

@@ -227,6 +227,7 @@ public class ItemSet {
 			return viewer.getDocument().getPartition(offset);
 		}
 		catch (BadLocationException e) {
+			Plugin.log(e);
 			return null;
 		}
 	}

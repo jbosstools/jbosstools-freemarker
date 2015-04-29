@@ -39,6 +39,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.console.IHyperlink;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 /**
  * @author <a href="mailto:joe&binamics.net">Joe Hudson </a>
@@ -100,6 +101,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 						}
 					}
 					catch (Exception e) {
+						Plugin.log(e);
 						// we can still proceed if we don't get the line number
 					}
 
@@ -116,6 +118,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 							populateMatchingFiles(project, files, fileName.split("/")); //$NON-NLS-1$
 						}
 						catch (CoreException e) {
+							Plugin.log(e);
 							// TODO log this exception
 						}
 					}
@@ -130,6 +133,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 				}
 			}
 		} catch (BadLocationException e) {
+			Plugin.log(e);
 		}
 	}
 
@@ -147,7 +151,9 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 						IJavaProject javaProject = JavaCore.create(resource.getProject());
 						if (javaProject.getOutputLocation().isPrefixOf(((IFile) resource).getFullPath())) doAdd = false;
 					}
-					catch (JavaModelException e) {}
+					catch (JavaModelException e) {
+						Plugin.log(e);
+					}
 					if (doAdd) files.add(resource);
 				}
 			}

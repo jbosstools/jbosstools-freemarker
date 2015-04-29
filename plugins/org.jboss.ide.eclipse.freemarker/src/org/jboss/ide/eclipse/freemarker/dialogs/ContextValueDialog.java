@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.jboss.ide.eclipse.freemarker.Messages;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
 
@@ -153,7 +154,9 @@ public class ContextValueDialog extends Dialog {
                         MessageDialog.openError(getShell(), Messages.ContextValueDialog_JAVA_PROJECT_ERROR, Messages.ContextValueDialog_MUST_BE_JAVA_PROJECT);
                     }
                 }
-                catch(JavaModelException _ex) { }
+                catch(JavaModelException _ex) {
+                	Plugin.log(_ex);
+                }
             }
 
             @Override
@@ -205,7 +208,9 @@ public class ContextValueDialog extends Dialog {
                         MessageDialog.openError(getShell(), Messages.ContextValueDialog_JAVA_PROJECT_ERROR, Messages.ContextValueDialog_MUST_BE_JAVA_PROJECT);
                     }
                 }
-                catch(JavaModelException _ex) { }
+                catch(JavaModelException _ex) {
+                	Plugin.log(_ex);
+                }
             }
 
             @Override

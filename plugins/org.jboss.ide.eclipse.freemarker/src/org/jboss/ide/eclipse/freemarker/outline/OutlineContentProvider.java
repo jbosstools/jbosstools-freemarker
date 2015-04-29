@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.MacroDirective;
@@ -61,6 +62,7 @@ public class OutlineContentProvider implements ITreeContentProvider {
 		try {
 			this.fullAstShown = level != null && OutlineContentProvider.OutlineLevelOfDetail.valueOf(level) == OutlineContentProvider.OutlineLevelOfDetail.full;
 		} catch (IllegalArgumentException e) {
+			Plugin.log(e);
 			this.fullAstShown = false;
 		}
 	}

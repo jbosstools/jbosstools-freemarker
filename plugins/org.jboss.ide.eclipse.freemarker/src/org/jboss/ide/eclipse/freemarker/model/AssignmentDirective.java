@@ -27,6 +27,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
@@ -86,6 +87,7 @@ public class AssignmentDirective extends AbstractDirective {
 			try {
 				this.nestable = isNestable(getContents(), this.type);
 			} catch (ParseException e) {
+				Plugin.log(e);
 				this.nestable = Boolean.FALSE;
 			}
 		}

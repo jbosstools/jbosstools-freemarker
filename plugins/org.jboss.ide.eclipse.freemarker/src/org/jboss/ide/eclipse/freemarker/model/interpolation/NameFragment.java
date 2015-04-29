@@ -41,6 +41,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
@@ -199,6 +200,7 @@ public class NameFragment extends AbstractFragment {
 			return completionProposals(proposals);
 		}
 		catch (IntrospectionException e) {
+			Plugin.log(e);
 			return null;
 		}
 	}

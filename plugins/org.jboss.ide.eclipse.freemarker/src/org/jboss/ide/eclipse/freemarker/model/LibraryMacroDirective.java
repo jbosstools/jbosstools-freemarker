@@ -24,6 +24,7 @@ package org.jboss.ide.eclipse.freemarker.model;
 import java.util.Collections;
 
 import org.eclipse.jface.text.ITypedRegion;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 
 public class LibraryMacroDirective extends MacroDirective {
@@ -45,7 +46,7 @@ public class LibraryMacroDirective extends MacroDirective {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			Plugin.log(e);
 		}
 	}
 

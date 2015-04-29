@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -102,7 +103,9 @@ public class ProjectClassLoader extends URLClassLoader {
                     }
 				}
 			}
-			catch (Exception e) {}
+			catch (Exception e) {
+				Plugin.log(e);
+			}
 		}
 
 		return list.toArray(new URL[list.size()]);

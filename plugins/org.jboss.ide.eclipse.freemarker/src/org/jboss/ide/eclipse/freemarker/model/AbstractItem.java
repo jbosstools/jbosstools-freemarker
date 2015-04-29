@@ -432,8 +432,9 @@ public abstract class AbstractItem implements Item {
 					region.getOffset(), region.getLength());
 		}
 		catch (BadLocationException e) {
-			return null;
+			Plugin.log(e);
 		}
+		return null;
 	}
 
 	public int getOffset () {

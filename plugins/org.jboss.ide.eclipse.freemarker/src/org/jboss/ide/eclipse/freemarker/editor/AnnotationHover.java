@@ -31,6 +31,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -94,6 +95,7 @@ public class AnnotationHover implements IAnnotationHover {
 					distance = 2;
 				}
 			} catch (BadLocationException e) {
+				Plugin.log(e);
 			}
 		}
 		return distance;

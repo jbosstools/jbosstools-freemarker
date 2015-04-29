@@ -27,6 +27,7 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
@@ -205,6 +206,7 @@ public class ContentScanner implements ITokenScanner {
 				escape = doEscape;
 			}
 		} catch (BadLocationException e) {
+			Plugin.log(e);
 			this.currentOffset = i;
 			this.tokenOffset = offsetStart;
 			this.tokenLength = endOffset - tokenOffset;

@@ -150,6 +150,7 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements
 						}
 					}
 				} catch (BadLocationException e) {
+					Plugin.log(e);
 					return NO_COMPLETIONS;
 				}
 				// check for interpolations
@@ -191,6 +192,7 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements
 						}
 					}
 				} catch (BadLocationException e) {
+					Plugin.log(e);
 					return NO_COMPLETIONS;
 				}
 			}

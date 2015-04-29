@@ -63,6 +63,7 @@ public class Plugin extends AbstractUIPlugin {
 		try {
 			resourceBundle = ResourceBundle.getBundle("org.jboss.ide.eclipse.freemarker.resources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
+			Plugin.log(x);
 			resourceBundle = null;
 		}
 	}

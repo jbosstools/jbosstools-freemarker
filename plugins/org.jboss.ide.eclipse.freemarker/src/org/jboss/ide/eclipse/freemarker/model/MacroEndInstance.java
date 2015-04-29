@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.jboss.ide.eclipse.freemarker.Plugin;
 
 public class MacroEndInstance extends AbstractDirective {
 
@@ -99,7 +100,9 @@ public class MacroEndInstance extends AbstractDirective {
 				contents = getViewer().getDocument().get(
 						getRegion().getOffset(), getRegion().getLength());
 			}
-			catch (BadLocationException e) {}
+			catch (BadLocationException e) {
+				Plugin.log(e);
+			}
 			if (null != contents) {
 				contents = contents.trim();
 				contents = contents.substring(3, contents.length()-1);

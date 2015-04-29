@@ -345,6 +345,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
 				}
 			} catch (BadLocationException e1) {
+				Plugin.log(e1);
 			}
 		} else if (e.keyCode == LexicalConstants.RIGHT_BRACE) {
 			try {
@@ -354,6 +355,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
 				}
 			} catch (BadLocationException e1) {
+				Plugin.log(e1);
 			}
 		}
 	}
@@ -415,7 +417,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				}
 			}
 		} catch (BadLocationException exc) {
-			// do nothing
+			Plugin.log(exc);
 		}
 
 		boolean stale = false;
@@ -504,6 +506,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					reader.close();
 				}
 			} catch (ParseException e) {
+				Plugin.log(e);
 				if (e.getMessage() != null) {
 					String errorStr = e.getMessage();
 					int errorLine = 0;
@@ -524,10 +527,12 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 								try {
 									errorLine = Integer.parseInt(s);
 								} catch (Exception e2) {
+									Plugin.log(e2);
 								}
 							}
 						}
 					} catch (NullPointerException npe) {
+						Plugin.log(npe);
 						errorLine = 0;
 					}
 					editor.addProblemMarker(errorStr, errorLine);
