@@ -1,13 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion> 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jboss.tools.freemarker</groupId>
 		<artifactId>plugins</artifactId>
-		<version>1.4.1-SNAPSHOT</version>
+		<version>1.4.101-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jboss.tools.freemarker.plugins</groupId>
-	<artifactId>org.jboss.ide.eclipse.freemarker</artifactId> 
-	
+	<artifactId>org.jboss.ide.eclipse.freemarker</artifactId>
+
 	<packaging>eclipse-plugin</packaging>
+	<properties>
+		<freemarkerVersion>2.3.22</freemarkerVersion>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>get-freemarker-library</id>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>org.freemarker</groupId>
+							<artifactId>freemarker</artifactId>
+							<version>${freemarkerVersion}</version>
+						</artifactItem>
+					</artifactItems>
+					<skip>false</skip>
+					<outputDirectory>${basedir}</outputDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>freemarker</artifactId>
-		<version>1.4.1-SNAPSHOT</version>
+		<version>1.4.101-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jboss.tools.freemarker</groupId>
 	<artifactId>features</artifactId>
