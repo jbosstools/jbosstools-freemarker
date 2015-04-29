@@ -35,4 +35,4 @@ Export-Package: freemarker.core,
  org.jboss.ide.eclipse.freemarker.preferences,
  org.jboss.ide.eclipse.freemarker.target
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Eclipse-BundleShape: dir
+Eclipse-BundleShape: jar
