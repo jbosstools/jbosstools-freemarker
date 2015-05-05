@@ -40,7 +40,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.jboss.ide.eclipse.freemarker.editor.DocumentProvider;
 import org.jboss.ide.eclipse.freemarker.preferences.Preferences;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -54,6 +56,8 @@ public class Plugin extends AbstractUIPlugin {
 
 	//The shared instance.
 	private static Plugin plugin;
+	private DocumentProvider documentProvider;
+
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 
@@ -108,6 +112,13 @@ public class Plugin extends AbstractUIPlugin {
 	public static void log (String s) {
 		IStatus status = new Status(IStatus.ERROR,ID,s);
 		Plugin.getDefault().getLog().log(status);
+	}
+
+	public DocumentProvider getDocumentProvider() {
+		if (this.documentProvider == null) {
+			this.documentProvider = new DocumentProvider();
+		}
+		return this.documentProvider;
 	}
 
 	public Image getImage(String key) {

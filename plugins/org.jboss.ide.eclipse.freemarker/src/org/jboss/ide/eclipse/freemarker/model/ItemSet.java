@@ -35,8 +35,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.editor.DocumentProvider;
 
 public class ItemSet {
 
@@ -224,7 +226,7 @@ public class ItemSet {
 
 	private ITypedRegion getRegion (int offset) {
 		try {
-			return viewer.getDocument().getPartition(offset);
+			return TextUtilities.getPartition(viewer.getDocument(), DocumentProvider.FTL_PARTITIONING, offset, false);
 		}
 		catch (BadLocationException e) {
 			Plugin.log(e);

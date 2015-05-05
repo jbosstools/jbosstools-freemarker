@@ -24,6 +24,7 @@ package org.jboss.ide.eclipse.freemarker.editor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
@@ -38,6 +39,8 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
  */
 public class DocumentProvider extends FileDocumentProvider {
 
+	public static final String FTL_PARTITIONING = "org.jboss.ide.eclipse.freemarker.partitioning";
+
 
 	public DocumentProvider() {
 		super();
@@ -51,8 +54,14 @@ public class DocumentProvider extends FileDocumentProvider {
 				new FastPartitioner(
 					new PartitionScanner(),
 					PartitionType.PARTITION_TYPES);
-			partitioner.connect(document);
-			document.setDocumentPartitioner(partitioner);
+			if (document instanceof IDocumentExtension3) {
+				IDocumentExtension3 docExt3 = (IDocumentExtension3) document;
+				docExt3.setDocumentPartitioner(FTL_PARTITIONING, partitioner);
+				partitioner.connect(document);
+			} else {
+				document.setDocumentPartitioner(partitioner);
+				partitioner.connect(document);
+			}
 		}
 		return document;
 	}

@@ -72,7 +72,7 @@ import org.jboss.ide.eclipse.freemarker.dialogs.ContextValueDialog;
 public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements ITextEditor, ITextEditorExtension {
 
 	public static final String ID = "org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor"; //$NON-NLS-1$
-	                                 
+
     private Editor vEditor;
     private boolean readOnly = false;
 
@@ -90,8 +90,9 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
     {
         try {
             vEditor = new Editor();
-            vEditor.init(getEditorSite(), getEditorInput());
-            if (readOnly) vEditor.setReadOnly(readOnly);
+            if (readOnly) {
+                vEditor.setReadOnly(readOnly);
+            }
             int index = addPage(vEditor, getEditorInput());
             setPageText(index, Messages.FreemarkerMultiPageEditor_PAGE_TEXT_SOURCE);
             setPartName(vEditor.getTitle());
@@ -155,7 +156,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
 		contextValuesTable.setLayoutData(data);
-		
+
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -189,7 +190,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 		data.widthHint = 45;
 		data.grabExcessHorizontalSpace = true;
 		deleteContextValueButton.setLayoutData(data);
-		
+
 		reloadContextValues();
         int index = addPage(composite);
         setPageText(index, Messages.FreemarkerMultiPageEditor_PAGE_TEXT_CONTEXT);
@@ -264,7 +265,7 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
 			}
 		}
 	}
-	
+
 	public class ContextValueDeleteKeyListener implements SelectionListener, KeyListener {
 		@Override
 		public void widgetSelected(SelectionEvent e) {

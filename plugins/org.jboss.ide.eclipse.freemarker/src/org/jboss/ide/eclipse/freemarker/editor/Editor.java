@@ -48,6 +48,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -96,7 +97,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		configuration = new org.jboss.ide.eclipse.freemarker.editor.Configuration(
 				getPreferenceStore(), this);
 		setSourceViewerConfiguration(configuration);
-		setDocumentProvider(new DocumentProvider());
+		setDocumentProvider(Plugin.getDefault().getDocumentProvider());
 
 	}
 
@@ -317,8 +318,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	 */
 	public ItemSet createItemSet(List<ITypedRegion> regions) {
 		IResource resource = null;
-		if (getEditorInput() instanceof IFileEditorInput) {
-			resource = ((IFileEditorInput) getEditorInput()).getFile();
+		IEditorInput input = getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			resource = ((IFileEditorInput) input).getFile();
 			// } else if (getEditorInput() instanceof JarEntryEditorInput) {
 			// resource = null;
 		}
