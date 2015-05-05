@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
 public class MacroLibrary {
 
 	private static final String HASH_MACRO_SPACE = new StringBuilder(7)
-			.append(LexicalConstants.HASH).append(Keyword.macro.toString())
+			.append(LexicalConstants.HASH).append(Keyword.MACRO.toString())
 			.append(LexicalConstants.SPACE).toString();
 
 	public static final String TYPE_FILE = "file"; //$NON-NLS-1$

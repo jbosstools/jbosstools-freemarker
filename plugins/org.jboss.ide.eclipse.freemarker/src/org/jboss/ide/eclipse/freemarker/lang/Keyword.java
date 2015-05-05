@@ -29,47 +29,52 @@ package org.jboss.ide.eclipse.freemarker.lang;
  *
  */
 public enum Keyword {
-	include,
-	import_("import"), //$NON-NLS-1$
-	assign,
-	local,
-	global,
-	break_("break"), //$NON-NLS-1$
-	nested,
-	return_("return"), //$NON-NLS-1$
-	stop,
-	list,
-	if_("if"), //$NON-NLS-1$
-	else_("else"), //$NON-NLS-1$
-	else_if,
-	switch_("switch"), //$NON-NLS-1$
-	case_("case"), //$NON-NLS-1$
-	default_("default"), //$NON-NLS-1$
-	macro,
-	ftl,
-	function_("function"), //$NON-NLS-1$
-	true_("true"), //$NON-NLS-1$
-	false_("false"), //$NON-NLS-1$
-	gt,
-	gte,
-	lt,
-	lte,
-	as,
-	in,
-	using
-	;
+	INCLUDE,
+	IMPORT,
+	ASSIGN,
+	LOCAL,
+	GLOBAL,
+	BREAK,
+	NESTED,
+	RETURN,
+	STOP,
+	LIST,
+	IF,
+	ELSE,
+	ELSE_IF,
+	SWITCH,
+	CASE,
+	DEFAULT,
+	MACRO,
+	FTL,
+	FUNCTION,
+	TRUE,
+	FALSE,
+	GT,
+	GTE,
+	LT,
+	LTE,
+	AS,
+	IN,
+	USING,
+	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;
 
 	private Keyword(String keyword) {
 		this.keyword = keyword;
 	}
+	
 	private Keyword() {
-		this.keyword = this.name();
+		this.keyword = this.name().toLowerCase();
 	}
 
 	@Override
 	public String toString() {
 		return keyword;
+	}
+	
+	public static Keyword keywordValueOf(String string) {
+		return Enum.valueOf(Keyword.class, string.toUpperCase());
 	}
 }

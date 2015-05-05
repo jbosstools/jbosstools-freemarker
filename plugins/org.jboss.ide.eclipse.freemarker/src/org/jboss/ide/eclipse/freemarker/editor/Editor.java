@@ -21,6 +21,7 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Collections;
@@ -337,22 +338,17 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		if (e.keyCode == SWT.SHIFT) {
 			shiftDown = true;
 		}
-		if (e.keyCode == LexicalConstants.RIGHT_SQUARE_BRACKET) {
+		// this feature is for avoiding double closing brackets 
+		if (e.character == LexicalConstants.RIGHT_SQUARE_BRACKET 
+						|| e.character == LexicalConstants.RIGHT_BRACE ) {
 			try {
-				char c = getDocument().getChar(getCaretOffset());
-				if (c == LexicalConstants.RIGHT_SQUARE_BRACKET) {
-					// remove this
-					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
-				}
-			} catch (BadLocationException e1) {
-				Plugin.log(e1);
-			}
-		} else if (e.keyCode == LexicalConstants.RIGHT_BRACE) {
-			try {
-				char c = getDocument().getChar(getCaretOffset());
-				if (c == LexicalConstants.RIGHT_BRACE) {
-					// remove this
-					getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
+				int offset = getCaretOffset();
+				if (offset < getDocument().getLength()) {
+					char c = getDocument().getChar(offset);
+					if (c == e.character) {
+						// remove this
+						getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
+					}
 				}
 			} catch (BadLocationException e1) {
 				Plugin.log(e1);
@@ -497,7 +493,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					String pageContents = getDocument().get();
 					Reader reader = new StringReader(pageContents);
 					/*
-					 * dummy is here to be able to suppres the warning about the
+					 * dummy is here to be able to suppress the warning about the
 					 * unused new Template()
 					 */
 					@SuppressWarnings("unused")
@@ -506,38 +502,31 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					reader.close();
 				}
 			} catch (ParseException e) {
-				Plugin.log(e);
 				if (e.getMessage() != null) {
 					String errorStr = e.getMessage();
-					int errorLine = 0;
-					try {
-						errorLine = e.getLineNumber();
-						if (errorLine == 0) {
-							// sometimes they forget to put it in
-							int index = e.getMessage().indexOf("line: "); //$NON-NLS-1$
-							if (index > 0) {
-								int index2 = e.getMessage().indexOf(
-										" ", index + 6); //$NON-NLS-1$
-								int index3 = e.getMessage().indexOf(
-										",", index + 6); //$NON-NLS-1$
-								if (index3 < index2 && index3 > 0)
-									index2 = index3;
-								String s = e.getMessage().substring(index + 6,
-										index2);
-								try {
-									errorLine = Integer.parseInt(s);
-								} catch (Exception e2) {
-									Plugin.log(e2);
-								}
+					int errorLine = e.getLineNumber();
+					if (errorLine == 0) {
+						// sometimes they forget to put it in
+						int index = e.getMessage().indexOf("line: "); //$NON-NLS-1$
+						if (index > 0) {
+							int index2 = e.getMessage().indexOf(
+									" ", index + 6); //$NON-NLS-1$
+							int index3 = e.getMessage().indexOf(
+									",", index + 6); //$NON-NLS-1$
+							if (index3 < index2 && index3 > 0)
+								index2 = index3;
+							String s = e.getMessage().substring(index + 6,
+									index2);
+							try {
+								errorLine = Integer.parseInt(s);
+							} catch (NumberFormatException e2) {
+								errorLine = 0;
 							}
 						}
-					} catch (NullPointerException npe) {
-						Plugin.log(npe);
-						errorLine = 0;
 					}
 					editor.addProblemMarker(errorStr, errorLine);
 				}
-			} catch (Exception e) {
+			} catch (CoreException | IOException e) {
 				Plugin.log(e);
 			} finally {
 				Editor.VALIDATOR = null;

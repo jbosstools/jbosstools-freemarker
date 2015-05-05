@@ -55,171 +55,171 @@ import org.jboss.ide.eclipse.freemarker.model.MacroEndDirective;
  */
 public enum Directive {
 
-	INCLUDE(Keyword.include) {
+	INCLUDE(Keyword.INCLUDE) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "include.png"); //$NON-NLS-1$;
 		}
 	},
-	IMPORT(Keyword.import_) {
+	IMPORT(Keyword.IMPORT) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "import.png"); //$NON-NLS-1$;
 		}
 	},
-	ASSIGN(Keyword.assign) {
+	ASSIGN(Keyword.ASSIGN) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentDirective(itemSet, this);
 		}
 	},
-	ASSIGN_END(Keyword.assign) {
+	ASSIGN_END(Keyword.ASSIGN) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentEndDirective(itemSet, this.name());
 		}
 	},
-	LOCAL(Keyword.local) {
+	LOCAL(Keyword.LOCAL) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentDirective(itemSet, this);
 		}
 	},
-	LOCAL_END(Keyword.local) {
+	LOCAL_END(Keyword.LOCAL) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentEndDirective(itemSet, this.name());
 		}
 	},
-	GLOBAL(Keyword.global) {
+	GLOBAL(Keyword.GLOBAL) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentDirective(itemSet, this);
 		}
 	},
-	GLOBAL_END(Keyword.global) {
+	GLOBAL_END(Keyword.GLOBAL) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new AssignmentEndDirective(itemSet, this.name());
 		}
 	},
-	BREAK(Keyword.break_) {
+	BREAK(Keyword.BREAK) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "break.png"); //$NON-NLS-1$;
 		}
 	},
-	NESTED(Keyword.nested) {
+	NESTED(Keyword.NESTED) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "nested.png"); //$NON-NLS-1$;
 		}
 	},
-	RETURN(Keyword.return_) {
+	RETURN(Keyword.RETURN) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "return.png"); //$NON-NLS-1$;
 		}
 	},
-	STOP(Keyword.stop) {
+	STOP(Keyword.STOP) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new GenericDirective(itemSet, "stop.png"); //$NON-NLS-1$;
 		}
 	},
-	LIST(Keyword.list) {
+	LIST(Keyword.LIST) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new ListDirective(itemSet);
 		}
 	},
-	LIST_END(Keyword.list) {
+	LIST_END(Keyword.LIST) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new ListEndDirective(itemSet);
 		}
 	},
-	IF(Keyword.if_) {
+	IF(Keyword.IF) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new IfDirective(itemSet);
 		}
 	},
-	ELSEIF(Keyword.else_if) {
+	ELSEIF(Keyword.ELSE_IF) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new ElseIfDirective(itemSet);
 		}
 	},
-	ELSE(Keyword.else_) {
+	ELSE(Keyword.ELSE) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new IfElseDirective(itemSet);
 		}
 	},
-	IF_END(Keyword.if_) {
+	IF_END(Keyword.IF) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new IfEndDirective(itemSet);
 		}
 	},
-	SWITCH(Keyword.switch_) {
+	SWITCH(Keyword.SWITCH) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
-			return new GenericNestableDirective(itemSet, "switch", "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$;
+			return new GenericNestableDirective(itemSet, keyword.name().toLowerCase(), "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$;
 		}
 	},
-	SWITCH_END(Keyword.switch_) {
+	SWITCH_END(Keyword.SWITCH) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
-			return new GenericNestableEndDirective(itemSet, "switch"); //$NON-NLS-1$;
+			return new GenericNestableEndDirective(itemSet, keyword.name().toLowerCase()); //$NON-NLS-1$;
 		}
 	},
-	CASE(Keyword.case_) {
+	CASE(Keyword.CASE) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new CaseDirective(itemSet);
 		}
 	},
-	DEFAULT(Keyword.default_) {
+	DEFAULT(Keyword.DEFAULT) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new CaseDefaultDirective(itemSet);
 		}
 	},
-	MACRO(Keyword.macro) {
+	MACRO(Keyword.MACRO) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new MacroDirective(itemSet);
 		}
 	},
-	MACRO_END(Keyword.macro) {
+	MACRO_END(Keyword.MACRO) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new MacroEndDirective(itemSet);
 		}
 	},
-	FTL(Keyword.ftl) {
+	FTL(Keyword.FTL) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new FtlDirective(itemSet);
 		}
 	},
-	FUNCTION(Keyword.function_) {
+	FUNCTION(Keyword.FUNCTION) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new FunctionDirective(itemSet);
 		}
 	},
-	FUNCTION_END(Keyword.function_) {
+	FUNCTION_END(Keyword.FUNCTION) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
 			return new FunctionEndDirective(itemSet);
 		}
-	}
-	;
+	};
 
 	private static final Map<String, Directive> FAST_LOOKUP;
+	
 	static {
 		Map<String, Directive> fastLookUp = new HashMap<String, Directive>(64);
 		Directive[] directives = values();
@@ -228,11 +228,12 @@ public enum Directive {
 		}
 		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
 	}
+	
 	public static Directive fastValueOf(String str) {
 		return FAST_LOOKUP.get(str);
 	}
 
-	private final Keyword keyword;
+	protected final Keyword keyword;
 
 	private Directive(Keyword keyword) {
 		this.keyword = keyword;

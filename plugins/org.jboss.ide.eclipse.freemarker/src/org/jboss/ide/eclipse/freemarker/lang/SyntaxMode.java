@@ -32,9 +32,9 @@ package org.jboss.ide.eclipse.freemarker.lang;
  */
 public enum SyntaxMode {
 	SQUARE(LexicalConstants.LEFT_SQUARE_BRACKET,
-			LexicalConstants.RIGHT_SQUARE_BRACKET), ANGLE(
-			LexicalConstants.LEFT_ANGLE_BRACKET,
-			LexicalConstants.RIGHT_ANGLE_BRACKET);
+					LexicalConstants.RIGHT_SQUARE_BRACKET), 
+	ANGLE(LexicalConstants.LEFT_ANGLE_BRACKET,
+					LexicalConstants.RIGHT_ANGLE_BRACKET);
 
 	private final char start;
 	private final char end;
