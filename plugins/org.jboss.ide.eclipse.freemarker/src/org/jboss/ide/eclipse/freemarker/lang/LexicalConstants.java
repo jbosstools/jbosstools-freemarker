@@ -71,5 +71,5 @@ public interface LexicalConstants {
 	char COMMA = ',';
 	String QUOT_STRING = String.valueOf(QUOT);
 	String APOS_STRING = String.valueOf(APOS);
-	String SQUARE_SYNTAX_MARKER = "" + LEFT_SQUARE_BRACKET + HASH + Keyword.ftl; //$NON-NLS-1$
+	String SQUARE_SYNTAX_MARKER = "" + LEFT_SQUARE_BRACKET + HASH + Keyword.FTL; //$NON-NLS-1$
 }
