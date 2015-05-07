@@ -53,15 +53,10 @@ public abstract class AbstractItem implements Item {
 		this.region = region;
 		this.viewer = viewer;
 		this.resource = resource;
-		try {
-			init(region, viewer, resource);
-		}
-		catch (Exception e) {
-			Plugin.log(e);
-		}
+		init(region, viewer, resource);
 	}
 
-	protected abstract void init (ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception;
+	protected abstract void init (ITypedRegion region, ISourceViewer viewer, IResource resource);
 
 	@Override
 	public boolean isStartItem() {

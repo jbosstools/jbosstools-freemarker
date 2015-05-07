@@ -48,27 +48,16 @@ public class CompletionDirective extends AbstractDirective {
 		String[] arr = splitContents();
 		if (null != arr && arr.length > 0) {
 			String s = arr[0];
-			try {
-				if (s.equals("list")) { //$NON-NLS-1$
-					directive = new ListDirective(itemSet);
-					directive.load(new TypedRegion(offset, this.contents.length(), "list"), viewer, resource); //$NON-NLS-1$
-				}
-				else if (s.equals("if")) { //$NON-NLS-1$
-					directive = new IfDirective(itemSet);
-					directive.load(new TypedRegion(offset, this.contents.length(), "if"), viewer, resource); //$NON-NLS-1$
-				}
+			if (s.equals("list")) { //$NON-NLS-1$
+				directive = new ListDirective(itemSet);
+				directive.load(new TypedRegion(offset, this.contents.length(), "list"), viewer, resource); //$NON-NLS-1$
 			}
-			catch (Exception e) {
-				Plugin.log(e);
-				directive = this;
+			else if (s.equals("if")) { //$NON-NLS-1$
+				directive = new IfDirective(itemSet);
+				directive.load(new TypedRegion(offset, this.contents.length(), "if"), viewer, resource); //$NON-NLS-1$
 			}
 		}
-		try {
-			load(region, viewer, resource);
-		}
-		catch (Exception e) {
-			Plugin.log(e);
-		}
+		load(region, viewer, resource);
 	}
 
 	@Override
@@ -93,6 +82,6 @@ public class CompletionDirective extends AbstractDirective {
 	}
 
 	@Override
-	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
+	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) {
 	}
 }

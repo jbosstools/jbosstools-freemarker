@@ -1,6 +1,6 @@
 /*
  * JBoss by Red Hat
- * Copyright 2006-2009, Red Hat Middleware, LLC, and individual contributors as indicated
+ * Copyright 2006-2015, Red Hat Middleware, LLC, and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -62,143 +62,124 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements
 	}
 
 	@Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
-			int offset) {
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+
+		Map<String, Class<?>> context = new HashMap<String, Class<?>>();
+		ContextValue[] values = ConfigurationManager.getInstance(
+				editor.getProject()).getContextValues(editor.getFile(),
+				true);
+		for (int i = 0; i < values.length; i++) {
+			context.put(values[i].name, values[i].objClass);
+		}
+		
+		// we might be starting something
 		try {
-			ItemSet directiveSet = editor.getItemSet();
+			int topOffset = viewer.getDocument().getLineInformationOfOffset(offset).getOffset();
 
-			Map<String, Class<?>> context = new HashMap<String, Class<?>>();
-			ContextValue[] values = ConfigurationManager.getInstance(
-					editor.getProject()).getContextValues(editor.getFile(),
-					true);
-			for (int i = 0; i < values.length; i++) {
-				context.put(values[i].name, values[i].objClass);
-			}
-
-			Item directive = directiveSet.getSelectedItem(offset);
-			if (null != directive) {
-				return directive.getCompletionProposals(offset, context);
-			} else {
-				// we might be starting something
-				Item item = editor.getItemSet().getPreviousItem(offset);
-				int topOffset = 0;
-				if (null != item)
-					topOffset = item.getRegion().getOffset()
-							+ item.getRegion().getLength();
-				// check for directives and macro calls
-				try {
-					for (int i = offset - 1; i >= topOffset; i--) {
-						char c = editor.getDocument().getChar(i);
-						if (c == LexicalConstants.RIGHT_ANGLE_BRACKET || c == LexicalConstants.RIGHT_SQUARE_BRACKET)
-							break;
-						if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
-							if (editor.getDocument().getLength() > i) {
-								char c2 = editor.getDocument().getChar(i + 1);
-								if (c2 == LexicalConstants.HASH) {
-									CompletionDirective completionDirective = new CompletionDirective(
-											editor.getItemSet(), i, offset - i,
-											(ISourceViewer) viewer,
-											(IResource) editor.getFile());
-									return completionDirective
-											.getCompletionProposals(offset,
-													context);
-								} else if (c2 == LexicalConstants.AT) {
-									CompletionMacroInstance completionMacroInstance = new CompletionMacroInstance(
-											editor.getItemSet(), editor
-													.getDocument().get(i,
-															offset - i), i,
-											editor.getFile());
-									return completionMacroInstance
-											.getCompletionProposals(offset,
-													context);
-								} else if (c2 == LexicalConstants.SLASH) {
-									if (editor.getDocument().getLength() < i + 3
-											|| editor.getDocument().getChar(
-													i + 2) == LexicalConstants.SPACE
-											|| editor.getDocument().getChar(
-													i + 2) == LexicalConstants.CR
-											|| editor.getDocument().getChar(
-													i + 2) == LexicalConstants.LF) {
-										Item stackItem = editor.getItemSet()
-												.getPreviousStartItem(offset);
-										StringBuilder value = new StringBuilder();
-										if (null != stackItem
-												&& stackItem instanceof MacroInstance)
-											value.append(LexicalConstants.AT);
-										else
-											value.append(LexicalConstants.HASH);
-										String name = null;
-										if (null != stackItem)
-											name = stackItem.getFirstToken();
-										if (null != name)
-											value.append(name);
-										if (c == LexicalConstants.LEFT_ANGLE_BRACKET)
-											value.append(LexicalConstants.RIGHT_ANGLE_BRACKET);
-										else
-											value.append(LexicalConstants.RIGHT_SQUARE_BRACKET);
-										ICompletionProposal completionProposal = new CompletionProposal(
-												value.toString(), offset, 0,
-												offset
-														+ value.toString()
-																.length());
-										return new ICompletionProposal[] { completionProposal };
-									}
-								} else {
-									return NO_COMPLETIONS;
-								}
+			for (int i = offset - 1; i >= 0; i--) {
+				char c = editor.getDocument().getChar(i);
+				if (c == LexicalConstants.RIGHT_ANGLE_BRACKET || c == LexicalConstants.RIGHT_SQUARE_BRACKET)
+					break;
+				if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
+					if (editor.getDocument().getLength() > i) {
+						char c2 = editor.getDocument().getChar(i + 1);
+						if (c2 == LexicalConstants.HASH) {
+							CompletionDirective completionDirective = new CompletionDirective(
+									editor.getItemSet(), i, offset - i,
+									(ISourceViewer) viewer,
+									(IResource) editor.getFile());
+							return completionDirective
+									.getCompletionProposals(offset,
+											context);
+						} else if (c2 == LexicalConstants.AT) {
+							CompletionMacroInstance completionMacroInstance = new CompletionMacroInstance(
+									editor.getItemSet(), editor
+											.getDocument().get(i,
+													offset - i), i,
+									editor.getFile());
+							return completionMacroInstance
+									.getCompletionProposals(offset,
+											context);
+						} else if (c2 == LexicalConstants.SLASH) {
+							if (editor.getDocument().getLength() < i + 3
+									|| editor.getDocument().getChar(
+											i + 2) == LexicalConstants.SPACE
+									|| editor.getDocument().getChar(
+											i + 2) == LexicalConstants.CR
+									|| editor.getDocument().getChar(
+											i + 2) == LexicalConstants.LF) {
+								Item stackItem = editor.getItemSet()
+										.getPreviousStartItem(offset);
+								StringBuilder value = new StringBuilder();
+								if (null != stackItem
+										&& stackItem instanceof MacroInstance)
+									value.append(LexicalConstants.AT);
+								else
+									value.append(LexicalConstants.HASH);
+								String name = null;
+								if (null != stackItem)
+									name = stackItem.getFirstToken();
+								if (null != name)
+									value.append(name);
+								if (c == LexicalConstants.LEFT_ANGLE_BRACKET)
+									value.append(LexicalConstants.RIGHT_ANGLE_BRACKET);
+								else
+									value.append(LexicalConstants.RIGHT_SQUARE_BRACKET);
+								ICompletionProposal completionProposal = new CompletionProposal(
+										value.toString(), offset, 0,
+										offset
+												+ value.toString()
+														.length());
+								return new ICompletionProposal[] { completionProposal };
 							}
+						} else {
+							return NO_COMPLETIONS;
 						}
 					}
-				} catch (BadLocationException e) {
-					Plugin.log(e);
-					return NO_COMPLETIONS;
-				}
-				// check for interpolations
-				try {
-					for (int i = offset - 1; i >= topOffset; i--) {
-						char c = editor.getDocument().getChar(i);
-						if (c == LexicalConstants.LF)
-							break;
-						else if (c == LexicalConstants.DOLLAR) {
-							if (editor.getDocument().getLength() > i) {
-								char c2 = editor.getDocument().getChar(i + 1);
-								if (c2 == LexicalConstants.LEFT_BRACE) {
-									int j = offset;
-									while (editor.getDocument().getLength() > j) {
-										char c3 = editor.getDocument().getChar(
-												j);
-										if (Character.isWhitespace(c3)
-												|| c3 == LexicalConstants.LEFT_PARENTHESIS || c3 == LexicalConstants.PERIOD
-												|| c3 == LexicalConstants.RIGHT_PARENTHESIS || c3 == LexicalConstants.RIGHT_BRACE
-												|| c3 == LexicalConstants.QUESTION_MARK) {
-											// j = j-1;
-											break;
-										}
-										j++;
-									}
-									CompletionInterpolation interpolation = new CompletionInterpolation(
-											editor.getItemSet(), editor
-													.getDocument()
-													.get(i, j - i), i,
-											editor.getFile());
-									interpolation.setParentItem(editor
-											.getItemSet().getPreviousStartItem(
-													offset));
-									return interpolation
-											.getCompletionProposals(offset,
-													context);
-								}
-							}
-						}
-					}
-				} catch (BadLocationException e) {
-					Plugin.log(e);
-					return NO_COMPLETIONS;
 				}
 			}
-		} catch (Exception e) {
+
+			// check for interpolations
+			for (int i = offset - 1; i >= topOffset; i--) {
+				char c = editor.getDocument().getChar(i);
+				if (c == LexicalConstants.LF)
+					break;
+				else if (c == LexicalConstants.DOLLAR) {
+					if (editor.getDocument().getLength() > (i + 1)) {
+						char c2 = editor.getDocument().getChar(i + 1);
+						if (c2 == LexicalConstants.LEFT_BRACE) {
+							int j = offset;
+							while (editor.getDocument().getLength() > j) {
+								char c3 = editor.getDocument().getChar(
+										j);
+								if (Character.isWhitespace(c3)
+										|| c3 == LexicalConstants.LEFT_PARENTHESIS || c3 == LexicalConstants.PERIOD
+										|| c3 == LexicalConstants.RIGHT_PARENTHESIS || c3 == LexicalConstants.RIGHT_BRACE
+										|| c3 == LexicalConstants.QUESTION_MARK) {
+									// j = j-1;
+									break;
+								}
+								j++;
+							}
+							CompletionInterpolation interpolation = new CompletionInterpolation(
+									editor.getItemSet(), editor
+											.getDocument()
+											.get(i, j - i), i,
+									editor.getFile());
+							interpolation.setParentItem(editor
+									.getItemSet().getPreviousStartItem(
+											offset));
+							return interpolation
+									.getCompletionProposals(offset,
+											context);
+						}
+					}
+				}
+			}
+		} catch (BadLocationException e) {
 			Plugin.log(e);
 		}
+			
 		return NO_COMPLETIONS;
 	}
 

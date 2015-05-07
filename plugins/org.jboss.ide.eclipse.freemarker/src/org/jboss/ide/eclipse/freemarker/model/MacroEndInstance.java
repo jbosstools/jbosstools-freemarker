@@ -40,7 +40,7 @@ public class MacroEndInstance extends AbstractDirective {
 
 
 	@Override
-	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
+	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) {
 		name = getSplitValue(0);
 	}
 
@@ -99,13 +99,12 @@ public class MacroEndInstance extends AbstractDirective {
 			try {
 				contents = getViewer().getDocument().get(
 						getRegion().getOffset(), getRegion().getLength());
+				contents = contents.trim();
+				contents = contents.substring(3, contents.length()-1);
+
 			}
 			catch (BadLocationException e) {
 				Plugin.log(e);
-			}
-			if (null != contents) {
-				contents = contents.trim();
-				contents = contents.substring(3, contents.length()-1);
 			}
 		}
 		return contents;

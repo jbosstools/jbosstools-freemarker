@@ -47,7 +47,7 @@ public class MacroDirective extends AbstractDirective implements
 
 	@Override
 	protected void init(ITypedRegion region, ISourceViewer viewer,
-			IResource resource) throws Exception {
+			IResource resource) {
 	}
 
 	@Override

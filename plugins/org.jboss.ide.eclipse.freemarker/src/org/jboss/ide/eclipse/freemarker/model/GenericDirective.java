@@ -45,6 +45,6 @@ public class GenericDirective extends AbstractDirective {
 	}
 
 	@Override
-	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) throws Exception {
+	protected void init(ITypedRegion region, ISourceViewer viewer, IResource resource) {
 	}
 }

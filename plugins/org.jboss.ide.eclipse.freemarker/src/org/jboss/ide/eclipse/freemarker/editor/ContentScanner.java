@@ -1,6 +1,6 @@
 /*
  * JBoss by Red Hat
- * Copyright 2006-2009, Red Hat Middleware, LLC, and individual contributors as indicated
+ * Copyright 2006-2015, Red Hat Middleware, LLC, and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -88,13 +88,13 @@ public class ContentScanner implements ITokenScanner {
 		boolean escape = false;
 		boolean doEscape = false;
 		try {
+			if (i >= endOffset) {
+				return Token.EOF;
+			}
 			char c = document.getChar(i);
 			char cNext = Character.MIN_VALUE;
 			if (document.getLength() > i + 2) {
 				cNext = document.getChar(i + 1);
-			}
-			if (i >= endOffset) {
-				return Token.EOF;
 			}
 			while (i < endOffset) {
 				doEscape = false;

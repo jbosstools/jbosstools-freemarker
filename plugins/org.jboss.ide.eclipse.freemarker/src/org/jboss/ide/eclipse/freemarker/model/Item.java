@@ -1,6 +1,6 @@
 /*
  * JBoss by Red Hat
- * Copyright 2006-2009, Red Hat Middleware, LLC, and individual contributors as indicated
+ * Copyright 2006-2015, Red Hat Middleware, LLC, and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,49 +31,49 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public interface Item {
 
-	public void load (ITypedRegion region, ISourceViewer viewer, IResource resource);
+	void load (ITypedRegion region, ISourceViewer viewer, IResource resource);
 
-	public boolean isNestable ();
+	boolean isNestable ();
 
-	public boolean isStartItem ();
+	boolean isStartItem ();
 
-	public boolean isEndItem ();
+	boolean isEndItem ();
 
-	public boolean isStartAndEndItem ();
+	boolean isStartAndEndItem ();
 
-	public Item getStartItem ();
+	Item getStartItem ();
 
-	public Item getEndItem ();
+	Item getEndItem ();
 
-	public boolean relatesToItem (Item directive);
+	boolean relatesToItem (Item directive);
 
-	public void relateItem (Item directive);
+	void relateItem (Item directive);
 
-	public ITypedRegion getRegion();
+	ITypedRegion getRegion();
 
-	public List<Item> getChildItems();
+	List<Item> getChildItems();
 
-	public Item getParentItem();
+	Item getParentItem();
 
-	public void setParentItem(Item item);
+	void setParentItem(Item item);
 
-	public void addSubDirective(Item directive);
+	void addSubDirective(Item directive);
 
-	public Item[] getRelatedItems ();
+	Item[] getRelatedItems ();
 
-	public String getContents();
+	String getContents();
 
-	public String getTreeImage();
+	String getTreeImage();
 
-	public String getTreeDisplay();
+	String getTreeDisplay();
 
-	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context);
+	ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context);
 
-	public String getFirstToken ();
+	String getFirstToken ();
 
-	public void addToContext (Map<String, Class<?>> context);
+	void addToContext (Map<String, Class<?>> context);
 
-	public void removeFromContext (Map<String, Class<?>> context);
+	void removeFromContext (Map<String, Class<?>> context);
 
-	public String getName();
+	String getName();
 }

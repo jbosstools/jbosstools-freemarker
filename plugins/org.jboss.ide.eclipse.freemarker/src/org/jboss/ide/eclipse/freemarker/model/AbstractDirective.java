@@ -45,12 +45,7 @@ public abstract class AbstractDirective extends AbstractItem {
 		if (null == contents) {
 			contents = super.getContents();
 			if (null != contents) {
-				try {
-					contents = contents.substring(2, contents.length()-1);
-				}
-				catch (StringIndexOutOfBoundsException e) {
-					Plugin.log(e);
-				}
+				contents = contents.substring(2, contents.length()-1);
 			}
 		}
 		return contents;
@@ -96,12 +91,7 @@ public abstract class AbstractDirective extends AbstractItem {
 		}
 		else if (index == 1 && !contentWithOffset.wasLastCharSpace()) {
 			String value = ""; //$NON-NLS-1$
-			try {
-				value = contentWithOffset.getContents()[index].substring(0, contentWithOffset.getOffsetInIndex());
-			}
-			catch (Exception e) {
-				Plugin.log(e);
-			}
+			value = contentWithOffset.getContents()[index].substring(0, contentWithOffset.getOffsetInIndex());
 			CompletionInterpolation completionInterpolation = new CompletionInterpolation(
 					getItemSet() , "${" + value, offset - contentWithOffset.getOffsetInIndex() - 2, getResource()); //$NON-NLS-1$
 			return completionInterpolation.getCompletionProposals(offset, context);
