@@ -133,7 +133,7 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements
 								return new ICompletionProposal[] { completionProposal };
 							}
 						} else {
-							return NO_COMPLETIONS;
+							break;
 						}
 					}
 				}
