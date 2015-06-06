@@ -124,8 +124,9 @@ public class Configuration extends TextSourceViewerConfiguration {
 		if (null == detectors) {
 			detectors = new IHyperlinkDetector[0];
 		}
-		IHyperlinkDetector[] detectorsNew = new IHyperlinkDetector[detectors.length+1];
+		IHyperlinkDetector[] detectorsNew = new IHyperlinkDetector[detectors.length+2];
 		System.arraycopy(detectors, 0, detectorsNew, 0, detectors.length);
+		detectorsNew[detectorsNew.length-2] = new IncludeHyperlinkDetector(sourceViewer, editor);
 		detectorsNew[detectorsNew.length-1] = new MacroHyperlinkDetector(sourceViewer, editor);
 		return detectorsNew;
 	}
