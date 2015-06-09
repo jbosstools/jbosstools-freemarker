@@ -198,7 +198,7 @@ public class ContentScanner implements ITokenScanner {
 						}
 					}
 				}
-				c = document.getChar(++i);
+				c = document.getChar(++i); 
 				cNext = Character.MIN_VALUE;
 				if (document.getLength() > i + 2) {
 					cNext = document.getChar(i + 1);
@@ -206,7 +206,7 @@ public class ContentScanner implements ITokenScanner {
 				escape = doEscape;
 			}
 		} catch (BadLocationException e) {
-			Plugin.log(e);
+			//Plugin.log(e);
 			this.currentOffset = i;
 			this.tokenOffset = offsetStart;
 			this.tokenLength = endOffset - tokenOffset;
