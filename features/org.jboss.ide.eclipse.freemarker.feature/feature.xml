@@ -4,7 +4,9 @@
       label="%featureName"
       version="1.4.101.qualifier"
       provider-name="%providerName"
-      plugin="org.jboss.ide.eclipse.freemarker">
+      plugin="org.jboss.ide.eclipse.freemarker"
+      license-feature="org.jboss.tools.foundation.license.feature"
+      license-feature-version="0.0.0">
 
    <description url="http://www.jboss.org/tools">
       %description
@@ -14,7 +16,7 @@
       %copyright
    </copyright>
 
-   <license url="%licenseURL">
+   <license>
       %license
    </license>
 
