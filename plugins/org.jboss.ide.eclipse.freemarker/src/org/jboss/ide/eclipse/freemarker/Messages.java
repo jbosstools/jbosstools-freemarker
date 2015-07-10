@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String FreemarkerMultiPageEditor_PAGE_TEXT_CONTEXT;
 	public static String FreemarkerMultiPageEditor_PAGE_TEXT_SOURCE;
 	public static String MacroHyperlink_TYPELABEL_MACRO_DEFINITION;
+	public static String IncludeHyperlink_TYPELABEL_INCLUDE_DECLARATION;
 	public static String OutlinePage_SetContextClassEntryAction;
 	public static String PreferencePage_GROUP_EDITOR_SYNTAX_COLORING;
 	public static String PreferencePage_DESCRIPTION_FREEMARKER_SETTINGS;
