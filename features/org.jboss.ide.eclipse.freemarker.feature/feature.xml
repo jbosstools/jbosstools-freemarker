@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.jboss.ide.eclipse.freemarker.feature"
-      label="%featureName"
-      version="1.4.101.qualifier"
-      provider-name="%providerName"
-      plugin="org.jboss.ide.eclipse.freemarker">
+   id="org.jboss.ide.eclipse.freemarker.feature"
+   label="%featureName"
+   version="1.4.101.qualifier"
+   provider-name="%providerName"
+   plugin="org.jboss.ide.eclipse.freemarker"
+   license-feature="org.jboss.tools.foundation.license.feature"
+   license-feature-version="0.0.0">
 
    <description url="http://www.jboss.org/tools">
       %description
@@ -14,7 +16,7 @@
       %copyright
    </copyright>
 
-   <license url="%licenseURL">
+   <license>
       %license
    </license>
 
