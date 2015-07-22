@@ -78,10 +78,11 @@ public class CompletionProcessor extends TemplateCompletionProcessor implements
 
 			for (int i = offset - 1; i >= 0; i--) {
 				char c = editor.getDocument().getChar(i);
-				if (c == LexicalConstants.RIGHT_ANGLE_BRACKET || c == LexicalConstants.RIGHT_SQUARE_BRACKET)
+				if (c == LexicalConstants.RIGHT_ANGLE_BRACKET || c == LexicalConstants.RIGHT_SQUARE_BRACKET) {
 					break;
+				}
 				if (c == LexicalConstants.LEFT_ANGLE_BRACKET || c == LexicalConstants.LEFT_SQUARE_BRACKET) {
-					if (editor.getDocument().getLength() > i) {
+					if (editor.getDocument().getLength() > i + 1) {
 						char c2 = editor.getDocument().getChar(i + 1);
 						if (c2 == LexicalConstants.HASH) {
 							CompletionDirective completionDirective = new CompletionDirective(
