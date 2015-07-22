@@ -82,25 +82,28 @@ public enum PartitionType {
 		public RuleBasedScanner createItemParser() {
 
 			List<IRule> rules = new ArrayList<IRule>();
-			rules.add(new DirectiveRule(Directive.FTL));
-			rules.add(new DirectiveRule(Directive.IF));
-			rules.add(new DirectiveRule(Directive.ELSEIF));
-			rules.add(new DirectiveRule(Directive.ELSE, true));
-			rules.add(new DirectiveRule(Directive.FUNCTION));
-			rules.add(new DirectiveRule(Directive.LIST));
-			rules.add(new DirectiveRule(Directive.MACRO));
-			rules.add(new DirectiveRule(Directive.SWITCH));
-			rules.add(new DirectiveRule(Directive.CASE));
-			rules.add(new DirectiveRule(Directive.DEFAULT));
-			rules.add(new DirectiveRule(Directive.ASSIGN));
-			rules.add(new DirectiveRule(Directive.LOCAL));
-			rules.add(new DirectiveRule(Directive.GLOBAL));
-			rules.add(new DirectiveRule(Directive.INCLUDE));
-			rules.add(new DirectiveRule(Directive.IMPORT));
-			rules.add(new DirectiveRule(Directive.BREAK));
-			rules.add(new DirectiveRule(Directive.STOP));
-			rules.add(new DirectiveRule(Directive.NESTED));
-			rules.add(new DirectiveRule(Directive.RETURN));
+		for (Directive directive : Directive.values() ) {	
+			rules.add(new DirectiveRule(directive));
+		}
+//			rules.add(new DirectiveRule(Directive.FTL));
+//			rules.add(new DirectiveRule(Directive.IF));
+//			rules.add(new DirectiveRule(Directive.ELSEIF));
+//			rules.add(new DirectiveRule(Directive.ELSE, true));
+//			rules.add(new DirectiveRule(Directive.FUNCTION));
+//			rules.add(new DirectiveRule(Directive.LIST));
+//			rules.add(new DirectiveRule(Directive.MACRO));
+//			rules.add(new DirectiveRule(Directive.SWITCH));
+//			rules.add(new DirectiveRule(Directive.CASE));
+//			rules.add(new DirectiveRule(Directive.DEFAULT));
+//			rules.add(new DirectiveRule(Directive.ASSIGN));
+//			rules.add(new DirectiveRule(Directive.LOCAL));
+//			rules.add(new DirectiveRule(Directive.GLOBAL));
+//			rules.add(new DirectiveRule(Directive.INCLUDE));
+//			rules.add(new DirectiveRule(Directive.IMPORT));
+//			rules.add(new DirectiveRule(Directive.BREAK));
+//			rules.add(new DirectiveRule(Directive.STOP));
+//			rules.add(new DirectiveRule(Directive.NESTED));
+//			rules.add(new DirectiveRule(Directive.RETURN));
 
 			RuleBasedScanner result = new RuleBasedScanner();
 			result.setRules(rules.toArray(new IRule[rules.size()]));

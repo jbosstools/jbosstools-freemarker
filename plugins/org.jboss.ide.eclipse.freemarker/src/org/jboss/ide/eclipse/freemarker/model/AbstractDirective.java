@@ -56,7 +56,7 @@ public abstract class AbstractDirective extends AbstractItem {
 		"break", "include", "import", "noparse", "compress", "escape", "noescape", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		"assign", "global", "local", "setting", "macro", "nested", "return", "flush", "function", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 		"stop", "ftl", "t", "lt", "rt", "nt", "attempt", "recover", "visit", "recurse", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-		"fallback" //$NON-NLS-1$
+		"fallback", "foreach" //$NON-NLS-1$ //$NON-NLS-2$
 	};
 	@Override
 	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {

@@ -166,7 +166,7 @@ public enum Directive {
 	SWITCH(Keyword.SWITCH) {
 		@Override
 		public Item createModelItem(ItemSet itemSet) {
-			return new GenericNestableDirective(itemSet, keyword.name().toLowerCase(), "switch.png"); //$NON-NLS-1$ //$NON-NLS-2$;
+			return new GenericNestableDirective(itemSet, keyword.name().toLowerCase(), "directive.gif"); //$NON-NLS-1$ //$NON-NLS-2$;
 		}
 	},
 	SWITCH_END(Keyword.SWITCH) {
@@ -216,8 +216,22 @@ public enum Directive {
 		public Item createModelItem(ItemSet itemSet) {
 			return new FunctionEndDirective(itemSet);
 		}
+	},
+	FOREACH(Keyword.FOREACH) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericNestableDirective(itemSet, keyword.name().toLowerCase(),"foreach.png"); //$NON-NLS-1$;
+		}
+	},
+	FOREACH_END(Keyword.FOREACH) {
+		@Override
+		public Item createModelItem(ItemSet itemSet) {
+			return new GenericNestableEndDirective(itemSet, keyword.name().toLowerCase()); //$NON-NLS-1$;
+		}
 	};
-
+	
+	
+	
 	private static final Map<String, Directive> FAST_LOOKUP;
 	
 	static {

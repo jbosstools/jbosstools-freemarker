@@ -22,6 +22,8 @@
 package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -144,4 +146,8 @@ public class Configuration extends TextSourceViewerConfiguration {
 		return reconciler;
 	}
 
+	@Override
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		return super.getAutoEditStrategies(sourceViewer, contentType);
+	}
 }

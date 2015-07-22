@@ -57,6 +57,7 @@ public enum Keyword {
 	AS,
 	IN,
 	USING,
+	FOREACH,
 	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;
