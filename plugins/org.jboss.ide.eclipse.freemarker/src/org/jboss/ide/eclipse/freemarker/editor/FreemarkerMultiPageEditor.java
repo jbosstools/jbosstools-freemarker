@@ -54,6 +54,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -96,6 +97,14 @@ public class FreemarkerMultiPageEditor extends MultiPageEditorPart implements IT
             int index = addPage(vEditor, getEditorInput());
             setPageText(index, Messages.FreemarkerMultiPageEditor_PAGE_TEXT_SOURCE);
             setPartName(vEditor.getTitle());
+            vEditor.addPropertyListener(new IPropertyListener() {
+                @Override
+                public void propertyChanged(Object source, int propId) {
+                   if(propId == PROP_TITLE) {
+                        setPartName(vEditor.getPartName());
+                        firePropertyChange(propId);
+                    }
+                }});
         }
         catch (PartInitException e) {
             ErrorDialog.openError(getSite().getShell(), Messages.FreemarkerMultiPageEditor_ERROR_CREATING_VEDITOR, null, e.getStatus());
