@@ -87,7 +87,10 @@ public class AssignmentDirective extends AbstractDirective {
 			try {
 				this.nestable = isNestable(getContents(), this.type);
 			} catch (ParseException e) {
-				Plugin.log(e);
+				// See https://issues.jboss.org/browse/JBIDE-20381 for details
+				// ParseException can occur here because when editor content is modified
+				// it doesn't stay correct all the time
+				// Plugin.log(e);
 				this.nestable = Boolean.FALSE;
 			}
 		}
