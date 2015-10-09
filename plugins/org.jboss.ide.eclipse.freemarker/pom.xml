@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.jboss.tools.freemarker</groupId>
 		<artifactId>plugins</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.5.1</version>
 	</parent>
 	<groupId>org.jboss.tools.freemarker.plugins</groupId>
 	<artifactId>org.jboss.ide.eclipse.freemarker</artifactId>
 
 	<packaging>eclipse-plugin</packaging>
 	<properties>
-		<freemarkerVersion>2.3.22</freemarkerVersion>
+		<freemarkerVersion>2.3.23</freemarkerVersion>
 	</properties>
 	<build>
 		<plugins>
