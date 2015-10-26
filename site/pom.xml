@@ -44,7 +44,7 @@
 								<artifact>
 									<file>../site/target/${project.name}-${project.version}.zip</file>
 									<type>zip</type>
-									<classifier>${BUILD_ALIAS}-v${timestamp}-B${BUILD_NUMBER}</classifier>
+									<classifier>${BUILD_ALIAS}</classifier>
 								</artifact>
 							</artifacts>
 						</configuration>
