@@ -8,6 +8,41 @@
 	</parent>
 	<groupId>org.jboss.tools.freemarker</groupId>
 	<artifactId>freemarker.site</artifactId> 
-	
 	<packaging>eclipse-repository</packaging>
+	<version>1.5.100.${BUILD_ALIAS}-v${timestamp}-B${BUILD_NUMBER}</version>
+
+	<properties>
+		<BUILD_NUMBER>000</BUILD_NUMBER>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<forceContextQualifier>true</forceContextQualifier>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>../site/target/${project.name}-${project.version}.zip</file>
+									<type>zip</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
