@@ -9,7 +9,7 @@
 	<groupId>org.jboss.tools.freemarker</groupId>
 	<artifactId>freemarker.site</artifactId> 
 	<packaging>eclipse-repository</packaging>
-	<!-- <version>1.5.100.${BUILD_ALIAS}-v${timestamp}-B${BUILD_NUMBER}</version> -->
+	<version>1.5.1${BUILD_ALIAS_NUM}-SNAPSHOT</version>
 
 	<properties>
 		<BUILD_NUMBER>000</BUILD_NUMBER>
@@ -20,14 +20,6 @@
 
 	<build>
 		<plugins>
-<!--			<plugin>
-				 <groupId>org.eclipse.tycho</groupId>
-				 <artifactId>tycho-packaging-plugin</artifactId>
-				 <version>${tychoVersion}</version>
-				 <configuration>
-						<format>'${BUILD_ALIAS}-v'yyyyMMdd-HHmm'-B${BUILD_NUMBER}'</format>
-				 </configuration>
-			</plugin> -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
