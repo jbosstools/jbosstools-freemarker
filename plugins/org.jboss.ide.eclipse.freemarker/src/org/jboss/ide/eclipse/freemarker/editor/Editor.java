@@ -21,9 +21,6 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +68,7 @@ import org.jboss.ide.eclipse.freemarker.target.TargetLanguages;
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.Version;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -219,15 +217,20 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		return getSourceViewer();
 	}
 
-	public void addProblemMarker(String aMessage, int aLine) {
+	public void addProblemMarker(String aMessage, int aLine, int aCharStart, int aCharEnd) {
 		IFile file = ((IFileEditorInput) getEditorInput()).getFile();
 		try {
-			Map<String, Object> attributes = new HashMap<String, Object>(5);
-			attributes.put(IMarker.SEVERITY,
-					Integer.valueOf(IMarker.SEVERITY_ERROR));
-			attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(aLine));
-			attributes.put(IMarker.MESSAGE, aMessage);
-			attributes.put(IMarker.TEXT, aMessage);
+			Map<String, Object> attributes = new HashMap<String, Object>();
+			MarkerUtilities.setMessage(attributes, aMessage);
+			// There was no MarkerUtilities.setSeverity method:
+			attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
+			MarkerUtilities.setLineNumber(attributes, aLine);
+            // Specify the column only if it isn't after the last char, otherwise Eclipse won't show the error marker
+			// on the editor margin: 
+			if (aCharStart < getDocument().getLength()) {			
+    			MarkerUtilities.setCharStart(attributes, aCharStart);
+    			MarkerUtilities.setCharEnd(attributes, aCharEnd);
+			}
 			MarkerUtilities.createMarker(file, attributes, IMarker.PROBLEM);
 		} catch (CoreException e) {
 			Plugin.log(e);
@@ -449,13 +452,31 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					highlightRelatedRegions(null, item);
 				}
 			}
-			validateContents();
+			validateContentsAsync();
 		}
 	}
 
 	public static Validator VALIDATOR;
 
-	public synchronized void validateContents() {
+	/**
+	 * Synchronous validation of the content.
+	 */
+	// TODO: This is a hack used for testing
+    public synchronized void validateContents() throws CoreException {
+        // Wait for any ongoing async validation to finish. 
+        while (VALIDATOR != null) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Interrputed while waiting previos validation to finish.", e);
+            }
+        }
+        
+        new Validator(this).run();
+    }
+	
+	public synchronized void validateContentsAsync() {
+	    // TODO: Rework this; The markers can get stale this this way.
 		if (null == VALIDATOR) {
 			VALIDATOR = new Validator(this);
 			VALIDATOR.start();
@@ -492,54 +513,61 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 					}
 					getFile().deleteMarkers(IMarker.PROBLEM, true,
 							IResource.DEPTH_INFINITE);
-					String pageContents = getDocument().get();
-					Reader reader = new StringReader(pageContents);
+					String documentContent = getDocument().get();
 					/*
-					 * dummy is here to be able to suppress the warning about the
-					 * unused new Template()
+					 * dummy is here to be able to suppress the warning about
+					 * the unused new Template()
 					 */
-					@SuppressWarnings("unused")
-					Template dummy = new Template(getFile().getName(), reader,
-							fmConfiguration);
-					reader.close();
-				}
-			} catch (ParseException e) {
-				if (e.getMessage() != null) {
-					String errorStr = e.getMessage();
-					int errorLine = e.getLineNumber();
-					if (errorLine == 0) {
-						// sometimes they forget to put it in
-						int index = e.getMessage().indexOf("line: "); //$NON-NLS-1$
-						if (index > 0) {
-							int index2 = e.getMessage().indexOf(
-									" ", index + 6); //$NON-NLS-1$
-							int index3 = e.getMessage().indexOf(
-									",", index + 6); //$NON-NLS-1$
-							if (index3 < index2 && index3 > 0)
-								index2 = index3;
-							String s = e.getMessage().substring(index + 6,
-									index2);
-							try {
-								errorLine = Integer.parseInt(s);
-							} catch (NumberFormatException e2) {
-								errorLine = 0;
-							}
-						}
+					try {
+						@SuppressWarnings("unused")
+						Template dummy = new Template(getFile().getName(), documentContent, fmConfiguration);
+					} catch (ParseException e) {
+						editor.addProblemMarker(e.getEditorMessage(), e.getLineNumber(),
+						        getOffset(e.getLineNumber(), e.getColumnNumber()),
+                                getOffset(e.getEndLineNumber(), e.getEndColumnNumber()) + 1);
 					}
-					editor.addProblemMarker(errorStr, errorLine);
 				}
-			} catch (CoreException | IOException e) {
+			} catch (Exception e) {
 				Plugin.log(e);
 			} finally {
-				Editor.VALIDATOR = null;
+			    synchronized (Editor.this) {
+	                Editor.VALIDATOR = null;
+	                Editor.this.notify();
+                }
 			}
 		}
+
+		/**
+         * Calculates the offset of the character in the document at the position
+         * given with 1-based line number and 1-based column number.
+         */
+        // TODO: Get rid of this with FM 2.3.25. Just set tab size to 1.
+        private int getOffset(int lineNumber, int columnNumber) throws BadLocationException {
+            IDocument document = getDocument();
+            
+            int currentOffset = document.getLineOffset(lineNumber - 1);
+            // FreeMarker 2.3.24 has accidentally changed the tab size used for AST node column number calculations
+            // from 8 to 1 with a JavaCC upgrade...
+            if (Configuration.getVersion().intValue() == Version.intValueFor(2, 3, 24)) {
+                return currentOffset + (columnNumber - 1);
+            }
+            
+            int currentColumnNumber = 1;
+            while (currentColumnNumber < columnNumber) {
+                // FreeMarker column number assumes tabs of width 8:
+                currentColumnNumber +=
+                        document.getChar(currentOffset) == '\t' ? 8 - (currentColumnNumber - 1) % 8 : 1; 
+                currentOffset++;
+            }
+            return currentOffset;
+        }
+
 	}
 
 	@Override
 	protected void editorSaved() {
 		super.editorSaved();
-		validateContents();
+		validateContentsAsync();
 	}
 
 	@Override

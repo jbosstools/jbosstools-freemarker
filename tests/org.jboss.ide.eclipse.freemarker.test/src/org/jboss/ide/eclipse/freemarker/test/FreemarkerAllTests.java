@@ -10,6 +10,7 @@ import org.jboss.ide.eclipse.freemarker.editor.coloring.test.InterpolationColori
 import org.jboss.ide.eclipse.freemarker.editor.coloring.test.ListColoringTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.FreemarkerEditorTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.IncludeHyperlinkDetectorTest;
+import org.jboss.ide.eclipse.freemarker.editor.test.ErrorMarkerTest;
 import org.jboss.ide.eclipse.freemarker.lang.test.ParserUtilsTest;
 import org.jboss.ide.eclipse.freemarker.model.test.AssignmentDirectiveTest;
 import org.jboss.ide.eclipse.freemarker.model.test.InterpolationTest;
@@ -25,6 +26,7 @@ public class FreemarkerAllTests extends TestCase {
 		suite.addTestSuite(FreemarkerPreferencePageTest.class);
 		suite.addTestSuite(FreemarkerEditorTest.class);
 		suite.addTestSuite(ParserUtilsTest.class);
+	    suite.addTestSuite(ErrorMarkerTest.class);
 
 		/* model tests */
 		suite.addTestSuite(AssignmentDirectiveTest.class);
