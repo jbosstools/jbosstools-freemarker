@@ -486,7 +486,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			try {
 				if (null != getFile()) {
 					if (null == fmConfiguration) {
-						fmConfiguration = new Configuration();
+						fmConfiguration = new Configuration(Configuration.getVersion());
 						fmConfiguration
 								.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
 					}
