@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>org.jboss.tools</groupId>
 		<artifactId>parent</artifactId>
-		<version>4.4.0.Final-SNAPSHOT</version>
+		<version>4.4.1.Alpha1-SNAPSHOT</version>
 	</parent>
 	<artifactId>freemarker</artifactId>
-	<version>1.5.100-SNAPSHOT</version>
+	<version>1.5.101-SNAPSHOT</version>
 	<name>jbosstools-freemarker</name>
 	<packaging>pom</packaging>
 	<properties>
