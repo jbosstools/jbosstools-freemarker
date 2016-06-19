@@ -76,6 +76,16 @@ public class ItemSet {
 						directives.add(directive);
 					}
 					if (!directive.isStartItem()) {
+					    // Close auto-closed item silently if we have a non-matching end- or start-and-end-directive:
+					    {
+    					    Item stackTopItem = !stackDirectives.isEmpty() ? stackDirectives.lastElement() : null; 
+                            if (stackTopItem != null && stackTopItem.isAutoClosed() &&
+                                    (directive.isEndItem() || directive.isStartAndEndItem())
+                                    && !directive.relatesToItem(stackTopItem)) {
+                                stackDirectives.pop();
+                            }
+					    }
+					    
 						Item directiveCheck = getFirstNestableItem(stackDirectives);
 						if (directive.isStartAndEndItem()) {
 							// not a true nestable but sub items will be nested

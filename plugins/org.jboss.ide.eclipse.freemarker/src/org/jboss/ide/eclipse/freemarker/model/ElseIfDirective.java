@@ -42,7 +42,7 @@ public class ElseIfDirective extends AbstractDirective {
 			ifDirective = (IfDirective) directive;
 		else if (null == ifDirective) {
 			if (directive instanceof ElseIfDirective) ifDirective = ((ElseIfDirective) directive).getIfDirective();
-			if (directive instanceof IfElseDirective) ifDirective = ((IfElseDirective) directive).getIfDirective();
+			if (directive instanceof ElseDirective) ifDirective = ((ElseDirective) directive).getIfDirective();
 			if (directive instanceof IfEndDirective) ifDirective = ((IfEndDirective) directive).getIfDirective();
 		}
 	}
@@ -50,7 +50,7 @@ public class ElseIfDirective extends AbstractDirective {
 	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfDirective
-				|| directive instanceof IfElseDirective
+				|| directive instanceof ElseDirective
 				|| directive instanceof ElseIfDirective
 				|| directive instanceof IfEndDirective);
 	}

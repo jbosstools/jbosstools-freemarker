@@ -29,11 +29,13 @@ import java.util.Map;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.jboss.ide.eclipse.freemarker.Plugin;
+import org.jboss.ide.eclipse.freemarker.lang.Directive;
 
 
 public abstract class AbstractDirective extends AbstractItem {
 
+    public static final String DEFAULT_IMAGE = "directive.png"; //$NON-NLS-1$
+    
 	String contents;
 
 	public AbstractDirective(ItemSet itemSet) {
@@ -51,13 +53,6 @@ public abstract class AbstractDirective extends AbstractItem {
 		return contents;
 	}
 
-	public static String[] directives = new String[] {
-		"if", "else", "elseif", "switch", "case", "default", "break", "list", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-		"break", "include", "import", "noparse", "compress", "escape", "noescape", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
-		"assign", "global", "local", "setting", "macro", "nested", "return", "flush", "function", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-		"stop", "ftl", "t", "lt", "rt", "nt", "attempt", "recover", "visit", "recurse", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-		"fallback", "foreach" //$NON-NLS-1$ //$NON-NLS-2$
-	};
 	@Override
 	public ICompletionProposal[] getCompletionProposals(int offset, Map<String, Class<?>> context) {
 		if (offset < 2) return null;
@@ -80,12 +75,14 @@ public abstract class AbstractDirective extends AbstractItem {
 			}
 			String prefix = contentWithOffsetContents[index].substring(0, subOffset);
 			List<ICompletionProposal> l = new ArrayList<ICompletionProposal>();
-			for (int i=0; i<directives.length; i++) {
-				String name = directives[i];
-				if (name.startsWith(prefix)) {
-					l.add(getCompletionProposal(offset, subOffset,
-							name, contentWithOffsetContents[0]));
-				}
+			for (Directive tag : Directive.values()) {
+			    if (!tag.isEndDirective()) {
+    				String name = tag.getKeyword().toString();
+    				if (name.startsWith(prefix)) {
+    					l.add(getCompletionProposal(offset, subOffset,
+    							name, contentWithOffsetContents[0]));
+    				}
+			    }
 			}
 			return completionProposals(l);
 		}
@@ -111,6 +108,16 @@ public abstract class AbstractDirective extends AbstractItem {
 				replacingString.length(), replacementString.length());
 	}
 
+    @Override
+    public String getTreeImage() {
+        return AbstractDirective.DEFAULT_IMAGE;
+    }
+    
+    @Override
+    public boolean isAutoClosed() {
+        return false;
+    }
+	
 	private static final Comparator<ICompletionProposal> COMPLETION_PROPOSAL_COMPARATOR = new Comparator<ICompletionProposal>() {
 		@Override
 		public int compare(ICompletionProposal arg0, ICompletionProposal arg1) {

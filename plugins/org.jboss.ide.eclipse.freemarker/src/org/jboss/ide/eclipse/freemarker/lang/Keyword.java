@@ -41,7 +41,7 @@ public enum Keyword {
 	LIST,
 	IF,
 	ELSE,
-	ELSE_IF,
+	ELSEIF,
 	SWITCH,
 	CASE,
 	DEFAULT,
@@ -58,6 +58,22 @@ public enum Keyword {
 	IN,
 	USING,
 	FOREACH,
+	ATTEMPT,
+	RECOVER,
+	VISIT,
+	RECURSE,
+	FALLBACK,
+	AUTOESC,
+    NOAUTOESC,
+	ESCAPE,
+	NOESCAPE,
+	NOPARSE,
+	ITEMS,
+	SEP,
+    FLUSH,
+	T,
+	LT_DIRECTIVE("lt"), //$NON-NLS-1$
+	RT,
 	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;

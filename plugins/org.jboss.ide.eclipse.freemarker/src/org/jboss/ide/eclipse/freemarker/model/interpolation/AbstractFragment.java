@@ -73,14 +73,7 @@ public abstract class AbstractFragment implements Fragment {
 
 	protected boolean instanceOf (Class<?> test, Class<?> base) {
 		if (null == test || null == base) return false;
-		while (null != test) {
-			for (int i=0; i<test.getInterfaces().length; i++) {
-				if (test.getInterfaces()[i].getClass().getName().equals(base.getName())) return true;
-			}
-			if (test.getName().equals(base.getName())) return true;
-			test = test.getSuperclass();
-		}
-		return false;
+		return base.isAssignableFrom(test);
 	}
 
 	private static final Comparator<ICompletionProposal> COMPLETION_PROPOSAL_COMPARATOR = new Comparator<ICompletionProposal>() {

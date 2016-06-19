@@ -27,8 +27,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class GenericDirective extends AbstractDirective {
 
-	private String image;
+	private final String image;
 
+    public GenericDirective (ItemSet itemSet) {
+        this(itemSet, AbstractDirective.DEFAULT_IMAGE);
+    }
+	
 	public GenericDirective (ItemSet itemSet, String image) {
 		super(itemSet);
 		this.image = image;

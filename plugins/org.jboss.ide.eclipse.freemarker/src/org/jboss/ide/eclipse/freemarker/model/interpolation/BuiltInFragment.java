@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,154 +33,72 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.w3c.dom.Node;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class BuiltInFragment extends AbstractFragment {
 
-	private static final Map<String, ParameterSet> STRING_BUILT_INS = new HashMap<String, ParameterSet>();
-	private static final Map<String, ParameterSet> NUMBER_BUILT_INS = new HashMap<String, ParameterSet>();
-	private static final Map<String, ParameterSet> DATE_BUILT_INS = new HashMap<String, ParameterSet>();
-	private static final Map<String, ParameterSet> LIST_BUILT_INS = new HashMap<String, ParameterSet>();
-	private static final Map<String, ParameterSet> MAP_BUILT_INS = new HashMap<String, ParameterSet>();
-	private static final Map<String, ParameterSet> OBJECT_BUILT_INS = new HashMap<String, ParameterSet>();
-	static {
-		addToMap (OBJECT_BUILT_INS,
-				new Object[]{
-					"is_collection", Boolean.class, null, //$NON-NLS-1$
-					"is_macro", Boolean.class, null, //$NON-NLS-1$
-					"is_transform", Boolean.class, null, //$NON-NLS-1$
-					"string", String.class, null,			 //$NON-NLS-1$
-					"namespace", String.class, null, //$NON-NLS-1$
-					"default", String.class, new String[]{"value "}, //$NON-NLS-1$ //$NON-NLS-2$
-					"is_number", Boolean.class, null, //$NON-NLS-1$
-					"is_directive", String.class, null, //$NON-NLS-1$
-					"is_boolean", Boolean.class, null, //$NON-NLS-1$
-					"is_hash_ex", Boolean.class, null, //$NON-NLS-1$
-					"is_enumerable", Boolean.class, null, //$NON-NLS-1$
-					"is_date", Boolean.class, null, //$NON-NLS-1$
-					"is_node", Boolean.class, null, //$NON-NLS-1$
-					"exists", Boolean.class, null, //$NON-NLS-1$
-					"is_indexable", Boolean.class, null, //$NON-NLS-1$
-					"is_string", Boolean.class, null, //$NON-NLS-1$
-					"is_hash", Boolean.class, null, //$NON-NLS-1$
-					"is_sequence", Boolean.class, null, //$NON-NLS-1$
-					"if_exists", Boolean.class, null, //$NON-NLS-1$
-					"has_content", Boolean.class, null, //$NON-NLS-1$
-					"is_method", Boolean.class, null, //$NON-NLS-1$
-					"round", String.class, null, //$NON-NLS-1$
-					"floor", String.class, null, //$NON-NLS-1$
-					"ceiling", String.class, null, //$NON-NLS-1$
-		});
-		addToMap (STRING_BUILT_INS,
-				new Object[]{
-					"interpret", String.class, null, //$NON-NLS-1$
-					"matches", Boolean.class, new String[]{"expression"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"html", String.class, null, //$NON-NLS-1$
-					"index_of", Number.class, new String[]{"substr"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"right_pad", String.class, new String[]{"padAmount"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"xml", String.class, null, //$NON-NLS-1$
-					"web_safe", String.class, null, //$NON-NLS-1$
-					"eval", null, null, //$NON-NLS-1$
-					"size", Number.class, null, //$NON-NLS-1$
-					"cap_first", String.class, null,					 //$NON-NLS-1$
-					"j_string", String.class, null, //$NON-NLS-1$
-					"first", String.class, null, //$NON-NLS-1$
-					"split", Collection.class, null, //$NON-NLS-1$
-					"upper_case", String.class, null, //$NON-NLS-1$
-					"last_index_of", String.class, null, //$NON-NLS-1$
-					"long", Number.class, null, //$NON-NLS-1$
-					"last", String.class, null, //$NON-NLS-1$
-					"starts_with", Boolean.class, null, //$NON-NLS-1$
-					"capitalize", String.class, null, //$NON-NLS-1$
-					"short", String.class, null, //$NON-NLS-1$
-					"ends_with", String.class, null, //$NON-NLS-1$
-					"chunk", Collection.class, null, //$NON-NLS-1$
-					"byte", String.class, null, //$NON-NLS-1$
-					"trim", String.class, null, //$NON-NLS-1$
-					"c", String.class, null, //$NON-NLS-1$
-					"chop_linebreak", String.class, null, //$NON-NLS-1$
-					"double", Number.class, null, //$NON-NLS-1$
-					"url", String.class, null, //$NON-NLS-1$
-					"replace", String.class, null, //$NON-NLS-1$
-					"uncap_first", String.class, null, //$NON-NLS-1$
-					"contains", Boolean.class, null, //$NON-NLS-1$
-					"left_pad", String.class, new String[]{"param"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"length", Number.class, null, //$NON-NLS-1$
-					"rtf", String.class, null, //$NON-NLS-1$
-					"lower_case", String.class, null, //$NON-NLS-1$
-					"js_string", String.class, null, //$NON-NLS-1$
-					"word_list", String.class, null, //$NON-NLS-1$
-		});
-		addToMap (NUMBER_BUILT_INS,
-				new Object[]{
-					"string.currency", Boolean.class, new String[]{"format"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"string", String.class, null,			 //$NON-NLS-1$
-					"number", Number.class, null, //$NON-NLS-1$
-					"new", String.class, null, //$NON-NLS-1$
-					"long", Number.class, null, //$NON-NLS-1$
-					"short", String.class, null, //$NON-NLS-1$
-					"double", Number.class, null, //$NON-NLS-1$
-					"int", Number.class, null, //$NON-NLS-1$
-		});
-		addToMap (DATE_BUILT_INS,
-				new Object[]{
-					"date", Date.class, null, //$NON-NLS-1$
-					"time", Date.class, null, //$NON-NLS-1$
-					"datetime", Date.class, null, //$NON-NLS-1$
-					"string", String.class, new String[]{"format"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"string.short", String.class, null, //$NON-NLS-1$
-					"string.medium", String.class, null, //$NON-NLS-1$
-					"string.long", String.class, null, //$NON-NLS-1$
-		});
-		addToMap (LIST_BUILT_INS,
-				new Object[]{
-					"seq_contains", Boolean.class, new String[]{"value"}, //$NON-NLS-1$ //$NON-NLS-2$
-					"reverse", Collection.class, null, //$NON-NLS-1$
-					"size", Number.class, null, //$NON-NLS-1$
-					"last", Object.class, null, //$NON-NLS-1$
-		});
-		addToMap (MAP_BUILT_INS,
-				new Object[]{
-					"keys", Collection.class, null, //$NON-NLS-1$
-		});
+	private static final Map<String, BuiltInEditorInfo> STRING_BUILT_INS = createMap(FTLType.STRING);
+	private static final Map<String, BuiltInEditorInfo> NUMBER_BUILT_INS = createMap(FTLType.NUMBER);
+	private static final Map<String, BuiltInEditorInfo> DATE_BUILT_INS = createMap(FTLType.DATE_LIKE);
+	private static final Map<String, BuiltInEditorInfo> LIST_BUILT_INS = createMap(FTLType.SEQUENCE);
+	private static final Map<String, BuiltInEditorInfo> MAP_BUILT_INS = createMap(FTLType.HASH);
+    private static final Map<String, BuiltInEditorInfo> NODE_BUILT_INS = createMap(FTLType.NODE);
+	private static final Map<String, BuiltInEditorInfo> ALL_BUILT_INS = createMap(FTLType.ANY);
+	
+	private static final Map<String, BuiltInEditorInfo> createMap(FTLType lhoType) {
+	    HashMap<String, BuiltInEditorInfo> map = new HashMap<String, BuiltInEditorInfo>();
+	    for (BuiltInInfo bi : BuiltInInfo.values()) {
+	        if (bi.isDeprecated()) {
+	            continue;
+	        }
+	        if (isBuiltInOf(bi, lhoType)) {
+	            map.put(bi.getSnakeCaseName(),
+	                    new BuiltInEditorInfo(
+	                            bi.getReturnType().getClosestJavaClass(), bi.isParameterListRequired()));
+	        }
+	    }
+	    return map;
 	}
 
-	private static void addToMap (Map<String, ParameterSet> map, Object[] arr) {
-		int i=0;
-		while (i<arr.length) {
-			map.put(
-					(String) arr[i++],
-					new ParameterSet (
-						(Class<?>) arr[i++],
-						(String[]) arr[i++]));
-		}
-	}
-
+    private static final boolean isBuiltInOf(BuiltInInfo bi, FTLType actualLhoType) {
+        if (actualLhoType == FTLType.ANY) {
+            return true;
+        }
+        for (FTLType supportedLhoType : bi.getLeftHandTypes()) {
+            if (supportedLhoType == FTLType.ANY) {
+                return true;
+            }
+            if (actualLhoType == supportedLhoType) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
 	public BuiltInFragment(int offset, String content) {
 		super(offset, content);
 	}
 
-	private String subContent = null;
 	@Override
-	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context, IResource resource, IProject project) {
-		if (null == subContent) {
-			subContent = getContent();
-			int index = subContent.indexOf("("); //$NON-NLS-1$
-			if (index > 0) subContent = subContent.substring(0, index);
-		}
-		ParameterSet parameterSet = STRING_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = NUMBER_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = DATE_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = LIST_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = MAP_BUILT_INS.get(subContent);
-		if (null == parameterSet) parameterSet = OBJECT_BUILT_INS.get(subContent);
-		if (null != parameterSet) {
-			return parameterSet.getReturnClass();
-		}
-		else return null;
+	public Class<?> getReturnClass (Class<?> parentClass, List<Fragment> fragments, Map<String, Class<?>> context,
+	        IResource resource, IProject project) {
+		BuiltInEditorInfo biEditorInfo = ALL_BUILT_INS.get(getBuiltInName());
+		return biEditorInfo != null ? biEditorInfo.getReturnClass() : null;
 	}
+
+    private String builtInNameOrNull;
+	
+    private String getBuiltInName() {
+        if (null == builtInNameOrNull) {
+			builtInNameOrNull = getContent();
+			int index = builtInNameOrNull.indexOf("("); //$NON-NLS-1$
+			if (index > 0) builtInNameOrNull = builtInNameOrNull.substring(0, index);
+		}
+        return builtInNameOrNull;
+    }
 
 	@Override
 	public ICompletionProposal[] getCompletionProposals (int subOffset, int offset, Class<?> parentClass,
@@ -195,43 +112,35 @@ public class BuiltInFragment extends AbstractFragment {
 		else if (instanceOf(parentClass, Date.class)) {
 			return getCompletionProposals(subOffset, offset, DATE_BUILT_INS);
 		}
-		else if (instanceOf(parentClass, Collection.class) || instanceOf(parentClass, List.class)) {
+		else if (instanceOf(parentClass, Collection.class) || instanceOf(parentClass, List.class)
+		        || parentClass != null && parentClass.isArray()) {
 			return getCompletionProposals(subOffset, offset, LIST_BUILT_INS);
 		}
 		else if (instanceOf(parentClass, Map.class)) {
 			return getCompletionProposals(subOffset, offset, MAP_BUILT_INS);
 		}
-		else return getCompletionProposals(subOffset, offset, OBJECT_BUILT_INS);
+        else if (instanceOf(parentClass, Node.class)) {
+            return getCompletionProposals(subOffset, offset, NODE_BUILT_INS);
+        }
+		else return getCompletionProposals(subOffset, offset, ALL_BUILT_INS);
 	}
 
-	private ICompletionProposal[] getCompletionProposals(int subOffset, int offset, Map<String, ParameterSet> values) {
+	private ICompletionProposal[] getCompletionProposals(
+	        int subOffset, int offset, Map<String, BuiltInEditorInfo> builtInsSubset) {
 		if (offset == 0) return null;
 		String prefix = getContent().substring(0, subOffset-1);
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-		for (Iterator<Map.Entry<String, ParameterSet>> i=values.entrySet().iterator(); i.hasNext(); ) {
-			Map.Entry<String, ParameterSet> entry = i.next();
+		for (Map.Entry<String, BuiltInEditorInfo> entry : builtInsSubset.entrySet()) {
 			String key = entry.getKey();
-			ParameterSet params = entry.getValue();
 			if (key.startsWith(prefix)) {
-				proposals.add(getCompletionProposal(key, params, offset, subOffset));
-			}
-		}
-		if (!values.equals(OBJECT_BUILT_INS)) {
-			values = OBJECT_BUILT_INS;
-			for (Iterator<Map.Entry<String, ParameterSet>> i=values.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, ParameterSet> entry = i.next();
-				String key = entry.getKey();
-				ParameterSet params = entry.getValue();
-				if (key.startsWith(prefix)) {
-					proposals.add(getCompletionProposal(key, params, offset, subOffset));
-				}
+				proposals.add(getCompletionProposal(key, entry.getValue(), offset, subOffset));
 			}
 		}
 		return completionProposals(proposals);
 	}
 
-	private ICompletionProposal getCompletionProposal (String key, ParameterSet params, int offset, int subOffset) {
-		if (null == params.getParameters() || params.getParameters().length == 0) {
+	private ICompletionProposal getCompletionProposal(String key, BuiltInEditorInfo biEditorInfo, int offset, int subOffset) {
+		if (!biEditorInfo.isParametersRequired()) {
 			return getCompletionProposal(offset, subOffset-1,
 					key, getContent());
 		}

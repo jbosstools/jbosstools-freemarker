@@ -80,30 +80,12 @@ public enum PartitionType {
 	DIRECTIVE_START(PreferenceKey.COLOR_DIRECTIVE) {
 		@Override
 		public RuleBasedScanner createItemParser() {
-
-			List<IRule> rules = new ArrayList<IRule>();
-		for (Directive directive : Directive.values() ) {	
-			rules.add(new DirectiveRule(directive));
-		}
-//			rules.add(new DirectiveRule(Directive.FTL));
-//			rules.add(new DirectiveRule(Directive.IF));
-//			rules.add(new DirectiveRule(Directive.ELSEIF));
-//			rules.add(new DirectiveRule(Directive.ELSE, true));
-//			rules.add(new DirectiveRule(Directive.FUNCTION));
-//			rules.add(new DirectiveRule(Directive.LIST));
-//			rules.add(new DirectiveRule(Directive.MACRO));
-//			rules.add(new DirectiveRule(Directive.SWITCH));
-//			rules.add(new DirectiveRule(Directive.CASE));
-//			rules.add(new DirectiveRule(Directive.DEFAULT));
-//			rules.add(new DirectiveRule(Directive.ASSIGN));
-//			rules.add(new DirectiveRule(Directive.LOCAL));
-//			rules.add(new DirectiveRule(Directive.GLOBAL));
-//			rules.add(new DirectiveRule(Directive.INCLUDE));
-//			rules.add(new DirectiveRule(Directive.IMPORT));
-//			rules.add(new DirectiveRule(Directive.BREAK));
-//			rules.add(new DirectiveRule(Directive.STOP));
-//			rules.add(new DirectiveRule(Directive.NESTED));
-//			rules.add(new DirectiveRule(Directive.RETURN));
+    		List<IRule> rules = new ArrayList<IRule>();
+    		for (Directive directive : Directive.values() ) {
+    		    if (!directive.isEndDirective()) {
+    		        rules.add(new DirectiveRule(directive));
+    		    }
+    		}
 
 			RuleBasedScanner result = new RuleBasedScanner();
 			result.setRules(rules.toArray(new IRule[rules.size()]));
@@ -126,14 +108,11 @@ public enum PartitionType {
 		public RuleBasedScanner createItemParser() {
 
 			List<IRule> rules = new ArrayList<IRule>();
-			rules.add(new DirectiveRuleEnd(Directive.IF_END));
-			rules.add(new DirectiveRuleEnd(Directive.FUNCTION_END));
-			rules.add(new DirectiveRuleEnd(Directive.LIST_END));
-			rules.add(new DirectiveRuleEnd(Directive.MACRO_END));
-			rules.add(new DirectiveRuleEnd(Directive.SWITCH_END));
-			rules.add(new DirectiveRuleEnd(Directive.ASSIGN_END));
-			rules.add(new DirectiveRuleEnd(Directive.LOCAL_END));
-			rules.add(new DirectiveRuleEnd(Directive.GLOBAL_END));
+			for (Directive directive : Directive.values()) {
+			    if (directive.isEndDirective()) {
+	                rules.add(new DirectiveRuleEnd(directive));
+			    }
+			}
 
 			RuleBasedScanner result = new RuleBasedScanner();
 			result.setRules(rules.toArray(new IRule[rules.size()]));

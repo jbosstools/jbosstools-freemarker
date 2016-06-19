@@ -44,13 +44,16 @@ public class ListEndDirective extends AbstractDirective {
 
 	@Override
 	public void relateItem(Item directive) {
-		if (directive instanceof ListDirective)
+		if (directive instanceof ListDirective) {
 			listDirective = (ListDirective) directive;
+		} else if (listDirective == null && directive instanceof ElseDirective) {
+		    listDirective = ((ElseDirective) directive).getListDirective();
+		}
 	}
 
 	@Override
 	public boolean relatesToItem(Item directive) {
-		return (directive instanceof IfElseDirective || directive instanceof ListDirective);
+		return (directive instanceof ElseDirective || directive instanceof ListDirective);
 	}
 
 	public ListDirective getListDirective() {
@@ -58,8 +61,8 @@ public class ListEndDirective extends AbstractDirective {
 	}
 
 	@Override
-	public Item getRelatedItem() {
-		return getListDirective();
+	public Item[] getRelatedItems() {
+        return listDirective != null ? listDirective.getRelatedItems() : null;
 	}
 
 	@Override

@@ -21,6 +21,7 @@
  */
 package org.jboss.ide.eclipse.freemarker.model;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class ListDirective extends AbstractDirective {
 
+    private ElseDirective elseDirective;
 	private ListEndDirective endDirective;
 
 	public ListDirective(ItemSet itemSet) {
@@ -48,13 +50,16 @@ public class ListDirective extends AbstractDirective {
 
 	@Override
 	public void relateItem(Item directive) {
-		if (directive instanceof ListEndDirective)
+		if (directive instanceof ListEndDirective) {
 			endDirective = (ListEndDirective) directive;
+		} else if (directive instanceof ElseDirective) {
+		    elseDirective = (ElseDirective) directive;
+		}
 	}
 
 	@Override
 	public boolean relatesToItem(Item directive) {
-		return (directive instanceof ListEndDirective);
+		return directive instanceof ListEndDirective || directive instanceof ElseDirective;
 	}
 
 	@Override
@@ -62,15 +67,31 @@ public class ListDirective extends AbstractDirective {
 		return true;
 	}
 
-	public ListEndDirective getEndDirective() {
+	public ElseDirective getElseDirective() {
+        return elseDirective;
+    }
+
+    public ListEndDirective getEndDirective() {
 		return endDirective;
 	}
 
-	@Override
-	public Item getRelatedItem() {
-		return getEndDirective();
-	}
-
+    @Override
+    public Item[] getRelatedItems() {
+        if (null == relatedItems) {
+            ArrayList<Item> items = new ArrayList<Item>(3);
+            items.add(this);
+            if (null != getEndDirective()) {
+                items.add(getEndDirective());
+            }
+            if (null != getElseDirective()) {
+                items.add(getElseDirective());
+            }
+            relatedItems = items.toArray(new Item[items.size()]);
+        }
+        return relatedItems;
+    }
+    private Item[] relatedItems;
+    
 	@Override
 	public String getTreeImage() {
 		return "list.png"; //$NON-NLS-1$

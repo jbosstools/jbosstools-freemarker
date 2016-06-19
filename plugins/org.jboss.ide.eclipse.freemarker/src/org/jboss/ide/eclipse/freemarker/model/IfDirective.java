@@ -31,7 +31,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class IfDirective extends AbstractDirective {
 
 	private IfEndDirective endDirective;
-	private IfElseDirective elseDirective;
+	private ElseDirective elseDirective;
 	private List<ElseIfDirective> elseIfDirectives = new ArrayList<ElseIfDirective>(1);
 
 	public IfDirective(ItemSet itemSet) {
@@ -49,8 +49,8 @@ public class IfDirective extends AbstractDirective {
 
 	@Override
 	public void relateItem(Item directive) {
-		if (directive instanceof IfElseDirective)
-			elseDirective = (IfElseDirective) directive;
+		if (directive instanceof ElseDirective)
+			elseDirective = (ElseDirective) directive;
 		else if (directive instanceof IfEndDirective)
 			endDirective = (IfEndDirective) directive;
 		else if (directive instanceof ElseIfDirective)
@@ -60,7 +60,7 @@ public class IfDirective extends AbstractDirective {
 	@Override
 	public boolean relatesToItem(Item directive) {
 		return (directive instanceof IfDirective
-				|| directive instanceof IfElseDirective
+				|| directive instanceof ElseDirective
 				|| directive instanceof ElseIfDirective
 				|| directive instanceof IfEndDirective);
 	}
@@ -70,7 +70,7 @@ public class IfDirective extends AbstractDirective {
 		return true;
 	}
 
-	public IfElseDirective getElseDirective() {
+	public ElseDirective getElseDirective() {
 		return elseDirective;
 	}
 

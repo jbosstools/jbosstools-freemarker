@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -118,7 +119,8 @@ public class ContextValueDialog extends Dialog {
                     if(javaProject != null)
                     {
                         org.eclipse.jdt.core.search.IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[]{javaProject});
-                        SelectionDialog sd = JavaUI.createTypeDialog(getShell(), new ApplicationWindow(getShell()), searchScope, 2, false);
+                        SelectionDialog sd = JavaUI.createTypeDialog(getShell(), new ApplicationWindow(getShell()),
+                                searchScope, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false);
                         sd.open();
                         Object objects[] = sd.getResult();
                         if(objects != null && objects.length > 0)
@@ -195,7 +197,8 @@ public class ContextValueDialog extends Dialog {
                     if(javaProject != null)
                     {
                         org.eclipse.jdt.core.search.IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[]{javaProject});
-                        SelectionDialog sd = JavaUI.createTypeDialog(getShell(), new ApplicationWindow(getShell()), searchScope, 2, false);
+                        SelectionDialog sd = JavaUI.createTypeDialog(getShell(), new ApplicationWindow(getShell()),
+                                searchScope, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, false);
                         sd.open();
                         Object objects[] = sd.getResult();
                         if(objects != null && objects.length > 0)

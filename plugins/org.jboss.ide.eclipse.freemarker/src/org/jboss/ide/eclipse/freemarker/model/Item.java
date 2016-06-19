@@ -40,6 +40,8 @@ public interface Item {
 	boolean isEndItem ();
 
 	boolean isStartAndEndItem ();
+	
+	boolean isAutoClosed();
 
 	Item getStartItem ();
 
