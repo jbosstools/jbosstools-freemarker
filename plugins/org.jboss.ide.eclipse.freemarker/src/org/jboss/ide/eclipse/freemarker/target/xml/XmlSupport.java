@@ -56,7 +56,9 @@ public class XmlSupport implements TargetLanguageSupport {
 			".xml.ftl", //$NON-NLS-1$
 			".html.ftl", //$NON-NLS-1$
 			".xhtml.ftl", //$NON-NLS-1$
-			".htm.ftl" //$NON-NLS-1$
+			".htm.ftl", //$NON-NLS-1$
+			".ftlh", //$NON-NLS-1$
+			".ftlx" //$NON-NLS-1$
 	));
 
 	/**

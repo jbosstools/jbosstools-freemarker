@@ -6,7 +6,7 @@
       <editor
             class="org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
-            extensions="ftl"
+            extensions="ftl,ftlx,ftlh"
             icon="$nl$/icons/icon.gif"
             id="org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor"
             name="Freemarker Editor">
