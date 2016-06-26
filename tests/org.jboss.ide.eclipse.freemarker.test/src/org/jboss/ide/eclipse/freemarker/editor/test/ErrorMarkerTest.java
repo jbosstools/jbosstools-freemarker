@@ -122,7 +122,7 @@ public class ErrorMarkerTest extends TestCase  {
 
     protected IMarker getErrorMarker(String editorContent) throws CoreException {
         editor.getDocument().set(editorContent);
-        editor.validateContents();
+        editor.reconcileInstantly();
         
         IResource resource = ResourceUtil.getResource(editor.getEditorInput());
         IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);

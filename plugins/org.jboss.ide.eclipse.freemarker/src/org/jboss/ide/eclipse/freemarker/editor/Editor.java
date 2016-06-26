@@ -45,12 +45,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -73,9 +71,6 @@ import org.jboss.ide.eclipse.freemarker.target.TargetLanguageSupport;
 import org.jboss.ide.eclipse.freemarker.target.TargetLanguages;
 
 import freemarker.core.ParseException;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.Version;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -88,14 +83,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	private ItemSet itemSet;
 	private Long itemSetModificationStamp;
 	
-	private static final char[] VALIDATION_TOKENS = new char[] {
-			LexicalConstants.QUOT, LexicalConstants.LEFT_SQUARE_BRACKET,
-			LexicalConstants.RIGHT_SQUARE_BRACKET, LexicalConstants.COMMA,
-			LexicalConstants.PERIOD, LexicalConstants.LF, '4' };
 	private boolean readOnly = false;
 
 	private boolean mouseDown = false;
-	private boolean ctrlDown = false;
 	private boolean shiftDown = false;
 
 	public Editor() {
@@ -439,9 +429,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.keyCode == SWT.CTRL) {
-			ctrlDown = true;
-		}
 		if (e.keyCode == SWT.SHIFT) {
 			shiftDown = true;
 		}
@@ -465,9 +452,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.keyCode == SWT.CTRL) {
-			ctrlDown = false;
-		} else if (e.keyCode == SWT.SHIFT) {
+		if (e.keyCode == SWT.SHIFT) {
 			shiftDown = false;
 		}
 		try {
@@ -522,54 +507,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		} catch (BadLocationException exc) {
 			Plugin.log(exc);
 		}
-
-		boolean stale = false;
-		if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
-			stale = true;
-		} else if (null != getSelectedItem(true)) {
-			stale = true;
-		} else {
-			char c = (char) e.keyCode;
-			for (int j = 0; j < VALIDATION_TOKENS.length; j++) {
-				if (c == VALIDATION_TOKENS[j]) {
-					stale = true;
-					break;
-				}
-			}
-			if (ctrlDown && (e.keyCode == 'v' || e.keyCode == 'x')) {
-				stale = true;
-			}
-		}
-		if (stale) {
-			validateContentsAsync();
-		}
-	}
-
-	public static Validator VALIDATOR;
-
-	/**
-	 * Synchronous validation of the content.
-	 */
-	// TODO: This is a hack used for testing
-    public synchronized void validateContents() throws CoreException {
-        // Wait for any ongoing async validation to finish. 
-        while (VALIDATOR != null) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                throw new IllegalStateException("Interrputed while waiting previos validation to finish.", e);
-            }
-        }
-        
-        new Validator(this).run();
-    }
-	
-	public synchronized void validateContentsAsync() {
-	    // TODO: Rework this; The markers can get stale this this way.
-		if (null == VALIDATOR) {
-			VALIDATOR = new Validator(this);
-			VALIDATOR.start();
-		}
 	}
 
 	public IProject getProject() {
@@ -581,58 +518,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				.getFile() : null;
 	}
 
-	private Configuration fmConfiguration;
 	private TargetLanguageSupport targetLanguageSupport;
-
-	public class Validator extends Thread {
-		Editor editor;
-
-		public Validator(Editor editor) {
-			this.editor = editor;
-		}
-
-		@Override
-		public void run() {
-			try {
-				if (null != getFile()) {
-					if (null == fmConfiguration) {
-						fmConfiguration = new Configuration(Configuration.getVersion());
-						fmConfiguration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
-						fmConfiguration.setTabSize(1);
-					}
-					getFile().deleteMarkers(IMarker.PROBLEM, true,
-							IResource.DEPTH_INFINITE);
-					String documentContent = getDocument().get();
-					/*
-					 * dummy is here to be able to suppress the warning about
-					 * the unused new Template()
-					 */
-					try {
-						@SuppressWarnings("unused")
-						Template dummy = new Template(getFile().getName(), documentContent, fmConfiguration);
-					} catch (ParseException e) {
-						editor.addProblemMarker(e.getEditorMessage(), e.getLineNumber(),
-								getDocument().getLineOffset(e.getLineNumber() - 1) + e.getColumnNumber() - 1,
-								getDocument().getLineOffset(e.getEndLineNumber() - 1) + e.getEndColumnNumber());
-					}
-				}
-			} catch (Exception e) {
-				Plugin.log(e);
-			} finally {
-			    synchronized (Editor.this) {
-	                Editor.VALIDATOR = null;
-	                Editor.this.notify();
-                }
-			}
-		}
-
-	}
-
-	@Override
-	protected void editorSaved() {
-		super.editorSaved();
-		validateContentsAsync();
-	}
 
 	@Override
 	public boolean isEditorInputReadOnly() {
@@ -658,10 +544,9 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	 *
 	 */
 	public void reconcileInstantly() {
-		ReconcilingStrategy s = new ReconcilingStrategy(this);
-		s.setDocument(getDocument());
-		List<ITypedRegion> regions = s.parseRegions();
-		reconcile(regions, ((IDocumentExtension4) getDocument()).getModificationStamp());
+		ReconcilingStrategy reconciler = new ReconcilingStrategy(this);
+		reconciler.setDocument(getDocument());
+		reconciler.reconcile();
 	}
 
 	/**
@@ -674,32 +559,57 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	 *            was changed while the ranges were created, and so it was made from an
 	 *            inconsistent editor content.
 	 */
-	public void reconcile(List<ITypedRegion> regions, final Long modificationStamp) {
+	void updateModel(List<ITypedRegion> regions, final Long modificationStamp) {
 		/* re-create the model in the reconciler thread */
 		final ItemSet newItemSet = createItemSet(regions);
-
-		Runnable newItemSetTask = new Runnable() {
-			@Override
-			public void run() {
-				itemSet = newItemSet;
-				itemSetModificationStamp = modificationStamp;
-				
-				updateRelatedItemHighlights();
-				
-				if (null != Editor.this.fOutlinePage) {
-					Editor.this.fOutlinePage.refresh();
+		executeInUIThread(
+			new Runnable() {
+				@Override
+				public void run() {
+					itemSet = newItemSet;
+					itemSetModificationStamp = modificationStamp;
+					
+					updateRelatedItemHighlights();
+					
+					if (null != Editor.this.fOutlinePage) {
+						Editor.this.fOutlinePage.refresh();
+					}
 				}
 			}
-		};
+		);
+	}
+
+	/**
+	 * Normally called from the reconciler thread to notify the UI thread about
+	 * a new region list become available.
+	 */
+	void updateMarkers(final ParseException pe) {
+		executeInUIThread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getFile().deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+					if (pe != null) {
+						addProblemMarker(pe.getEditorMessage(), pe.getLineNumber(),
+								getDocument().getLineOffset(pe.getLineNumber() - 1) + pe.getColumnNumber() - 1,
+								getDocument().getLineOffset(pe.getEndLineNumber() - 1) + pe.getEndColumnNumber());
+					}
+				} catch (Exception e) {
+					Plugin.log(e);
+				}
+			}
+		});
+	}
+	
+	private void executeInUIThread(Runnable task) {
 		/* make sure to run in the UI thread */
 		if (Thread.currentThread() == Display.getDefault().getThread()) {
 			/* we are in the UI thread - run synchrounously */
-			newItemSetTask.run();
+			task.run();
 		} else {
 			/* run asynchronously */
-			Display.getDefault().asyncExec(newItemSetTask);
+			Display.getDefault().asyncExec(task);
 		}
-
 	}
 
 	public TargetLanguageSupport getTargetLanguageSupport() {
