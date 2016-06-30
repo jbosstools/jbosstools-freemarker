@@ -530,7 +530,7 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	}
 
 	/**
-	 * Reconciles in the current thread using a newly create
+	 * Reconciles in the current thread using a newly created
 	 * {@link ReconcilingStrategy}.
 	 * <p>
 	 * For test purposes. Useful when testing functionality related to

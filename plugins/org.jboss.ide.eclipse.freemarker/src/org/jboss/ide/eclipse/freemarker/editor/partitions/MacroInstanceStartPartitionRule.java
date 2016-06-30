@@ -21,28 +21,34 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor.partitions;
 
-import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
-import org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener;
 import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
- * A {@link MultiLineRule} that matches an FTL macro instance start tags, such as {@code <@myMacro ...>} and marks them as
- * the {@link PartitionType#MACRO_INSTANCE_START} partitions.
- *
- * @author <a href="mailto:ppalaga@redhat.com">Peter Palaga</a>
- * @since 1.4.0
+ * A {@link PredicateRule} that matches an FTL macro instance start tags, such as {@code <@myMacro ...>} and marks them
+ * as the {@link PartitionType#MACRO_INSTANCE_START} partitions.
  */
-public class MacroInstanceStartPartitionRule extends MultiLineRule implements SyntaxModeListener {
+public class MacroInstanceStartPartitionRule extends GenericDirectiveStartPartitionRule {
+	
+	private static final Token SUCCESS_TOKEN = new Token(PartitionType.MACRO_INSTANCE_START.name());
 
 	public MacroInstanceStartPartitionRule() {
-		super(SyntaxMode.getDefault().getMacroInstanceStart(), SyntaxMode.getDefault().getTagEnd(), new Token(PartitionType.MACRO_INSTANCE_START.name()));
+		super(getStartSequence(SyntaxMode.getDefault()));
 	}
-
+	
 	@Override
-	public void syntaxModeChanged(SyntaxMode syntaxMode) {
-		fStartSequence = syntaxMode.getMacroInstanceStart().toCharArray();
-		fEndSequence = syntaxMode.getTagEnd().toCharArray();
+	public IToken getSuccessToken() {
+		return SUCCESS_TOKEN;
+	}
+	
+	@Override
+	protected char[] getSyntaxModeTagStart(SyntaxMode syntaxMode) {
+		return getStartSequence(syntaxMode);
 	}
 
+	private static char[] getStartSequence(SyntaxMode syntaxMode) {
+		return syntaxMode.getMacroInstanceStart().toCharArray();
+	}
+	
 }

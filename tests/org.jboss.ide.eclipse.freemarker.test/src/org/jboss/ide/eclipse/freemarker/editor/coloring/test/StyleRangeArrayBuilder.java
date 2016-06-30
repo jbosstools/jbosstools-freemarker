@@ -32,6 +32,10 @@ public class StyleRangeArrayBuilder {
 				.append("()\n"); //$NON-NLS-1$
 		for (StyleRange styleRange : actual) {
 			PreferenceKey key = reverse.get(styleRange.foreground);
+			if (key == null) {
+				throw new IllegalStateException("Couldn't find preference key for foreground color "
+						+ styleRange.foreground + ", in style range " + styleRange + ".");
+			}
 			String method = proposeBuilderMethod(key);
 			String comment = proposeComment(styleRange, document);
 			out.append("." + method + "(" + styleRange.length + ") " + comment + "\n"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
@@ -103,6 +107,18 @@ public class StyleRangeArrayBuilder {
 		return range(length, PreferenceKey.COLOR_TEXT);
 	}
 
+	public StyleRangeArrayBuilder otherExpPart(int length) {
+		return range(length, PreferenceKey.COLOR_OTHER_EXP_PART);
+	}
+	
+	public StyleRangeArrayBuilder variable(int length) {
+		return range(length, PreferenceKey.COLOR_VARIABLE);
+	}
+
+	public StyleRangeArrayBuilder keyword(int length) {
+		return range(length, PreferenceKey.COLOR_KEYWORD);
+	}
+	
 	public StyleRangeArrayBuilder xmlComment(int length) {
 		return range(length, PreferenceKey.COLOR_XML_COMMENT);
 	}

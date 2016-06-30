@@ -21,6 +21,9 @@
  */
 package org.jboss.ide.eclipse.freemarker.lang;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * FTL keywords.
  *
@@ -93,5 +96,14 @@ public enum Keyword {
 	
 	public static Keyword keywordValueOf(String string) {
 		return Enum.valueOf(Keyword.class, string.toUpperCase());
+	}
+	
+	public static final Set<String> EXPRESSION_KEYWORDS = new HashSet<String>();
+	static {
+		EXPRESSION_KEYWORDS.add(AS.toString());
+		EXPRESSION_KEYWORDS.add(IN.toString());
+		EXPRESSION_KEYWORDS.add(USING.toString());
+		EXPRESSION_KEYWORDS.add(TRUE.toString());
+		EXPRESSION_KEYWORDS.add(FALSE.toString());
 	}
 }

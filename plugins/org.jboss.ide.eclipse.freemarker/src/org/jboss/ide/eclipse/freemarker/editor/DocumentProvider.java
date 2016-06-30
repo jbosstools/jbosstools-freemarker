@@ -42,13 +42,14 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
  */
 public class DocumentProvider extends FileDocumentProvider {
 
-	public static final String FTL_PARTITIONING = "org.jboss.ide.eclipse.freemarker.partitioning";
+	public static final String FTL_PARTITIONING = "org.jboss.ide.eclipse.freemarker.partitioning"; //$NON-NLS-1$
 
 	/**
 	 * {@link Position} category in the {@link IDocument} used for tracking the positions of the group of related
 	 * directives that the caret is on.
 	 */
-	public static final String RELATED_ITEM_POSITION_CATEGORY = "org.jboss.ide.eclipse.freemarker.relatedItem";
+	public static final String RELATED_ITEM_POSITION_CATEGORY
+			= "org.jboss.ide.eclipse.freemarker.relatedItem"; //$NON-NLS-1$
 
 	public DocumentProvider() {
 		super();

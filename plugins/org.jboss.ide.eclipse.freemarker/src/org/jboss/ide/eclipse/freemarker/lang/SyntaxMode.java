@@ -45,6 +45,7 @@ public enum SyntaxMode {
 	private final String macroInstanceStart;
 	private final String macroInstanceEnd;
 	private final String tagEnd;
+	private final String emptyTagEnd;
 
 	private SyntaxMode(char start, char end) {
 		this.start = start;
@@ -65,6 +66,7 @@ public enum SyntaxMode {
 				.append(LexicalConstants.SLASH).append(LexicalConstants.AT)
 				.toString();
 		this.tagEnd = String.valueOf(end);
+		this.emptyTagEnd = new StringBuilder(2).append(LexicalConstants.SLASH).append(end).toString();
 	}
 
 	public char getStart() {
@@ -101,6 +103,10 @@ public enum SyntaxMode {
 
 	public String getTagEnd() {
 		return tagEnd;
+	}
+
+	public String getEmptyTagEnd() {
+		return emptyTagEnd;
 	}
 
 	public static SyntaxMode getDefault() {

@@ -23,7 +23,6 @@ package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -67,11 +66,11 @@ public class Configuration extends TextSourceViewerConfiguration {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(DocumentProvider.FTL_PARTITIONING);
 
-		PartitionType[] partitionTypes = PartitionType.values();
-		for (PartitionType partitionType : partitionTypes) {
+		for (PartitionType partitionType : PartitionType.values()) {
 			ITokenScanner scanner = partitionType.createColoringTokenizer(editor);
 			if (scanner != null) {
-				DefaultDamagerRepairer dr = new DefaultDamagerRepairer(scanner);
+				DefaultDamagerRepairer dr = scanner instanceof ExpressionColoringTokenScanner
+						? new PartitionGranulairyDamagerRepairer(scanner) : new DefaultDamagerRepairer(scanner);
 				reconciler.setDamager(dr, partitionType.name());
 				reconciler.setRepairer(dr, partitionType.name());
 			}

@@ -44,9 +44,10 @@ public class AssignmentDirective extends AbstractDirective {
 		/* first variable name */
 		parser.consumeIdentifierOrStringLiteral();
 		parser.consumeWhiteSpace();
-		/* lack of an equals sign at this position means that this is a nesting form of assign */
+		/* A directive end at this position means that this is a nesting form of assign */
 		return Boolean.valueOf(parser.isAtEndOfInput()
-				|| !parser.matches(LexicalConstants.EQUALS, false));
+				|| parser.matches(LexicalConstants.DIRECTIVE_END_AB[0], false)
+				|| parser.matches(LexicalConstants.DIRECTIVE_END_SB[0], false));
 
 	}
 

@@ -380,12 +380,13 @@ public abstract class AbstractItem implements Item {
 	public String getTreeDisplay() {
 		if (null == treeDisplay) {
 			treeDisplay = getContents();
-			if (null != treeDisplay
-					&& treeDisplay.length() > 0
-					&& treeDisplay.charAt(treeDisplay.length() - 1) == LexicalConstants.SLASH) {
-				treeDisplay = treeDisplay.substring(0, treeDisplay.length()-1);
+			if (null != treeDisplay) {
+				if (treeDisplay.length() > 0
+						&& treeDisplay.charAt(treeDisplay.length() - 1) == LexicalConstants.SLASH) {
+					treeDisplay = treeDisplay.substring(0, treeDisplay.length()-1);
+				}
+				treeDisplay = treeDisplay.trim();
 			}
-			treeDisplay = treeDisplay.trim();
 		}
 		return treeDisplay;
 	}

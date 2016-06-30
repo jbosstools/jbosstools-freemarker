@@ -6,10 +6,16 @@ import junit.framework.TestSuite;
 
 import org.jboss.ide.eclipse.freemarker.editor.coloring.test.AssignColoringTest;
 import org.jboss.ide.eclipse.freemarker.editor.coloring.test.EditInterpolationColoringTest;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.EscapedIdentifiersColoringTest;
 import org.jboss.ide.eclipse.freemarker.editor.coloring.test.InterpolationColoringTest;
 import org.jboss.ide.eclipse.freemarker.editor.coloring.test.ListColoringTest;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.MultilineColoringTest;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.PartitionClosingColoringTest;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.PartitionClosingSquColoringTest;
+import org.jboss.ide.eclipse.freemarker.editor.coloring.test.StringLiteralsColoringTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.FreemarkerEditorTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.IncludeHyperlinkDetectorTest;
+import org.jboss.ide.eclipse.freemarker.editor.test.PartitionScannerTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.ErrorMarkerTest;
 import org.jboss.ide.eclipse.freemarker.lang.test.ParserUtilsTest;
 import org.jboss.ide.eclipse.freemarker.model.test.AssignmentDirectiveTest;
@@ -23,22 +29,30 @@ public class FreemarkerAllTests extends TestCase {
 	public static Test suite ()
 	{
 		TestSuite suite = new TestSuite(FreemarkerAllTests.class.getName());
-		suite.addTestSuite(FreemarkerPreferencePageTest.class);
+
 		suite.addTestSuite(FreemarkerEditorTest.class);
 		suite.addTestSuite(ParserUtilsTest.class);
 	    suite.addTestSuite(ErrorMarkerTest.class);
+		suite.addTestSuite(PartitionScannerTest.class);
+		suite.addTestSuite(FreemarkerPreferencePageTest.class);
 
-		/* model tests */
+		// model tests
 		suite.addTestSuite(AssignmentDirectiveTest.class);
 		suite.addTestSuite(ListDirectiveTest.class);
 		suite.addTestSuite(InterpolationTest.class);
 
-		/* coloring tests */
+		// coloring tests
 		suite.addTestSuite(AssignColoringTest.class);
 		suite.addTestSuite(InterpolationColoringTest.class);
 		suite.addTestSuite(ListColoringTest.class);
 		suite.addTestSuite(EditInterpolationColoringTest.class);
 		suite.addTestSuite(IncludeHyperlinkDetectorTest.class);
+		suite.addTestSuite(PartitionClosingColoringTest.class);
+		suite.addTestSuite(PartitionClosingSquColoringTest.class);
+		suite.addTestSuite(StringLiteralsColoringTest.class);
+		suite.addTestSuite(MultilineColoringTest.class);
+		suite.addTestSuite(EscapedIdentifiersColoringTest.class);
+		
 		return suite;
 	}
 
