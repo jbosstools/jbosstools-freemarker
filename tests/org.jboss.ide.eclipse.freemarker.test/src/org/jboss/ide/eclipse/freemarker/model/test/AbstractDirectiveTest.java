@@ -103,15 +103,16 @@ public abstract class AbstractDirectiveTest extends TestCase {
 	}
 
 
-	protected void assertListEnd(Iterator<Item> i) {
-		assertDirective(i, ListEndDirective.class);
+	protected Item assertListEnd(Iterator<Item> i) {
+		return assertDirective(i, ListEndDirective.class);
 	}
 
-	protected void assertDirective(Iterator<Item> i, Class<?> cl) {
+	protected Item assertDirective(Iterator<Item> i, Class<?> cl) {
 		Item item;
 		item = i.next();
 		assertEquals(cl, item.getClass());
 		assertEquals(0, item.getChildItems().size());
+		return item;
 	}
 
 	protected void assertIfEnd(Iterator<Item> i) {

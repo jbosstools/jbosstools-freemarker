@@ -80,11 +80,11 @@ public class ListDirective extends AbstractDirective {
         if (null == relatedItems) {
             ArrayList<Item> items = new ArrayList<Item>(3);
             items.add(this);
-            if (null != getEndDirective()) {
-                items.add(getEndDirective());
-            }
             if (null != getElseDirective()) {
                 items.add(getElseDirective());
+            }
+            if (null != getEndDirective()) {
+                items.add(getEndDirective());
             }
             relatedItems = items.toArray(new Item[items.size()]);
         }

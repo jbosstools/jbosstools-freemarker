@@ -39,6 +39,7 @@ import org.jboss.ide.eclipse.freemarker.model.ListDirective;
 import org.jboss.ide.eclipse.freemarker.model.SepDirective;
 import org.jboss.ide.eclipse.freemarker.model.SepEndDirective;
 import org.jboss.ide.eclipse.freemarker.test.FreemarkerTestUtils;
+import org.junit.Assert;
 
 import freemarker.template.TemplateException;
 
@@ -140,7 +141,7 @@ public class ListDirectiveTest extends AbstractDirectiveTest {
 		 *   No items 
 		 * </#list>
 		 */
-		assertChildren(i, ListDirective.class,
+		Item listDirective = assertChildren(i, ListDirective.class,
 				ItemsDirective.class,
 				ElseDirective.class
 		);
@@ -150,8 +151,13 @@ public class ListDirectiveTest extends AbstractDirectiveTest {
 		assertInterpolation(i);
 		assertDirective(i, SepDirective.class);
 		assertDirective(i, ItemsEndDirective.class);
-		assertDirective(i, ElseDirective.class);
-		assertListEnd(i);
+		Item elseDirective = assertDirective(i, ElseDirective.class);
+		Item listEndDirective = assertListEnd(i);
+		
+		Item[] relatedItems = new Item[] { listDirective, elseDirective, listEndDirective };
+		Assert.assertArrayEquals(relatedItems, listDirective.getRelatedItems());
+		Assert.assertArrayEquals(relatedItems, elseDirective.getRelatedItems());
+		Assert.assertArrayEquals(relatedItems, listEndDirective.getRelatedItems());
 		
 		/* 
 		 * <#list 1..3 as x>${x}<#sep>, </#list>
