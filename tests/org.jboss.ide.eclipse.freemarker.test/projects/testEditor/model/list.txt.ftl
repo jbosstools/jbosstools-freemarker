@@ -21,3 +21,19 @@
 </#assign>
 Number of words: ${x?word_list?size}
 ${x}
+
+2.3.23 listing directives:
+<#list 1..3>
+  Items:
+  <#items as n>
+  	${n}<#sep>,
+  </#items>
+<#else>
+  No items 
+</#list>
+
+<#list 1..3 as x>${x}<#sep>, </#list>
+
+<#list 1..3 as x>
+  <div>${x}<#sep>,</#sep></div>
+</#list>

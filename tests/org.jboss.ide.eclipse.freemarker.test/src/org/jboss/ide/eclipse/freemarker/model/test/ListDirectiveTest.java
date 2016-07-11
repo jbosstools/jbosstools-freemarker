@@ -28,11 +28,16 @@ import java.util.Iterator;
 
 import org.jboss.ide.eclipse.freemarker.model.AssignmentDirective;
 import org.jboss.ide.eclipse.freemarker.model.AssignmentEndDirective;
+import org.jboss.ide.eclipse.freemarker.model.ElseDirective;
 import org.jboss.ide.eclipse.freemarker.model.GenericDirective;
 import org.jboss.ide.eclipse.freemarker.model.IfDirective;
 import org.jboss.ide.eclipse.freemarker.model.Interpolation;
 import org.jboss.ide.eclipse.freemarker.model.Item;
+import org.jboss.ide.eclipse.freemarker.model.ItemsDirective;
+import org.jboss.ide.eclipse.freemarker.model.ItemsEndDirective;
 import org.jboss.ide.eclipse.freemarker.model.ListDirective;
+import org.jboss.ide.eclipse.freemarker.model.SepDirective;
+import org.jboss.ide.eclipse.freemarker.model.SepEndDirective;
 import org.jboss.ide.eclipse.freemarker.test.FreemarkerTestUtils;
 
 import freemarker.template.TemplateException;
@@ -52,7 +57,7 @@ public class ListDirectiveTest extends AbstractDirectiveTest {
 
 	public void testListModel() {
 		Collection<Item> items = load();
-		assertEquals(26, items.size());
+		assertEquals(42, items.size());
 		Iterator<Item> i = items.iterator();
 
 		assertAssignment(i);
@@ -92,7 +97,7 @@ public class ListDirectiveTest extends AbstractDirectiveTest {
 		 *   ${x}
 		 *   <#if x = "spring"><#break></#if>
 		 * </#list>
- */
+         */
 
 		assertChildren(i, ListDirective.class,
 				Interpolation.class,
@@ -125,6 +130,51 @@ public class ListDirectiveTest extends AbstractDirectiveTest {
 		 * ${x} */
 		assertInterpolation(i);
 		assertInterpolation(i);
+
+		/* <#list 1..3>
+		 *   Items:
+		 *   <#items as n>
+		 *   	${n}<#sep>,
+		 *   </#items>
+		 * <#else>
+		 *   No items 
+		 * </#list>
+		 */
+		assertChildren(i, ListDirective.class,
+				ItemsDirective.class,
+				ElseDirective.class
+		);
+		assertChildren(i, ItemsDirective.class,
+				Interpolation.class,
+				SepDirective.class);
+		assertInterpolation(i);
+		assertDirective(i, SepDirective.class);
+		assertDirective(i, ItemsEndDirective.class);
+		assertDirective(i, ElseDirective.class);
+		assertListEnd(i);
+		
+		/* 
+		 * <#list 1..3 as x>${x}<#sep>, </#list>
+		 */
+		assertChildren(i, ListDirective.class,
+				Interpolation.class,
+				SepDirective.class);
+		assertInterpolation(i);
+		assertDirective(i, SepDirective.class);
+		assertListEnd(i);
+		
+		/* 
+		 * <#list 1..3 as x>
+		 *   <div>${x}<#sep>,</#sep></div>
+		 * </#list>
+		 */		
+		assertChildren(i, ListDirective.class,
+				Interpolation.class,
+				SepDirective.class);
+		assertInterpolation(i);
+		assertDirective(i, SepDirective.class);
+		assertDirective(i, SepEndDirective.class);
+		assertListEnd(i);
 	}
 
 }
