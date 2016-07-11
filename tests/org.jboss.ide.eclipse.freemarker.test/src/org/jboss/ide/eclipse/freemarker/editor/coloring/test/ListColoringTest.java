@@ -22,10 +22,8 @@ public class ListColoringTest extends AbstractColoringTest {
 	}
 
 	public void testListColoring() {
-		StyleRange[] expected = new StyleRangeArrayBuilder().directive(16) // <#assign
-																			// seq
-																			// =
-																			// [
+		StyleRange[] expected = new StyleRangeArrayBuilder()
+				.directive(16) // <#assign seq = [
 				.string(8) // "winter"
 				.directive(2) // ,
 				.string(8) // "spring"
@@ -83,6 +81,34 @@ public class ListColoringTest extends AbstractColoringTest {
 				.interpolation(19) // ${x?word_list?size}
 				.text(1) // <whitespace>
 				.interpolation(4) // ${x}
+				.text(29) // 2.3.23 listing directives:
+				.directive(12) // <#list 1..3>
+				.text(12) // Items:
+				.directive(13) // <#items as n>
+				.text(4) // <whitespace>
+				.interpolation(4) // ${n}
+				.directive(6) // <#sep>
+				.text(4) // ,
+				.directive(9) // </#items>
+				.text(1) // <whitespace>
+				.directive(7) // <#else>
+				.text(13) // No items
+				.directive(8) // </#list>
+				.text(2) // <whitespace>
+				.directive(17) // <#list 1..3 as x>
+				.interpolation(4) // ${x}
+				.directive(6) // <#sep>
+				.text(2) // ,
+				.directive(8) // </#list>
+				.text(2) // <whitespace>
+				.directive(17) // <#list 1..3 as x>
+				.text(8) // <div>
+				.interpolation(4) // ${x}
+				.directive(6) // <#sep>
+				.text(1) // ,
+				.directive(7) // </#sep>
+				.text(7) // </div>
+				.directive(8) // </#list>
 				.build();
 		validateColoring(expected);
 	}
