@@ -597,8 +597,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 				if (null != getFile()) {
 					if (null == fmConfiguration) {
 						fmConfiguration = new Configuration(Configuration.getVersion());
-						fmConfiguration
-								.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
+						fmConfiguration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
+						fmConfiguration.setTabSize(1);
 					}
 					getFile().deleteMarkers(IMarker.PROBLEM, true,
 							IResource.DEPTH_INFINITE);
@@ -612,8 +612,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 						Template dummy = new Template(getFile().getName(), documentContent, fmConfiguration);
 					} catch (ParseException e) {
 						editor.addProblemMarker(e.getEditorMessage(), e.getLineNumber(),
-						        getOffset(e.getLineNumber(), e.getColumnNumber()),
-                                getOffset(e.getEndLineNumber(), e.getEndColumnNumber()) + 1);
+								getDocument().getLineOffset(e.getLineNumber() - 1) + e.getColumnNumber() - 1,
+								getDocument().getLineOffset(e.getEndLineNumber() - 1) + e.getEndColumnNumber());
 					}
 				}
 			} catch (Exception e) {
@@ -625,31 +625,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
                 }
 			}
 		}
-
-		/**
-         * Calculates the offset of the character in the document at the position
-         * given with 1-based line number and 1-based column number.
-         */
-        // TODO: Get rid of this with FM 2.3.25. Just set tab size to 1.
-        private int getOffset(int lineNumber, int columnNumber) throws BadLocationException {
-            IDocument document = getDocument();
-            
-            int currentOffset = document.getLineOffset(lineNumber - 1);
-            // FreeMarker 2.3.24 has accidentally changed the tab size used for AST node column number calculations
-            // from 8 to 1 with a JavaCC upgrade...
-            if (Configuration.getVersion().intValue() == Version.intValueFor(2, 3, 24)) {
-                return currentOffset + (columnNumber - 1);
-            }
-            
-            int currentColumnNumber = 1;
-            while (currentColumnNumber < columnNumber) {
-                // FreeMarker column number assumes tabs of width 8:
-                currentColumnNumber +=
-                        document.getChar(currentOffset) == '\t' ? 8 - (currentColumnNumber - 1) % 8 : 1; 
-                currentOffset++;
-            }
-            return currentOffset;
-        }
 
 	}
 
