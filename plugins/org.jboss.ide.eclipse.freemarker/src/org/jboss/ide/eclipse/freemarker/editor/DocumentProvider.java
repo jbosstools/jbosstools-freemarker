@@ -23,17 +23,18 @@ package org.jboss.ide.eclipse.freemarker.editor;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionScanner;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
-import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 
 /**
@@ -43,6 +44,11 @@ public class DocumentProvider extends FileDocumentProvider {
 
 	public static final String FTL_PARTITIONING = "org.jboss.ide.eclipse.freemarker.partitioning";
 
+	/**
+	 * {@link Position} category in the {@link IDocument} used for tracking the positions of the group of related
+	 * directives that the caret is on.
+	 */
+	public static final String RELATED_ITEM_POSITION_CATEGORY = "org.jboss.ide.eclipse.freemarker.relatedItem";
 
 	public DocumentProvider() {
 		super();
@@ -52,6 +58,7 @@ public class DocumentProvider extends FileDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document != null) {
+			// Set up and register partitioner:
 			IDocumentPartitioner partitioner =
 				new FastPartitioner(
 					new PartitionScanner(),
@@ -80,6 +87,10 @@ public class DocumentProvider extends FileDocumentProvider {
 				document.setDocumentPartitioner(partitioner);
 				partitioner.connect(document);
 			}
+			
+			// Set up position category used for keeping track of the related directive highlights:
+			document.addPositionCategory(RELATED_ITEM_POSITION_CATEGORY);
+			document.addPositionUpdater(new DefaultPositionUpdater(RELATED_ITEM_POSITION_CATEGORY));
 		}
 		return document;
 	}

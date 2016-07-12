@@ -28,6 +28,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
@@ -93,10 +94,11 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 	 * a new {@link ItemSet} in {@link Editor#reconcile(List)}
 	 */
 	private void reconcile() {
-
+		long stamp1 = ((IDocumentExtension4) document).getModificationStamp();
 		List<ITypedRegion> regions = parseRegions();
+		long stamp2 = ((IDocumentExtension4) document).getModificationStamp();
 		if (regions != null) {
-			this.editor.reconcile(regions);
+			this.editor.reconcile(regions, stamp1 == stamp2 ? stamp1 : null);
 		}
 
 	}
@@ -176,6 +178,10 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 
 	@Override
 	public void setDocument(IDocument document) {
+		if (!(document instanceof IDocumentExtension4)) {
+			throw new IllegalStateException(
+					"Document must implement " + IDocumentExtension4.class.getName() + ".");  //$NON-NLS-1$//$NON-NLS-2$
+		}
 		this.document = document;
 	}
 

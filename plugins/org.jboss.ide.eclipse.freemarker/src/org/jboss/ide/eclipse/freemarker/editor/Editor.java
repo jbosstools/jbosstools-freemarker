@@ -21,8 +21,10 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,18 +34,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -79,8 +86,8 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	private org.jboss.ide.eclipse.freemarker.editor.Configuration configuration;
 
 	private ItemSet itemSet;
-	private Item selectedItem;
-	private Item[] relatedItems;
+	private Long itemSetModificationStamp;
+	
 	private static final char[] VALIDATION_TOKENS = new char[] {
 			LexicalConstants.QUOT, LexicalConstants.LEFT_SQUARE_BRACKET,
 			LexicalConstants.RIGHT_SQUARE_BRACKET, LexicalConstants.COMMA,
@@ -163,19 +170,12 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	protected void handleCursorPositionChanged() {
 		super.handleCursorPositionChanged();
 		if (!mouseDown) {
+			updateRelatedItemHighlights();
+			
 			int offset = getCaretOffset();
 			Item item = getItemSet().getSelectedItem(offset);
 			if (null == item && offset > 0)
 				item = getItemSet().getSelectedItem(offset - 1);
-			if (Preferences.getInstance().getBoolean(
-					PreferenceKey.HIGHLIGHT_RELATED_ITEMS)) {
-				if (null != item && null != item.getRelatedItems()
-						&& item.getRelatedItems().length > 0) {
-					highlightRelatedRegions(item.getRelatedItems(), item);
-				} else {
-					highlightRelatedRegions(null, item);
-				}
-			}
 			if (null == item) {
 				item = getItemSet().getContextItem(getCaretOffset());
 			}
@@ -237,59 +237,161 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		}
 	}
 
-	private synchronized void highlightRelatedRegions(Item[] items,
-			Item selectedItem) {
-		if (null == items || items.length == 0) {
-			if (null != relatedItems && relatedItems.length > 0) {
-				for (int i = 0; i < relatedItems.length; i++) {
-					if (getDocument().getLength() >= relatedItems[i]
-							.getRegion().getOffset()
-							+ relatedItems[i].getRegion().getLength()) {
-						if (null == this.selectedItem
-								|| !relatedItems[i].equals(this.selectedItem))
-							resetRange(relatedItems[i].getRegion());
+	/**
+	 * Updates the related item highlights (background colorings) based on the current caret position.
+	 */
+	private void updateRelatedItemHighlights() {
+		if (!Preferences.getInstance().getBoolean(PreferenceKey.HIGHLIGHT_RELATED_ITEMS)) {
+			return;
+		}
+		
+		// How it works:
+		//
+		// The positions of related items to show are calculated from the ItemSet and the caret position, but only
+		// when the ItemSet is up to date with IDocument's state (see isItemSetUpToDate()). When it is, the calculated
+		// positions are stored in the IDocument as Position-s with RELATED_ITEM_POSITION_CATEGORY category. When the
+		// document is modified, these Position-s are updated synchronously; that's just an IDocument feature.
+		// Meanwhile, the reconciler starts to create an updated ItemSet asynchronously. When it's done, the process
+		// described here is restarted (see in reconcile(...)).
+		//
+		// Why do we need IDocument Position-s? Because to remove the old background colorings, we need to keep track
+		// of the boundaries of them while the document is being modified, and so those boundaries change.  
+		
+		try {
+			int caretOffset = getCaretOffset();
+			IDocument doc = getDocument();
+			Position[] docRelatedItemPositions = doc.getPositions(DocumentProvider.RELATED_ITEM_POSITION_CATEGORY);
+			Position docRelatedItemPositionAtCaret = getPositionThatContainsOffset(caretOffset,
+					docRelatedItemPositions);
+			
+			// If the caret is not at a place that belongs to the group of related items whose positions
+			// the IDocument stores currently, we drop those positions.
+			if (docRelatedItemPositionAtCaret == null) {
+				for (Position docRelatedItemPosition : docRelatedItemPositions) {
+					if (!docRelatedItemPosition.isDeleted() && docRelatedItemPosition.length != 0) {
+						removeRelatedDirectiveTextStyle(docRelatedItemPosition);
+					}
+					doc.removePosition(DocumentProvider.RELATED_ITEM_POSITION_CATEGORY, docRelatedItemPosition);
+				}
+				docRelatedItemPositions = new RelatedItemPosition[0];
+			}
+			
+			// Calculate newPositions, which stores the desired list of related directive positions and their
+			// highlightedness.
+			List<RelatedItemPosition> newPositions = new ArrayList<>();
+			if (isItemSetUpToDate()) {
+				Item selectedItem = getItemSet().getSelectedItem(caretOffset);
+				if (selectedItem != null) {
+					newPositions.add(new RelatedItemPosition(
+							selectedItem.getRegion().getOffset(), selectedItem.getRegion().getLength(),
+							false  /* not highlighted */));
+					Item[] relatedItems = selectedItem.getRelatedItems();
+					if (relatedItems != null) {
+						for (Item relatedItem : relatedItems) {
+							// Item.getRelatedItems() sometimes contains the item itself, sometimes it doesn't.
+							// So we just emulate that it consistently never does.
+							if (relatedItem != selectedItem) {
+								newPositions.add(new RelatedItemPosition(
+										relatedItem.getRegion().getOffset(), relatedItem.getRegion().getLength(),
+										true /* highlighted */));
+							}
+						}
+					}
+				}
+			} else if (docRelatedItemPositionAtCaret != null) {
+				// The last ItemSet went out of sync with the IDocument content, so we can't use it. But as the caret is
+				// at an item from a group of related items whose positions the IDocument currently tracks, we can still
+				// update the highlightedness of those items.
+				for (Position docRelatedItemPosition : docRelatedItemPositions) {
+					boolean expectedHighlightedness = docRelatedItemPosition != docRelatedItemPositionAtCaret;
+					if (expectedHighlightedness != ((RelatedItemPosition) docRelatedItemPosition).isHighlighted()) {
+						newPositions.add(
+								new RelatedItemPosition(
+										docRelatedItemPosition.getOffset(), docRelatedItemPosition.getLength(),
+										expectedHighlightedness));
+					} else {
+						newPositions.add((RelatedItemPosition) docRelatedItemPosition);
 					}
 				}
 			}
-			relatedItems = null;
-		}
-		if (null != relatedItems) {
-			for (int i = 0; i < relatedItems.length; i++) {
-				if (getDocument().getLength() >= relatedItems[i].getRegion()
-						.getOffset() + relatedItems[i].getRegion().getLength()) {
-					if (null == this.selectedItem
-							|| !relatedItems[i].equals(this.selectedItem))
-						resetRange(relatedItems[i].getRegion());
+			
+			// Filter out items from newPositions that are the same as some we already have in the IDocument, also
+			// remove and un-highlight old Positions that are not in newPositions:
+			for (Position oldPosition : docRelatedItemPositions) {
+				boolean oldPositionCanBeKept = false;
+				for (Iterator<RelatedItemPosition> iterator = newPositions.iterator();
+						!oldPositionCanBeKept && iterator.hasNext();) {
+					RelatedItemPosition newPosition = iterator.next();
+					
+					if (newPosition.getOffset() == oldPosition.getOffset()
+							&& newPosition.getLength() == oldPosition.getLength()
+							&& newPosition.isHighlighted() == ((RelatedItemPosition) oldPosition).isHighlighted()) {
+						iterator.remove(); // We won't add this newPosition.
+						oldPositionCanBeKept = true;
+					}
+				}
+				
+				if (!oldPositionCanBeKept) {
+					if (!oldPosition.isDeleted() && ((RelatedItemPosition) oldPosition).isHighlighted()) {
+						removeRelatedDirectiveTextStyle(oldPosition);
+					}
+					doc.removePosition(DocumentProvider.RELATED_ITEM_POSITION_CATEGORY, oldPosition);
 				}
 			}
-		}
-		if (null != items && items.length > 0) {
-			for (int i = 0; i < items.length; i++) {
-				if (getDocument().getLength() >= items[i].getRegion()
-						.getOffset() + items[i].getRegion().getLength()
-						&& !items[i].equals(selectedItem)) {
-					ITypedRegion region = items[i].getRegion();
-					getSourceViewer().getTextWidget().setStyleRange(
-							new StyleRange(region.getOffset(), region
-									.getLength(), null, Preferences
-									.getInstance().getColor(
-											PreferenceKey.COLOR_RELATED_ITEM)));
+			
+			// Add positions and highlights for the remaining (i.e., truly new) newPositions: 
+			for (RelatedItemPosition newPosition : newPositions) {
+				if (newPosition.isHighlighted()) {
+					addRelatedDirectiveTextStyle(newPosition);
 				}
+				doc.addPosition(DocumentProvider.RELATED_ITEM_POSITION_CATEGORY, newPosition);
 			}
+		} catch (BadPositionCategoryException | BadLocationException e) {
+			// Should never occur
+			throw new IllegalStateException(e);
 		}
-		relatedItems = items;
-		this.selectedItem = selectedItem;
 	}
 
-	private void resetRange(ITypedRegion region) {
-		if (getSourceViewer() instanceof ITextViewerExtension2)
+	private boolean isItemSetUpToDate() {
+		long modificationStamp = ((IDocumentExtension4) getDocument()).getModificationStamp();
+		return itemSetModificationStamp != null && modificationStamp == itemSetModificationStamp;
+	}
+
+	private Position getPositionThatContainsOffset(int offset, Position[] positions) {
+		if (positions == null) {
+			return null;
+		}
+		for (Position position : positions) {
+			if (position.includes(offset)) {
+				return position;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Paints a region of the text as "related item".
+	 */
+	private void addRelatedDirectiveTextStyle(Position position) {
+		getSourceViewer().getTextWidget().setStyleRange(
+				new StyleRange(
+						position.getOffset(), position.getLength(),
+						null, // General / Editors / Text Editors / Foreground color
+						Preferences.getInstance().getColor(PreferenceKey.COLOR_RELATED_ITEM)));
+	}
+
+	/**
+	 * Removes the effect of {@link #addRelatedDirectiveTextStyle(int, int)} inside the specified {@link Position}.
+	 */
+	private void removeRelatedDirectiveTextStyle(Position position) {
+		if (getSourceViewer() instanceof ITextViewerExtension2) {
 			((ITextViewerExtension2) getSourceViewer())
-					.invalidateTextPresentation(region.getOffset(),
-							region.getLength());
-		else
+					.invalidateTextPresentation(position.getOffset(), position.getLength());
+		} else {
 			getSourceViewer().invalidateTextPresentation();
+		}
 	}
-
+	
 	public Item getSelectedItem(boolean allowFudge) {
 		int caretOffset = getCaretOffset();
 		Item item = getItemSet().getSelectedItem(getCaretOffset());
@@ -439,19 +541,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 			}
 		}
 		if (stale) {
-			int offset = getCaretOffset();
-			Item item = getItemSet().getSelectedItem(offset);
-			if (null == item && offset > 0)
-				item = getItemSet().getSelectedItem(offset - 1);
-			if (Preferences.getInstance().getBoolean(
-					PreferenceKey.HIGHLIGHT_RELATED_ITEMS)) {
-				if (null != item && null != item.getRelatedItems()
-						&& item.getRelatedItems().length > 0) {
-					highlightRelatedRegions(item.getRelatedItems(), item);
-				} else {
-					highlightRelatedRegions(null, item);
-				}
-			}
 			validateContentsAsync();
 		}
 	}
@@ -597,17 +686,31 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		ReconcilingStrategy s = new ReconcilingStrategy(this);
 		s.setDocument(getDocument());
 		List<ITypedRegion> regions = s.parseRegions();
-		reconcile(regions);
+		reconcile(regions, ((IDocumentExtension4) getDocument()).getModificationStamp());
 	}
 
-	public void reconcile(List<ITypedRegion> regions) {
+	/**
+	 * Normally called from the reconciler thread to notify the UI thread about
+	 * a new region list become available.
+	 * 
+	 * @param modificationStamp
+	 *            The {@link IDocumentExtension4#getModificationStamp()} for
+	 *            which the regions were created, or {@code null} if the stamp
+	 *            was changed while the ranges were created, and so it was made from an
+	 *            inconsistent editor content.
+	 */
+	public void reconcile(List<ITypedRegion> regions, final Long modificationStamp) {
 		/* re-create the model in the reconciler thread */
 		final ItemSet newItemSet = createItemSet(regions);
 
 		Runnable newItemSetTask = new Runnable() {
 			@Override
 			public void run() {
-				Editor.this.itemSet = newItemSet;
+				itemSet = newItemSet;
+				itemSetModificationStamp = modificationStamp;
+				
+				updateRelatedItemHighlights();
+				
 				if (null != Editor.this.fOutlinePage) {
 					Editor.this.fOutlinePage.refresh();
 				}
