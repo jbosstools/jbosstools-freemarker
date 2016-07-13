@@ -21,6 +21,7 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -38,10 +39,15 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
+import org.eclipse.ui.IEditorInput;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
+
+import freemarker.core.ParseException;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 /**
  * A {@link IReconcilingStrategy} that triggers re-build of {@link ItemSet} in
@@ -93,14 +99,41 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 	 * Creates a {@link List} of {@link ITypedRegion}s that can be used to build
 	 * a new {@link ItemSet} in {@link Editor#reconcile(List)}
 	 */
-	private void reconcile() {
+	void reconcile() {
 		long stamp1 = ((IDocumentExtension4) document).getModificationStamp();
 		List<ITypedRegion> regions = parseRegions();
 		long stamp2 = ((IDocumentExtension4) document).getModificationStamp();
 		if (regions != null) {
-			this.editor.reconcile(regions, stamp1 == stamp2 ? stamp1 : null);
+			this.editor.updateModel(regions, stamp1 == stamp2 ? stamp1 : null);
 		}
 
+		ParseException e = checkTemplateSyntax();		
+		this.editor.updateMarkers(e);
+	}
+
+	private Configuration fmConfiguration;
+	
+	/**
+	 * Returns the syntactical error in the template, or {@code null} if there's none.
+	 */
+	private ParseException checkTemplateSyntax() {
+		if (fmConfiguration == null) {
+			fmConfiguration = new Configuration(Configuration.getVersion());
+			fmConfiguration.setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
+			fmConfiguration.setTabSize(1);
+		}
+		try {
+			@SuppressWarnings("unused")
+			Template dummy = new Template(
+					editor.getEditorInput().getName(),
+					editor.getDocument().get(),
+					fmConfiguration);
+		} catch (ParseException e) {
+			return e;
+		} catch (IOException e) {
+			Plugin.log(e);
+		}
+		return null;
 	}
 
 	/**
@@ -109,7 +142,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 	 *
 	 * @return {@link List} of regions or null if {@link #monitor} was cancelled.
 	 */
-	public List<ITypedRegion> parseRegions() {
+	private List<ITypedRegion> parseRegions() {
 		final IDocument doc = this.document;
 		if (monitor != null) {
 			// FIXME: Add translation

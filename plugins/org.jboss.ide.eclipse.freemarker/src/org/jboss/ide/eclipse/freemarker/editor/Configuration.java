@@ -142,7 +142,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		IReconcilingStrategy reconcilingStrategy= new ReconcilingStrategy(editor);
 		MonoReconciler reconciler= new MonoReconciler(reconcilingStrategy, false);
-		reconciler.setDelay(500);
+		reconciler.setDelay(300);
 		return reconciler;
 	}
 
