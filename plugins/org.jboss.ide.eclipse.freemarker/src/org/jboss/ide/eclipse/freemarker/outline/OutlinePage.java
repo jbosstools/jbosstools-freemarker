@@ -172,7 +172,11 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 	}
 
 	public void refresh() {
-		getTreeViewer().refresh();
+		try {
+			getTreeViewer().refresh();
+		} catch (SWTException e) {
+			Plugin.log(e);
+		}
 	}
 
 	public class SetContextEntryAction extends Action {
