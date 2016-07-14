@@ -66,11 +66,15 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 		testNestable(true, "assign x "); //$NON-NLS-1$
 		testNestable(true, "assign \"x x\" "); //$NON-NLS-1$
 		testNestable(true, "assign 'x x' "); //$NON-NLS-1$
+		testNestable(false, "assign x++"); //$NON-NLS-1$
+		testNestable(false, "assign x ++ "); //$NON-NLS-1$
+		testNestable(false, "assign x-=2"); //$NON-NLS-1$
+		testNestable(false, "assign x -= 2 "); //$NON-NLS-1$
 	}
 
 	public void testAssignModel() {
 		Collection<Item> items = load();
-		assertEquals(16, items.size());
+		assertEquals(18, items.size());
 		Iterator<Item> i = items.iterator();
 
 		/* <#assign key="val"> */
@@ -81,7 +85,13 @@ public class AssignmentDirectiveTest extends AbstractDirectiveTest {
 
 		/* <#assign counter = counter + 1> */
 		assertAssignment(i);
+		
+		/* <#assign counter++> */
+		assertAssignment(i);
 
+		/* <#assign counter *= 2> */
+		assertAssignment(i);
+		
 		/* <#assign
 		 *   days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 		 *   counter = counter + 1

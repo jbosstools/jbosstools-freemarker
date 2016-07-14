@@ -21,73 +21,42 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor.rules;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.jboss.ide.eclipse.freemarker.editor.partitions.GenericDirectiveEndPartitionRule;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
-import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
+import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 
 /**
- * A {@link MultiLineRule} that matches a particular FTL directive end and marks the
- * region as the given {@link Directive}. Used for building an {@link ItemSet}.
- *
- * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
+ * Matches a particular FTL directive end and marks the region as the given
+ * {@link Directive}. Used for building an {@link ItemSet}.
  */
-public class DirectiveRuleEnd extends DirectiveRule {
+public class DirectiveRuleEnd extends GenericDirectiveEndPartitionRule {
 
+	private final String directiveName;
+	
 	public DirectiveRuleEnd(Directive directive) {
-		super(directive, true);
+		super(String.valueOf(getStartSequence(directive.getKeyword().toString(), SyntaxMode.getDefault())),
+				new Token(directive.name() /* enum name */));
+		directiveName = directive.getKeyword().toString();
 	}
 
-	public DirectiveRuleEnd(Directive directive, boolean nameOnly) {
-		super(directive, nameOnly);
-	}
-
-	public DirectiveRuleEnd(Directive directive, boolean nameOnly, char identifierChar) {
-		super(directive, nameOnly, identifierChar);
-	}
-
-	public DirectiveRuleEnd(String name,
-			String tokenData, boolean nameOnly, char identifierChar) {
-		super(name, tokenData, nameOnly, identifierChar);
-	}
-
-	/**
-	 * Evaluates this rules without considering any column constraints. Resumes
-	 * detection, i.e. look sonly for the end sequence required by this rule if the
-	 * <code>resume</code> flag is set.
-	 *
-	 * @param scanner the character scanner to be used
-	 * @param resume <code>true</code> if detection should be resumed, <code>false</code> otherwise
-	 * @return the token resulting from this evaluation
-	 * @since 2.0
-	 */
 	@Override
-	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
-		if (resume) {
-			if (endSequenceDetected(scanner))
-				return fToken;
-		} else {
-			int c= scanner.read();
-			if (c == syntaxMode.getStart()) {
-				int c2 = scanner.read();
-				if (c2 == LexicalConstants.SLASH) {
-					// check for the sequence identifier
-					c2 = scanner.read();
-					if (c2 == identifierChar) {
-						if (sequenceDetected(scanner, c, false)) {
-							if (endSequenceDetected(scanner, c))
-								return fToken;
-						}
-					}
-					scanner.unread();
-				}
-				scanner.unread();
-			}
-		}
-		scanner.unread();
-		return Token.UNDEFINED;
+	protected char[] getStartSequence(SyntaxMode syntaxMode) {
+		return getStartSequence(directiveName, syntaxMode);
 	}
+	
+	private static char[] getStartSequence(String directiveName, SyntaxMode syntaxMode) {
+		String tagStart = syntaxMode.getDirectiveEnd();
+		char[] tagStartWithName = new char[tagStart.length() + directiveName.length()];
+		int dst = 0;
+		for (int i = 0; i < tagStart.length(); i++) {
+			tagStartWithName[dst++] = tagStart.charAt(i);
+		}
+		for (int i = 0; i < directiveName.length(); i++) {
+			tagStartWithName[dst++] = directiveName.charAt(i);
+		}
+		return tagStartWithName;
+	}
+	
 }

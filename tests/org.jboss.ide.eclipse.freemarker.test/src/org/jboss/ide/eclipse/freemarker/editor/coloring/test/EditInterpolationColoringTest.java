@@ -24,26 +24,15 @@ package org.jboss.ide.eclipse.freemarker.editor.coloring.test;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.custom.StyleRange;
-import org.jboss.ide.eclipse.freemarker.model.test.AbstractDirectiveTest;
 
 @SuppressWarnings("nls")
 public class EditInterpolationColoringTest extends AbstractColoringTest {
 
-	private static final String TEST_FTL_FILE = "interpolation.ftl";
-
-	@Override
-	protected String getTestDirectoryName() {
-		return AbstractColoringTest.TEST_DIRECTORY;
-	}
+	private static final String TEST_FTL_FILE = "edit-interpolation.ftl";
 
 	@Override
 	protected String getTestTemplateName() {
 		return TEST_FTL_FILE;
-	}
-
-	@Override
-	protected String getTestProjectName() {
-		return AbstractDirectiveTest.TEST_PROJECT;
 	}
 
 	/**
@@ -62,8 +51,10 @@ public class EditInterpolationColoringTest extends AbstractColoringTest {
 		editor.reconcileInstantly();
 
 		StyleRange[] expected = new StyleRangeArrayBuilder()
-		.interpolation(5) // ${ab}
-		.build();
+				.interpolation(2) // ${
+				.variable(2) // ab
+				.interpolation(1) // }
+				.build();
 		validateColoring(expected);
 	}
 
@@ -74,8 +65,10 @@ public class EditInterpolationColoringTest extends AbstractColoringTest {
 	 */
 	public void testInterpolationColoringInitial() {
 		StyleRange[] expected = new StyleRangeArrayBuilder()
-		.interpolation(4) // ${a}
-		.build();
+				.interpolation(2) // ${
+				.variable(1) // a
+				.interpolation(1) // }
+				.build();
 		validateColoring(expected);
 	}
 

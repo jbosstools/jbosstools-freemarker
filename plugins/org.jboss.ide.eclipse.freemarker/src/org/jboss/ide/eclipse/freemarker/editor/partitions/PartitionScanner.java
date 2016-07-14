@@ -30,7 +30,6 @@ import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.jboss.ide.eclipse.freemarker.editor.DocumentProvider;
 import org.jboss.ide.eclipse.freemarker.editor.SyntaxModeListener;
@@ -65,7 +64,7 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 	private SyntaxMode syntaxMode = SyntaxMode.getDefault();
 	private ScannerState nextState;
 	private ScannerState currentState;
-	private final RuleBasedPartitionScanner delegate;
+	private final RuleBasedPartitionScanner2 delegate;
 	private final IToken defaultReturnToken;
 	private IPredicateRule[] predicateRules;
 
@@ -74,7 +73,7 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 	 */
 	public PartitionScanner() {
 
-		this.delegate = new RuleBasedPartitionScanner();
+		this.delegate = new RuleBasedPartitionScanner2();
 		PartitionType[] partitionTypes = PartitionType.values();
 		List<IPredicateRule> rules = new ArrayList<IPredicateRule>(partitionTypes.length);
 		for (PartitionType partitionType : partitionTypes) {
@@ -97,6 +96,21 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 
 	@Override
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
+		detectSyntaxMode(document, offset);
+		delegate.setPartialRange(document, offset, length, contentType, partitionOffset);
+		this.nextState = null;
+		this.currentState = null;
+	}
+
+	@Override
+	public void setRange(IDocument document, int offset, int length) {
+		detectSyntaxMode(document, offset);
+		delegate.setRange(document, offset, length);
+		this.nextState = null;
+		this.currentState = null;
+	}
+
+	private void detectSyntaxMode(IDocument document, int offset) {
 		if (offset == 0) {
 			/* let us believe that offset == 0 is exactly "the beginning" of the document
 			 * where the [#ftl] or <#ftl> directive can only be located */
@@ -108,10 +122,6 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 				 * offset and length to the whole document is safe enough */
 			}
 		}
-		delegate.setPartialRange(document, offset, length, contentType, partitionOffset);
-		IToken nextToken = delegate.nextToken();
-		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
-		this.currentState = null;
 	}
 
 	@Override
@@ -131,6 +141,11 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 		/* first shift next to current */
 		this.currentState = this.nextState;
 
+		if (currentState == null) {
+			IToken nextToken = delegate.nextToken();
+			this.currentState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
+		}
+		
 		/* Then populate the next, but try to merge with current as far as possible */
 		IToken nextToken = delegate.nextToken();
 		while (this.currentState.token == this.defaultReturnToken && nextToken == this.defaultReturnToken) {
@@ -153,14 +168,6 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 	@Override
 	public int getTokenLength() {
 		return currentState.getLength();
-	}
-
-	@Override
-	public void setRange(IDocument document, int offset, int length) {
-		delegate.setRange(document, offset, length);
-		IToken nextToken = delegate.nextToken();
-		this.nextState = new ScannerState(delegate.getTokenOffset(), delegate.getTokenLength(), nextToken );
-		this.currentState = null;
 	}
 
 }

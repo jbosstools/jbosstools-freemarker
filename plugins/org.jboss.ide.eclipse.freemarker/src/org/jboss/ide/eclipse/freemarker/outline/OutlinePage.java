@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -171,7 +172,11 @@ public class OutlinePage extends ContentOutlinePage implements IDoubleClickListe
 	}
 
 	public void refresh() {
-		getTreeViewer().refresh();
+		try {
+			getTreeViewer().refresh();
+		} catch (SWTException e) {
+			Plugin.log(e);
+		}
 	}
 
 	public class SetContextEntryAction extends Action {

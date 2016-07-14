@@ -42,7 +42,7 @@ public class MacroDirective extends AbstractDirective implements
 
 	public MacroDirective(ItemSet itemSet, String contents) {
 		super(itemSet);
-		this.contents = contents;
+		setContents(contents);
 	}
 
 	@Override

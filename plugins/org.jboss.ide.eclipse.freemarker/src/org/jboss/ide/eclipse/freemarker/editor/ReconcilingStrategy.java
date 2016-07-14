@@ -61,7 +61,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 	private IDocument document;
 	private Editor editor;
 	private EnumMap<PartitionType, ITokenScanner> itemParsers;
-	private SyntaxMode syntaxMode;
+	private SyntaxMode lastSyntaxMode;
 	private IProgressMonitor monitor;
 
 	public ReconcilingStrategy(Editor editor) {
@@ -75,9 +75,9 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 					PartitionType.class);
 			PartitionType[] partitionTypes = PartitionType.values();
 			for (PartitionType partitionType : partitionTypes) {
-				itemParsers
-						.put(partitionType, partitionType.createItemParser());
+				itemParsers.put(partitionType, partitionType.createItemParser());
 			}
+			lastSyntaxMode = SyntaxMode.getDefault();
 		}
 	}
 
@@ -150,7 +150,15 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 			monitor.beginTask("", doc.getLength()); //$NON-NLS-1$
 		}
 		ensureItemParsersInitilized();
-		final SyntaxMode newMode = DocumentProvider.findMode(doc);
+		final SyntaxMode actualSyntaxMode = DocumentProvider.findMode(doc);
+		if (actualSyntaxMode != this.lastSyntaxMode) {
+			for (ITokenScanner scanner : itemParsers.values()) {
+				if (scanner instanceof SyntaxModeListener) {
+					((SyntaxModeListener) scanner).syntaxModeChanged(actualSyntaxMode);
+				}
+			}
+			this.lastSyntaxMode = actualSyntaxMode;
+		}
 		int index = 0;
 		List<ITypedRegion> regions = new ArrayList<ITypedRegion>(64);
 		try {
@@ -162,20 +170,12 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 					monitor.worked(index);
 				}
 				ITypedRegion region = TextUtilities.getPartition(doc, DocumentProvider.FTL_PARTITIONING, index, false);
-				PartitionType partitionType = PartitionType.fastValueOf(region
-						.getType());
+				PartitionType partitionType = PartitionType.fastValueOf(region.getType());
 				if (partitionType != null) {
 					ITokenScanner scanner = itemParsers.get(partitionType);
 					if (scanner != null) {
-						if (newMode != this.syntaxMode
-								&& scanner instanceof SyntaxModeListener) {
-							((SyntaxModeListener) scanner)
-									.syntaxModeChanged(newMode);
-						}
-						scanner.setRange(doc, region.getOffset(),
-								region.getLength());
-						for (IToken token = scanner.nextToken(); !token.isEOF(); token = scanner
-								.nextToken()) {
+						scanner.setRange(doc, region.getOffset(), region.getLength());
+						for (IToken token = scanner.nextToken(); !token.isEOF(); token = scanner.nextToken()) {
 							if (canceled()) {
 								return null;
 							}
@@ -196,12 +196,11 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 						regions.add(region);
 					}
 				}
-				index = region.getOffset() + region.getLength() + 1;
+				index = region.getOffset() + region.getLength();
 			}
 		} catch (BadLocationException e) {
 			Plugin.log(e);
 		} finally {
-			this.syntaxMode = newMode;
 			if (monitor != null) {
 				monitor.done();
 			}

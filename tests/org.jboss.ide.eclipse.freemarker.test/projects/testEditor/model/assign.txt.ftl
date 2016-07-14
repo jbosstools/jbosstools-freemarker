@@ -1,6 +1,8 @@
 <#assign key="val">
 <#assign seasons = ["winter", "spring", "summer", "autumn"]>
-<#assign counter = counter + 1>
+<#assign counter = counter?number + 1>
+<#assign counter++>
+<#assign counter *= 2>
 <#assign
   days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
   counter = counter + 1

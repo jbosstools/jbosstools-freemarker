@@ -50,13 +50,16 @@ public class Preferences {
 	 */
 	public enum PreferenceKey {
 
-		COLOR_DIRECTIVE("color.directive", "0,0,255"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_DIRECTIVE("color.directive", "21,21,234"), //$NON-NLS-1$ //$NON-NLS-2$
 		COLOR_INTERPOLATION("color.interpolation", "255,0,128"), //$NON-NLS-1$ //$NON-NLS-2$
-		COLOR_COMMENT("color.comment", "170,0,0"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_COMMENT("color.comment", "149,159,191"), //$NON-NLS-1$ //$NON-NLS-2$
 		COLOR_TEXT("color.text", "0,0,0"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_VARIABLE("color.variable", "0,128,255"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_KEYWORD("color.keyword", "21,21,234"), //$NON-NLS-1$ //$NON-NLS-2$
 		COLOR_STRING("color.string", "0,128,128"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_OTHER_EXP_PART("color.otherExpPart", "81,81,106"), //$NON-NLS-1$ //$NON-NLS-2$
 		COLOR_XML_TAG("color.xmlTag", "0,0,128"), //$NON-NLS-1$ //$NON-NLS-2$
-		COLOR_XML_COMMENT("color.xmlComment", "128,128,128"), //$NON-NLS-1$ //$NON-NLS-2$
+		COLOR_XML_COMMENT("color.xmlComment", "112,112,112"), //$NON-NLS-1$ //$NON-NLS-2$
 		COLOR_RELATED_ITEM("color.oppositeRegion", "255,255,128"), //$NON-NLS-1$ //$NON-NLS-2$
 		HIGHLIGHT_RELATED_ITEMS("boolean.highlightRelatedItems", Boolean.TRUE), //$NON-NLS-1$
 		OUTLINE_LEVEL_OF_DETAIL("outline.level.of.detail", OutlineLevelOfDetail.functionAndMacroDefinitions.name()); //$NON-NLS-1$

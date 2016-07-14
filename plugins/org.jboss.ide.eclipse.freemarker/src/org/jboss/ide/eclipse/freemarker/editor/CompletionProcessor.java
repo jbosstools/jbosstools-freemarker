@@ -44,7 +44,6 @@ import org.jboss.ide.eclipse.freemarker.model.CompletionDirective;
 import org.jboss.ide.eclipse.freemarker.model.CompletionInterpolation;
 import org.jboss.ide.eclipse.freemarker.model.CompletionMacroInstance;
 import org.jboss.ide.eclipse.freemarker.model.Item;
-import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.model.MacroInstance;
 
 /**

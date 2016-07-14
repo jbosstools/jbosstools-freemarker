@@ -16,51 +16,91 @@ public class ListColoringTest extends AbstractColoringTest {
 		return ListDirectiveTest.TEST_FTL_FILE;
 	}
 
-	@Override
-	protected String getTestProjectName() {
-		return AbstractDirectiveTest.TEST_PROJECT;
-	}
-
 	public void testListColoring() {
 		StyleRange[] expected = new StyleRangeArrayBuilder()
-				.directive(16) // <#assign seq = [
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(3) // seq
+				.otherExpPart(4) // = [
 				.string(8) // "winter"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "spring"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "summer"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "autumn"
-				.directive(2) // ]>
+				.otherExpPart(1) // ]
+				.directive(1) // >
 				.text(1) // <whitespace>
-				.directive(16) // <#list seq as x>
+				.directive(6) // <#list
+				.otherExpPart(1) // <whitespace>
+				.variable(3) // seq
+				.otherExpPart(1) // <whitespace>
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.directive(1) // >
 				.text(3) // <whitespace>
-				.interpolation(14) // ${x_index + 1}
+				.interpolation(2) // ${
+				.variable(7) // x_index
+				.otherExpPart(4) // + 1
+				.interpolation(1) // }
 				.text(2) // .
-				.interpolation(4) // ${x}
-				.directive(16) // <#if x_has_next>
+				.interpolation(2) // ${
+				.variable(1) // x
+				.interpolation(1) // }
+				.directive(4) // <#if
+				.otherExpPart(1) // <whitespace>
+				.variable(10) // x_has_next
+				.directive(1) // >
 				.text(1) // ,
 				.directive(6) // </#if>
 				.text(1) // <whitespace>
 				.directive(8) // </#list>
 				.text(3) // <whitespace>
-				.directive(17) // <#list 1..3 as n>
+				.directive(6) // <#list
+				.otherExpPart(6) // 1..3
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // n
+				.directive(1) // >
 				.text(3) // <whitespace>
-				.directive(17) // <#list 1..3 as m>
+				.directive(6) // <#list
+				.otherExpPart(6) // 1..3
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // m
+				.directive(1) // >
 				.text(16) // list item #
-				.interpolation(4) // ${n}
+				.interpolation(2) // ${
+				.variable(1) // n
+				.interpolation(1) // }
 				.text(1) // x
-				.interpolation(4) // ${m}
+				.interpolation(2) // ${
+				.variable(1) // m
+				.interpolation(1) // }
 				.text(3) // <whitespace>
 				.directive(8) // </#list>
 				.text(1) // <whitespace>
 				.directive(8) // </#list>
 				.text(2) // <whitespace>
-				.directive(16) // <#list seq as x>
+				.directive(6) // <#list
+				.otherExpPart(1) // <whitespace>
+				.variable(3) // seq
+				.otherExpPart(1) // <whitespace>
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.directive(1) // >
 				.text(3) // <whitespace>
-				.interpolation(4) // ${x}
+				.interpolation(2) // ${
+				.variable(1) // x
+				.interpolation(1) // }
 				.text(3) // <whitespace>
-				.directive(9) // <#if x =
+				.directive(4) // <#if
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.otherExpPart(3) // =
 				.string(8) // "spring"
 				.directive(1) // >
 				.directive(8) // <#break>
@@ -68,25 +108,49 @@ public class ListColoringTest extends AbstractColoringTest {
 				.text(1) // <whitespace>
 				.directive(8) // </#list>
 				.text(2) // <whitespace>
-				.directive(11) // <#assign x>
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.directive(1) // >
 				.text(3) // <whitespace>
-				.directive(17) // <#list 1..3 as n>
+				.directive(6) // <#list
+				.otherExpPart(6) // 1..3
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // n
+				.directive(1) // >
 				.text(16) // list item #
-				.interpolation(4) // ${n}
+				.interpolation(2) // ${
+				.variable(1) // n
+				.interpolation(1) // }
 				.text(3) // <whitespace>
 				.directive(8) // </#list>
 				.text(1) // <whitespace>
 				.directive(10) // </#assign>
 				.text(18) // Number of words:
-				.interpolation(19) // ${x?word_list?size}
+				.interpolation(2) // ${
+				.variable(1) // x
+				.otherExpPart(15) // ?word_list?size
+				.interpolation(1) // }
 				.text(1) // <whitespace>
-				.interpolation(4) // ${x}
+				.interpolation(2) // ${
+				.variable(1) // x
+				.interpolation(1) // }
 				.text(29) // 2.3.23 listing directives:
-				.directive(12) // <#list 1..3>
+				.directive(6) // <#list
+				.otherExpPart(5) // 1..3
+				.directive(1) // >
 				.text(12) // Items:
-				.directive(13) // <#items as n>
+				.directive(7) // <#items
+				.otherExpPart(1) // <whitespace>
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // n
+				.directive(1) // >
 				.text(4) // <whitespace>
-				.interpolation(4) // ${n}
+				.interpolation(2) // ${
+				.variable(1) // n
+				.interpolation(1) // }
 				.directive(6) // <#sep>
 				.text(4) // ,
 				.directive(9) // </#items>
@@ -95,15 +159,29 @@ public class ListColoringTest extends AbstractColoringTest {
 				.text(13) // No items
 				.directive(8) // </#list>
 				.text(2) // <whitespace>
-				.directive(17) // <#list 1..3 as x>
-				.interpolation(4) // ${x}
+				.directive(6) // <#list
+				.otherExpPart(6) // 1..3
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.directive(1) // >
+				.interpolation(2) // ${
+				.variable(1) // x
+				.interpolation(1) // }
 				.directive(6) // <#sep>
 				.text(2) // ,
 				.directive(8) // </#list>
 				.text(2) // <whitespace>
-				.directive(17) // <#list 1..3 as x>
+				.directive(6) // <#list
+				.otherExpPart(6) // 1..3
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // x
+				.directive(1) // >
 				.text(8) // <div>
-				.interpolation(4) // ${x}
+				.interpolation(2) // ${
+				.variable(1) // x
+				.interpolation(1) // }
 				.directive(6) // <#sep>
 				.text(1) // ,
 				.directive(7) // </#sep>

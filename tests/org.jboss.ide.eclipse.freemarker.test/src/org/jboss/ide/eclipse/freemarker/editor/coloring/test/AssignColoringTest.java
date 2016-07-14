@@ -16,72 +16,125 @@ public class AssignColoringTest extends AbstractColoringTest {
 		return AssignmentDirectiveTest.TEST_FTL_FILE;
 	}
 
-	@Override
-	protected String getTestProjectName() {
-		return AbstractDirectiveTest.TEST_PROJECT;
-	}
-
 	public void testAssignColoring() {
-		StyleRange[] expected = new StyleRangeArrayBuilder().directive(13) // <#assign
-																			// key=
+		StyleRange[] expected = new StyleRangeArrayBuilder()
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(3) // key
+				.otherExpPart(1) // =
 				.string(5) // "val"
 				.directive(1) // >
 				.text(1) // <whitespace>
-				.directive(20) // <#assign seasons = [
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // seasons
+				.otherExpPart(4) // = [
 				.string(8) // "winter"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "spring"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "summer"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(8) // "autumn"
-				.directive(2) // ]>
+				.otherExpPart(1) // ]
+				.directive(1) // >
 				.text(1) // <whitespace>
-				.directive(31) // <#assign counter = counter + 1>
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // counter
+				.otherExpPart(3) // =
+				.variable(7) // counter
+				.otherExpPart(11) // ?number + 1
+				.directive(1) // >
 				.text(1) // <whitespace>
-				.directive(19) // <#assign days = [
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // counter
+				.otherExpPart(2) // ++
+				.directive(1) // >
+				.text(1) // <whitespace>
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // counter
+				.otherExpPart(5) // *= 2
+				.directive(1) // >
+				.text(1) // <whitespace>
+				.directive(8) // <#assign
+				.otherExpPart(3) // <whitespace>
+				.variable(4) // days
+				.otherExpPart(4) // = [
 				.string(4) // "Mo"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "Tu"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "We"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "Th"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "Fr"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "Sa"
-				.directive(2) // ,
+				.otherExpPart(2) // ,
 				.string(4) // "Su"
-				.directive(27) // ] counter = counter + 1 >
+				.otherExpPart(4) // ]
+				.variable(7) // counter
+				.otherExpPart(3) // =
+				.variable(7) // counter
+				.otherExpPart(5) // + 1
+				.directive(1) // >
 				.text(1) // <whitespace>
-				.directive(16) // <#macro myMacro>
+				.directive(7) // <#macro
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // myMacro
+				.directive(1) // >
 				.text(3) // foo
 				.directive(9) // </#macro>
 				.text(1) // <whitespace>
-				.directive(26) // <#assign formattedSeasons>
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(16) // formattedSeasons
+				.directive(1) // >
 				.text(3) // <whitespace>
-				.directive(20) // <#list seasons as s>
+				.directive(6) // <#list
+				.otherExpPart(1) // <whitespace>
+				.variable(7) // seasons
+				.otherExpPart(1) // <whitespace>
+				.keyword(2) // as
+				.otherExpPart(1) // <whitespace>
+				.variable(1) // s
+				.directive(1) // >
 				.text(5) // <whitespace>
-				.interpolation(4) // ${s}
+				.interpolation(2) // ${
+				.variable(1) // s
+				.interpolation(1) // }
 				.text(1) // <whitespace>
-				.directive(12) // <@myMacro />
+				.directive(9) // <@myMacro
+				.otherExpPart(1) // <whitespace>
+				.directive(2) // />
 				.text(3) // <whitespace>
 				.directive(8) // </#list>
 				.text(1) // <whitespace>
 				.directive(10) // </#assign>
 				.text(18) // Number of words:
-				.interpolation(34) // ${formattedSeasons?word_list?size}
+				.interpolation(2) // ${
+				.variable(16) // formattedSeasons
+				.otherExpPart(15) // ?word_list?size
+				.interpolation(1) // }
 				.text(1) // <whitespace>
-				.interpolation(19) // ${formattedSeasons}
+				.interpolation(2) // ${
+				.variable(16) // formattedSeasons
+				.interpolation(1) // }
 				.text(1) // <whitespace>
-				.directive(15) // <#assign hello=
-				.string(7) // "Hello
-				.interpolation(7) // ${user}
-				.string(2) // !"
+				.directive(8) // <#assign
+				.otherExpPart(1) // <whitespace>
+				.variable(5) // hello
+				.otherExpPart(1) // =
+				.string(16) // "Hello ${user}!"
 				.directive(1) // >
 				.text(1) // <whitespace>
-				.interpolation(8) // ${hello}
+				.interpolation(2) // ${
+				.variable(5) // hello
+				.interpolation(1) // }
 				.build();
 		validateColoring(expected);
 	}

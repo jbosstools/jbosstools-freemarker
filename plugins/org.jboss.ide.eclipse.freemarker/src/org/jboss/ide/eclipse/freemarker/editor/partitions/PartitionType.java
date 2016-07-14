@@ -34,8 +34,8 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
-import org.jboss.ide.eclipse.freemarker.editor.ContentScanner;
 import org.jboss.ide.eclipse.freemarker.editor.Editor;
+import org.jboss.ide.eclipse.freemarker.editor.ExpressionColoringTokenScanner;
 import org.jboss.ide.eclipse.freemarker.editor.SingleTokenScanner;
 import org.jboss.ide.eclipse.freemarker.editor.rules.DirectiveRule;
 import org.jboss.ide.eclipse.freemarker.editor.rules.DirectiveRuleEnd;
@@ -66,15 +66,29 @@ public enum PartitionType {
 	DOLLAR_INTERPOLATION(PreferenceKey.COLOR_INTERPOLATION) {
 		@Override
 		public IPredicateRule createPartitioningRule() {
-			return new InterpolationRule(LexicalConstants.DOLLAR, new Token(
-					this.name()));
+			return new DollarInterpolationRule();
+		}
+
+		@Override
+		public ITokenScanner createColoringTokenizer(Editor editor) {
+			return new ExpressionColoringTokenScanner(
+					createColoringToken(foregroundPreferenceKey), false,
+					LexicalConstants.DOLLAR_INTERPOLATION_START, LexicalConstants.DOLLAR_INTERPOLATION_END, null, false,
+					null, null, null);
 		}
 	},
 	HASH_INTERPOLATION(PreferenceKey.COLOR_INTERPOLATION) {
 		@Override
 		public IPredicateRule createPartitioningRule() {
-			return new InterpolationRule(LexicalConstants.HASH, new Token(
-					this.name()));
+			return new HashInterpolationRule();
+		}
+
+		@Override
+		public ITokenScanner createColoringTokenizer(Editor editor) {
+			return new ExpressionColoringTokenScanner(
+					createColoringToken(foregroundPreferenceKey), false,
+					LexicalConstants.HASH_INTERPOLATION_START, LexicalConstants.HASH_INTERPOLATION_END, null, false,
+					null, null, null);
 		}
 	},
 	DIRECTIVE_START(PreferenceKey.COLOR_DIRECTIVE) {
@@ -87,7 +101,7 @@ public enum PartitionType {
     		    }
     		}
 
-			RuleBasedScanner result = new RuleBasedScanner();
+			RuleBasedScanner result = new SyntaxModeListenerRuleBasedScanner();
 			result.setRules(rules.toArray(new IRule[rules.size()]));
 			return result;
 		}
@@ -99,7 +113,13 @@ public enum PartitionType {
 
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
-			return new ContentScanner(createColoringToken(foregroundPreferenceKey));
+			IToken coloringToken = createColoringToken(foregroundPreferenceKey);
+			return new ExpressionColoringTokenScanner(
+					coloringToken, true,
+					LexicalConstants.DIRECTIVE_START_AB, LexicalConstants.DIRECTIVE_END_AB,
+					LexicalConstants.DIRECTIVE_END_AB_EMPTY, true,
+					LexicalConstants.DIRECTIVE_START_SB, LexicalConstants.DIRECTIVE_END_SB,
+					LexicalConstants.DIRECTIVE_END_SB_EMPTY);
 		}
 
 	},
@@ -114,7 +134,7 @@ public enum PartitionType {
 			    }
 			}
 
-			RuleBasedScanner result = new RuleBasedScanner();
+			RuleBasedScanner result = new SyntaxModeListenerRuleBasedScanner();
 			result.setRules(rules.toArray(new IRule[rules.size()]));
 			return result;
 		}
@@ -133,7 +153,12 @@ public enum PartitionType {
 
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
-			return new ContentScanner(createColoringToken(foregroundPreferenceKey));
+			return new ExpressionColoringTokenScanner(
+					createColoringToken(foregroundPreferenceKey), true,
+					LexicalConstants.MACRO_INST_START_AB, LexicalConstants.MACRO_INST_END_AB,
+					LexicalConstants.MACRO_INST_END_AB_EMPTY, true,
+					LexicalConstants.MACRO_INST_START_SB, LexicalConstants.MACRO_INST_END_SB,
+					LexicalConstants.MACRO_INST_END_SB_EMPTY);
 		}
 	},
 	MACRO_INSTANCE_END(PreferenceKey.COLOR_DIRECTIVE) {

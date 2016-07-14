@@ -36,7 +36,7 @@ public abstract class AbstractDirective extends AbstractItem {
 
     public static final String DEFAULT_IMAGE = "directive.png"; //$NON-NLS-1$
     
-	String contents;
+	private String contents;
 
 	public AbstractDirective(ItemSet itemSet) {
 		super(itemSet);
@@ -47,10 +47,14 @@ public abstract class AbstractDirective extends AbstractItem {
 		if (null == contents) {
 			contents = super.getContents();
 			if (null != contents) {
-				contents = contents.substring(2, contents.length()-1);
+				contents = contents.length() > 3 ? contents.substring(2, contents.length()-1) : ""; //$NON-NLS-1$
 			}
 		}
 		return contents;
+	}
+
+	protected void setContents(String contents) {
+		this.contents = contents;
 	}
 
 	@Override

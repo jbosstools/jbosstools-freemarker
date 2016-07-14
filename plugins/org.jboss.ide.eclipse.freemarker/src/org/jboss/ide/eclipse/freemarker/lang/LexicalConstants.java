@@ -72,4 +72,27 @@ public interface LexicalConstants {
 	String QUOT_STRING = String.valueOf(QUOT);
 	String APOS_STRING = String.valueOf(APOS);
 	String SQUARE_SYNTAX_MARKER = "" + LEFT_SQUARE_BRACKET + HASH + Keyword.FTL; //$NON-NLS-1$
+	char COMMENT_START_HEAD_1 = LEFT_ANGLE_BRACKET;
+	char COMMENT_START_HEAD_2 = LEFT_SQUARE_BRACKET;
+	char[] COMMENT_START_TAIL_1 = new char[] { HASH, '-', '-' };
+	char[] COMMENT_START_TAIL_2 = new char[] { EXCLAMATION_MARK, '-', '-' };
+	char COMMENT_END_HEAD = '-';
+	char[] COMMENT_END_TAIL_1 = new char[] { '-', RIGHT_ANGLE_BRACKET };
+	char[] COMMENT_END_TAIL_2 = new char[] { '-', RIGHT_SQUARE_BRACKET };
+	char[] DOLLAR_INTERPOLATION_START = new char[] { DOLLAR, LEFT_BRACE };
+	char[] DOLLAR_INTERPOLATION_END = new char[] { RIGHT_BRACE };
+	char[] HASH_INTERPOLATION_START = new char[] { HASH, LEFT_BRACE };
+	char[] HASH_INTERPOLATION_END = new char[] { RIGHT_BRACE };
+	char[] DIRECTIVE_START_AB = new char[] { LEFT_ANGLE_BRACKET, HASH };
+	char[] DIRECTIVE_END_AB = new char[] { RIGHT_ANGLE_BRACKET };
+	char[] DIRECTIVE_END_AB_EMPTY = new char[] { SLASH, RIGHT_ANGLE_BRACKET };
+	char[] DIRECTIVE_START_SB = new char[] { LEFT_SQUARE_BRACKET, HASH };
+	char[] DIRECTIVE_END_SB = new char[] { RIGHT_SQUARE_BRACKET };
+	char[] DIRECTIVE_END_SB_EMPTY = new char[] { SLASH, RIGHT_SQUARE_BRACKET };
+	char[] MACRO_INST_START_AB = new char[] { LEFT_ANGLE_BRACKET, AT };
+	char[] MACRO_INST_END_AB = new char[] { RIGHT_ANGLE_BRACKET };
+	char[] MACRO_INST_END_AB_EMPTY = new char[] { SLASH, RIGHT_ANGLE_BRACKET };
+	char[] MACRO_INST_START_SB = new char[] { LEFT_SQUARE_BRACKET, AT };
+	char[] MACRO_INST_END_SB = new char[] { RIGHT_SQUARE_BRACKET };
+	char[] MACRO_INST_END_SB_EMPTY = new char[] { SLASH, RIGHT_SQUARE_BRACKET };
 }

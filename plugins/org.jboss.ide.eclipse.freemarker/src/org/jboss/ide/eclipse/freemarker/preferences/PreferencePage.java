@@ -101,6 +101,12 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 				Messages.PreferencePage_FIELD_COMMENT, editorGroup));
 		addField(new ColorFieldEditor(PreferenceKey.COLOR_STRING.toString(),
 				Messages.PreferencePage_FIELD_STRING, editorGroup));
+		addField(new ColorFieldEditor(PreferenceKey.COLOR_VARIABLE.toString(),
+				Messages.PreferencePage_FIELD_VARIABLE, editorGroup));
+		addField(new ColorFieldEditor(PreferenceKey.COLOR_KEYWORD.toString(),
+				Messages.PreferencePage_FIELD_KEYWORD, editorGroup));
+		addField(new ColorFieldEditor(PreferenceKey.COLOR_OTHER_EXP_PART.toString(),
+				Messages.PreferencePage_FIELD_OTHER_EXP_PART, editorGroup));
 		addField(new ColorFieldEditor(PreferenceKey.COLOR_XML_TAG.toString(),
 				Messages.PreferencePage_FIELD_HTML_XML_TAG, editorGroup));
 		addField(new ColorFieldEditor(PreferenceKey.COLOR_XML_COMMENT.toString(),

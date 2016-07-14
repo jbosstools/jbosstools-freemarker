@@ -75,6 +75,9 @@ public class Messages extends NLS {
 	public static String PreferencePage_FIELD_INTERPOLATION;
 	public static String PreferencePage_FIELD_RELATED_DIRECTIVES;
 	public static String PreferencePage_FIELD_STRING;
+	public static String PreferencePage_FIELD_VARIABLE;
+	public static String PreferencePage_FIELD_KEYWORD;
+	public static String PreferencePage_FIELD_OTHER_EXP_PART;
 	public static String PreferencePage_FIELD_TEXT;
 	static {
 		// initialize resource bundle

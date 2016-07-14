@@ -30,7 +30,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.jboss.ide.eclipse.freemarker.Plugin;
 
 public class CompletionDirective extends AbstractDirective {
 

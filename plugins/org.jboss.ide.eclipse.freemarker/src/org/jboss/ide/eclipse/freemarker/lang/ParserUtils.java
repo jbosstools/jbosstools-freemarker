@@ -22,6 +22,7 @@
 package org.jboss.ide.eclipse.freemarker.lang;
 
 import freemarker.core.FMParser;
+import freemarker.template.utility.StringUtil;
 
 /**
  * Freemarker parser utilities. We are forced to implement these methods because
@@ -228,33 +229,45 @@ public class ParserUtils implements LexicalConstants {
 	}
 
 	/**
-	 * Consumes an FTL indentifier as defined by <a href=
-	 * "https://github.com/freemarker/freemarker/blob/2.3-gae/src/main/javacc/FTL.jj"
-	 * >FTL.jj</a>.
-	 *
-	 * <pre>
-	 *   < ID: <LETTER> (<LETTER>|<DIGIT>)* >
-	 * </pre>
-	 *
-	 * @return the position in {@link #input} next after the consumed token
-	 * @throws ParseException
+	 * Consumes an FTL indentifier.
 	 */
 	public int consumeIdentifier() throws ParseException {
 		checkEndOfInput("identifier"); //$NON-NLS-1$
 		this.lastTokenStart = offset;
-		if (!isLetter(input.charAt(offset))) {
+
+		char c = input.charAt(offset);
+		if (!StringUtil.isFTLIdentifierStart(c)
+				&& !(c == LexicalConstants.BACKSLASH && isNextCharEscapeableNameChar())) {
 			throw new ParseException(
-					"Letter expected at position " + offset, offset); //$NON-NLS-1$
+					"Expected identifier start at position " + offset, offset); //$NON-NLS-1$
 		}
-		offset++;
-		while (offset < inputLength) {
-			char ch = input.charAt(offset);
-			if (!isLetter(ch) && !isDigit(ch)) {
-				break;
-			}
+
+		if (c == LexicalConstants.BACKSLASH) {
 			offset++;
 		}
-		return offset;
+		offset++;
+		
+		while (true) {
+			if (offset == inputLength) {
+				return offset;
+			}
+			c = input.charAt(offset);
+
+			if (!StringUtil.isFTLIdentifierPart(c)) {
+				if (c == LexicalConstants.BACKSLASH && isNextCharEscapeableNameChar()) {
+					// Skip the character after \
+					offset++;
+				} else {
+					// c wasn't part of the identifier
+					return offset;
+				}
+			}
+			offset++;			
+		}
+	}
+
+	private boolean isNextCharEscapeableNameChar() {
+		return offset + 1 < inputLength && ParserUtils.isEscapeableNameChar(input.charAt(offset + 1));
 	}
 
 	/**
@@ -551,6 +564,31 @@ public class ParserUtils implements LexicalConstants {
 			checkEndOfInput(String.valueOf(ch));
 		}
 		return input.charAt(offset) == ch;
+	}
+
+	public static boolean isQuotingChar(final char c) {
+		return c == LexicalConstants.QUOT || c == LexicalConstants.APOS;
+	}
+
+	public static int mirrorClosingParentesisLikeChar(int c) {
+		switch (c) {
+		case ')': return '(';
+		case ']': return '[';
+		case '}': return '{';
+		default: return c;
+		}
+	}
+	
+	public static char mirrorClosingParentesisLikeChar(char c) {
+		return (char) mirrorClosingParentesisLikeChar((int) c);
+	}
+
+	public static boolean isEscapeableNameChar(char c) {
+		return c == '.' || c == ':' || c == '-';
+	}
+
+	public static boolean isFTLWhitespace(char c) {
+		return c <= 0x20;
 	}
 
 }
