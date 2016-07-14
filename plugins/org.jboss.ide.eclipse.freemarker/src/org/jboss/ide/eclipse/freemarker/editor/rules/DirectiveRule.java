@@ -29,7 +29,7 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 
 /**
- * Matches a particular FTL directive start and marks the region with as the
+ * Matches a particular FTL directive start and marks the region with
  * given {@link Directive#name()}. Used for building an {@link ItemSet}.
  */
 public class DirectiveRule extends GenericDirectiveStartPartitionRule {

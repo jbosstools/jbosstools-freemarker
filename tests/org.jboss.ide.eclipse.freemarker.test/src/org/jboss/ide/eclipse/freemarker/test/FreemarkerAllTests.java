@@ -16,6 +16,7 @@ import org.jboss.ide.eclipse.freemarker.editor.coloring.test.StringLiteralsColor
 import org.jboss.ide.eclipse.freemarker.editor.test.FreemarkerEditorTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.IncludeHyperlinkDetectorTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.PartitionScannerTest;
+import org.jboss.ide.eclipse.freemarker.editor.test.AutoEditStrategyTest;
 import org.jboss.ide.eclipse.freemarker.editor.test.ErrorMarkerTest;
 import org.jboss.ide.eclipse.freemarker.lang.test.ParserUtilsTest;
 import org.jboss.ide.eclipse.freemarker.model.test.AssignmentDirectiveTest;
@@ -35,6 +36,7 @@ public class FreemarkerAllTests extends TestCase {
 	    suite.addTestSuite(ErrorMarkerTest.class);
 		suite.addTestSuite(PartitionScannerTest.class);
 		suite.addTestSuite(FreemarkerPreferencePageTest.class);
+		suite.addTestSuite(AutoEditStrategyTest.class);
 
 		// model tests
 		suite.addTestSuite(AssignmentDirectiveTest.class);

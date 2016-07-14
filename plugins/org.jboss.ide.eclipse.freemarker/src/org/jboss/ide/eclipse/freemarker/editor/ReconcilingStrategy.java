@@ -170,7 +170,7 @@ public class ReconcilingStrategy implements IReconcilingStrategy,
 					monitor.worked(index);
 				}
 				ITypedRegion region = TextUtilities.getPartition(doc, DocumentProvider.FTL_PARTITIONING, index, false);
-				PartitionType partitionType = PartitionType.fastValueOf(region.getType());
+				PartitionType partitionType = PartitionType.getByContentType(region.getType());
 				if (partitionType != null) {
 					ITokenScanner scanner = itemParsers.get(partitionType);
 					if (scanner != null) {

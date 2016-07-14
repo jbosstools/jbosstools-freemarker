@@ -43,7 +43,7 @@ import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
  */
 public class Configuration extends TextSourceViewerConfiguration {
-
+	
 	private Editor editor;
 
 	public Configuration(IPreferenceStore preferenceStore, Editor editor) {
@@ -53,7 +53,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return PartitionType.PARTITION_TYPES;
+		return PartitionType.CONTENT_TYPES;
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class Configuration extends TextSourceViewerConfiguration {
 			if (scanner != null) {
 				DefaultDamagerRepairer dr = scanner instanceof ExpressionColoringTokenScanner
 						? new PartitionGranulairyDamagerRepairer(scanner) : new DefaultDamagerRepairer(scanner);
-				reconciler.setDamager(dr, partitionType.name());
-				reconciler.setRepairer(dr, partitionType.name());
+				reconciler.setDamager(dr, partitionType.getContentType());
+				reconciler.setRepairer(dr, partitionType.getContentType());
 			}
 		}
 
@@ -109,7 +109,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 		CompletionProcessor completionProcessor = new CompletionProcessor(editor);
 		assistant.setContentAssistProcessor(completionProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 		for (PartitionType partitionType : PartitionType.values()) {
-			assistant.setContentAssistProcessor(completionProcessor, partitionType.name());
+			assistant.setContentAssistProcessor(completionProcessor, partitionType.getContentType());
 		}
 		//FIXME: Add back XML content assist some day
 //		assistant.setContentAssistProcessor(completionProcessor, PartitionScanner.XML_COMMENT);
@@ -147,6 +147,7 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
-		return super.getAutoEditStrategies(sourceViewer, contentType);
+		return new IAutoEditStrategy[] { SimpleAutoIndentingAutoEditStrategy.INSTANCE };
 	}
+	
 }

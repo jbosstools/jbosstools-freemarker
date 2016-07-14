@@ -31,7 +31,7 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
  */
 public class MacroInstanceStartPartitionRule extends GenericDirectiveStartPartitionRule {
 	
-	private static final Token SUCCESS_TOKEN = new Token(PartitionType.MACRO_INSTANCE_START.name());
+	private static final Token SUCCESS_TOKEN = new Token(PartitionType.MACRO_INSTANCE_START.getContentType());
 
 	public MacroInstanceStartPartitionRule() {
 		super(getStartSequence(SyntaxMode.getDefault()));

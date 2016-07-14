@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
@@ -57,13 +58,13 @@ import org.jboss.ide.eclipse.freemarker.target.TargetColoringScanner;
  * @since 1.4.0
  */
 public enum PartitionType {
-	COMMENT(PreferenceKey.COLOR_COMMENT) {
+	COMMENT("ftl.comment", PreferenceKey.COLOR_COMMENT) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new CommentPartitionRule();
 		}
 	},
-	DOLLAR_INTERPOLATION(PreferenceKey.COLOR_INTERPOLATION) {
+	DOLLAR_INTERPOLATION("ftl.dollarInterpolation", PreferenceKey.COLOR_INTERPOLATION) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new DollarInterpolationRule();
@@ -72,12 +73,12 @@ public enum PartitionType {
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
 			return new ExpressionColoringTokenScanner(
-					createColoringToken(foregroundPreferenceKey), false,
+					createColoringToken(getForegroundPreferenceKey()), false,
 					LexicalConstants.DOLLAR_INTERPOLATION_START, LexicalConstants.DOLLAR_INTERPOLATION_END, null, false,
 					null, null, null);
 		}
 	},
-	HASH_INTERPOLATION(PreferenceKey.COLOR_INTERPOLATION) {
+	HASH_INTERPOLATION("ftl.hashInterpolation", PreferenceKey.COLOR_INTERPOLATION) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new HashInterpolationRule();
@@ -86,12 +87,12 @@ public enum PartitionType {
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
 			return new ExpressionColoringTokenScanner(
-					createColoringToken(foregroundPreferenceKey), false,
+					createColoringToken(getForegroundPreferenceKey()), false,
 					LexicalConstants.HASH_INTERPOLATION_START, LexicalConstants.HASH_INTERPOLATION_END, null, false,
 					null, null, null);
 		}
 	},
-	DIRECTIVE_START(PreferenceKey.COLOR_DIRECTIVE) {
+	DIRECTIVE_START("ftl.directiveStart", PreferenceKey.COLOR_DIRECTIVE) { //$NON-NLS-1$
 		@Override
 		public RuleBasedScanner createItemParser() {
     		List<IRule> rules = new ArrayList<IRule>();
@@ -113,7 +114,7 @@ public enum PartitionType {
 
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
-			IToken coloringToken = createColoringToken(foregroundPreferenceKey);
+			IToken coloringToken = createColoringToken(getForegroundPreferenceKey());
 			return new ExpressionColoringTokenScanner(
 					coloringToken, true,
 					LexicalConstants.DIRECTIVE_START_AB, LexicalConstants.DIRECTIVE_END_AB,
@@ -123,7 +124,7 @@ public enum PartitionType {
 		}
 
 	},
-	DIRECTIVE_END(PreferenceKey.COLOR_DIRECTIVE) {
+	DIRECTIVE_END("ftl.directiveEnd", PreferenceKey.COLOR_DIRECTIVE) { //$NON-NLS-1$
 		@Override
 		public RuleBasedScanner createItemParser() {
 
@@ -144,8 +145,7 @@ public enum PartitionType {
 			return new DirectiveEndPartitionRule();
 		}
 	},
-	MACRO_INSTANCE_START(PreferenceKey.COLOR_DIRECTIVE) {
-
+	MACRO_INSTANCE_START("ftl.macroInstanceStart", PreferenceKey.COLOR_DIRECTIVE) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new MacroInstanceStartPartitionRule();
@@ -154,20 +154,21 @@ public enum PartitionType {
 		@Override
 		public ITokenScanner createColoringTokenizer(Editor editor) {
 			return new ExpressionColoringTokenScanner(
-					createColoringToken(foregroundPreferenceKey), true,
+					createColoringToken(getForegroundPreferenceKey()), true,
 					LexicalConstants.MACRO_INST_START_AB, LexicalConstants.MACRO_INST_END_AB,
 					LexicalConstants.MACRO_INST_END_AB_EMPTY, true,
 					LexicalConstants.MACRO_INST_START_SB, LexicalConstants.MACRO_INST_END_SB,
 					LexicalConstants.MACRO_INST_END_SB_EMPTY);
 		}
 	},
-	MACRO_INSTANCE_END(PreferenceKey.COLOR_DIRECTIVE) {
+	MACRO_INSTANCE_END("ftl.macroInstanceEnd", PreferenceKey.COLOR_DIRECTIVE) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new MacroInstanceEndPartitionRule();
 		}
 	},
-	TEXT(PreferenceKey.COLOR_TEXT) {
+	// IDocument.DEFAULT_CONTENT_TYPE is used to be compatible with FastPartitioner
+	TEXT(IDocument.DEFAULT_CONTENT_TYPE, PreferenceKey.COLOR_TEXT) {
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			/* there is no explicit rule for FTL text */
@@ -180,23 +181,23 @@ public enum PartitionType {
 		}
 
 	};
-
+	
 	/** Partitions as a static array for convenience. */
-	public static final String[] PARTITION_TYPES;
+	public static final String[] CONTENT_TYPES;
 
-	/** Used in {@link #fastValueOf(String)} */
-	private static final Map<String, PartitionType> FAST_LOOKUP;
+	/** Used in {@link #getByContentType(String)} */
+	private static final Map<String, PartitionType> LOOKUP_BY_CONTENT_TYPE;
 
 	static {
 		PartitionType[] partitionTypes = PartitionType.values();
-		PARTITION_TYPES = new String[partitionTypes.length];
-		Map<String, PartitionType> fastLookUp = new HashMap<String, PartitionType>();
+		CONTENT_TYPES = new String[partitionTypes.length];
+		Map<String, PartitionType> lookUpByContentType = new HashMap<String, PartitionType>();
 		for (int i = 0; i < partitionTypes.length; i++) {
 			PartitionType partitionType = partitionTypes[i];
-			PARTITION_TYPES[i] = partitionType.name();
-			fastLookUp.put(partitionType.name(), partitionType);
+			CONTENT_TYPES[i] = partitionType.getContentType();
+			lookUpByContentType.put(partitionType.getContentType(), partitionType);
 		}
-		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
+		LOOKUP_BY_CONTENT_TYPE = Collections.unmodifiableMap(lookUpByContentType);
 	}
 
 	public static IToken createColoringToken(PreferenceKey foregroundPreferenceKey) {
@@ -208,18 +209,21 @@ public enum PartitionType {
 	 * A {@link HashMap}-backed and {@code null}-tolerant alternative of
 	 * {@link #valueOf(String)}.
 	 *
-	 * @param name
+	 * @param contentType
 	 * @return the {@link PartitionType} that corresponds to the given {@code name}
 	 *         or {@code null} of there is no such.
 	 */
-	public static PartitionType fastValueOf(String name) {
-		return FAST_LOOKUP.get(name);
+	public static PartitionType getByContentType(String contentType) {
+		return LOOKUP_BY_CONTENT_TYPE.get(contentType);
 	}
+	
+	private final String contentType;
 
 	/** The preference key for syntax coloring. */
-	final PreferenceKey foregroundPreferenceKey;
+	private final PreferenceKey foregroundPreferenceKey;
 
-	private PartitionType(PreferenceKey foregroundPreferenceKey) {
+	private PartitionType(String contentType, PreferenceKey foregroundPreferenceKey) {
+		this.contentType = contentType;
 		this.foregroundPreferenceKey = foregroundPreferenceKey;
 	}
 
@@ -250,6 +254,14 @@ public enum PartitionType {
 	 */
 	public ITokenScanner createItemParser() {
 		return null;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public PreferenceKey getForegroundPreferenceKey() {
+		return foregroundPreferenceKey;
 	}
 
 }

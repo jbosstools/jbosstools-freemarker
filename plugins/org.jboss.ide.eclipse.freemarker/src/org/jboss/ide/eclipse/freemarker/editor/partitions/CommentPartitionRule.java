@@ -36,7 +36,8 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 public class CommentPartitionRule extends MultiLineRule implements SyntaxModeListener {
 
 	public CommentPartitionRule() {
-		super(SyntaxMode.getDefault().getCommentStart(), SyntaxMode.getDefault().getCommentEnd(), new Token(PartitionType.COMMENT.name()));
+		super(SyntaxMode.getDefault().getCommentStart(), SyntaxMode.getDefault().getCommentEnd(),
+				new Token(PartitionType.COMMENT.getContentType()));
 	}
 
 	/**

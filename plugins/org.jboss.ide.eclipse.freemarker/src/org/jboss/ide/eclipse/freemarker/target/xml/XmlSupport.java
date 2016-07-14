@@ -65,8 +65,8 @@ public class XmlSupport implements TargetLanguageSupport {
 	 * @see org.jboss.ide.eclipse.freemarker.target.TargetLanguageSupport#createColoringScanner(java.lang.String)
 	 */
 	@Override
-	public ITokenScanner createColoringScanner(String partitionType) {
-		XmlPartitionType xmlPartitionType = XmlPartitionType.fastValueOf(partitionType);
+	public ITokenScanner createColoringScanner(String partitionContentType) {
+		XmlPartitionType xmlPartitionType = XmlPartitionType.getByContentType(partitionContentType);
 		if (xmlPartitionType != null) {
 			return xmlPartitionType.createColoringTokenizer();
 		}
@@ -88,7 +88,7 @@ public class XmlSupport implements TargetLanguageSupport {
 			}
 		}
 		RuleBasedTargetPartitionScanner result = new RuleBasedTargetPartitionScanner();
-		result.setDefaultReturnToken(new Token(XmlPartitionType.OTHER.name()));
+		result.setDefaultReturnToken(new Token(XmlPartitionType.OTHER.getContentType()));
 		result.setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
 		return result;
 	}

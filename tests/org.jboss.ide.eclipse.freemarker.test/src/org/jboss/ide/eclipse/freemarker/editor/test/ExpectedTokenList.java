@@ -52,7 +52,7 @@ public class ExpectedTokenList {
 	}
 	
 	public ExpectedTokenList add(PartitionType partitionType, int length) {
-		expectedTokens.add(new TokenAssertion(nextOffset, length, partitionType.name()));
+		expectedTokens.add(new TokenAssertion(nextOffset, length, partitionType.getContentType()));
 		nextOffset += length;
 		return this;
 	}

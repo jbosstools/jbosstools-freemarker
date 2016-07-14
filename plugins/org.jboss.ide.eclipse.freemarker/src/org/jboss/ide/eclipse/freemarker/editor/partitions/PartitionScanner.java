@@ -84,7 +84,7 @@ public class PartitionScanner implements IPartitionTokenScanner, SyntaxModeListe
 			}
 		}
 		setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
-		this.defaultReturnToken = new Token(PartitionType.TEXT.name());
+		this.defaultReturnToken = new Token(PartitionType.TEXT.getContentType());
 		this.delegate.setDefaultReturnToken(defaultReturnToken);
 
 	}

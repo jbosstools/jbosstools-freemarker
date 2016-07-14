@@ -27,9 +27,7 @@ import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionScanner;
@@ -59,41 +57,29 @@ public class DocumentProvider extends FileDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document != null) {
-			// Set up and register partitioner:
-			IDocumentPartitioner partitioner =
-				new FastPartitioner(
-					new PartitionScanner(),
-					PartitionType.PARTITION_TYPES) {
-				public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
-					ITypedRegion region= getPartition(offset);
-					if (preferOpenPartitions) {
-						if (region.getOffset() == offset && !region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-							if (offset > 0) {
-								region= getPartition(offset - 1);
-								if (region.getType().equals(PartitionType.DIRECTIVE_START.name()))
-									return region;
-							}
-							return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
-						}
-					}
-			        return region;
-				}
-				
-			};
-			if (document instanceof IDocumentExtension3) {
-				IDocumentExtension3 docExt3 = (IDocumentExtension3) document;
-				docExt3.setDocumentPartitioner(FTL_PARTITIONING, partitioner);
-				partitioner.connect(document);
-			} else {
-				document.setDocumentPartitioner(partitioner);
-				partitioner.connect(document);
-			}
+			setupDocumentPartitioner(document);
 			
 			// Set up position category used for keeping track of the related directive highlights:
 			document.addPositionCategory(RELATED_ITEM_POSITION_CATEGORY);
 			document.addPositionUpdater(new DefaultPositionUpdater(RELATED_ITEM_POSITION_CATEGORY));
 		}
 		return document;
+	}
+
+	public static void setupDocumentPartitioner(IDocument document) {
+		// Set up and register partitioner:
+		IDocumentPartitioner partitioner =
+			new FastPartitioner(
+				new PartitionScanner(),
+				PartitionType.CONTENT_TYPES);
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 docExt3 = (IDocumentExtension3) document;
+			docExt3.setDocumentPartitioner(FTL_PARTITIONING, partitioner);
+			partitioner.connect(document);
+		} else {
+			document.setDocumentPartitioner(partitioner);
+			partitioner.connect(document);
+		}
 	}
 
 	public static SyntaxMode findMode(IDocument document) {
