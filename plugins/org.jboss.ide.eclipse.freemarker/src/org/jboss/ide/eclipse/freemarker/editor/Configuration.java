@@ -21,6 +21,8 @@
  */
 package org.jboss.ide.eclipse.freemarker.editor;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -37,6 +39,12 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.InterpolationCloserAutoEditStrategy;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.InterpolationDoubleClosingPreventionAutoEditStrategy;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.FTLCommentCloserAutoEditStrategy;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.FTLTagCloserAutoEditStrategy;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.FTLTagDoubleClosingPreventionAutoEditStrategy;
+import org.jboss.ide.eclipse.freemarker.editor.autoedit.SimpleAutoIndentingAutoEditStrategy;
 import org.jboss.ide.eclipse.freemarker.editor.partitions.PartitionType;
 
 /**
@@ -53,6 +61,10 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
+		return getConfiguredContentTypes();
+	}
+
+	public static String[] getConfiguredContentTypes() {
 		return PartitionType.CONTENT_TYPES;
 	}
 
@@ -147,7 +159,30 @@ public class Configuration extends TextSourceViewerConfiguration {
 
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
-		return new IAutoEditStrategy[] { SimpleAutoIndentingAutoEditStrategy.INSTANCE };
+		return getAutoEditStrategies(contentType, true);
+	}
+
+	public static IAutoEditStrategy[] getAutoEditStrategies(String contentType, boolean autoClosersEnabled) {
+		ArrayList<IAutoEditStrategy> strategies = new ArrayList<>();
+		
+		if (autoClosersEnabled) {
+			if (contentType.equals(PartitionType.TEXT.getContentType())) {
+				strategies.add(FTLTagCloserAutoEditStrategy.INSTANCE);
+				strategies.add(InterpolationCloserAutoEditStrategy.INSTANCE);
+			} else if (contentType.equals(PartitionType.DIRECTIVE_END.getContentType())
+					|| contentType.equals(PartitionType.DIRECTIVE_START.getContentType())
+					|| contentType.equals(PartitionType.MACRO_INSTANCE_START.getContentType())
+					|| contentType.equals(PartitionType.MACRO_INSTANCE_END.getContentType())) {
+				strategies.add(FTLTagDoubleClosingPreventionAutoEditStrategy.INSTANCE);
+				strategies.add(FTLCommentCloserAutoEditStrategy.INSTANCE);
+			} else if (contentType.equals(PartitionType.DOLLAR_INTERPOLATION.getContentType())
+					|| contentType.equals(PartitionType.HASH_INTERPOLATION.getContentType())) {
+				strategies.add(InterpolationDoubleClosingPreventionAutoEditStrategy.INSTANCE);
+			}
+		}
+		strategies.add(SimpleAutoIndentingAutoEditStrategy.INSTANCE);
+		
+		return strategies.toArray(new IAutoEditStrategy[0]);
 	}
 	
 }

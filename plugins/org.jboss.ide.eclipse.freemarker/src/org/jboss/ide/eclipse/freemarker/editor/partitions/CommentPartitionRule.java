@@ -37,7 +37,7 @@ public class CommentPartitionRule extends MultiLineRule implements SyntaxModeLis
 
 	public CommentPartitionRule() {
 		super(SyntaxMode.getDefault().getCommentStart(), SyntaxMode.getDefault().getCommentEnd(),
-				new Token(PartitionType.COMMENT.getContentType()));
+				new Token(PartitionType.COMMENT.getContentType()), (char) 0, true);
 	}
 
 	/**

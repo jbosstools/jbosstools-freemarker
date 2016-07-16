@@ -8,7 +8,7 @@
  * Contributors: 
  * Daniel Dekany 
  ******************************************************************************/
-package org.jboss.ide.eclipse.freemarker.editor;
+package org.jboss.ide.eclipse.freemarker.editor.autoedit;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
