@@ -12,6 +12,15 @@
             name="Freemarker Editor">
       </editor>
    </extension>
+   <!-- Extension to show the standard "Show whitespace characters" and "Toggle block selection mode" icons: -->
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.ui.edit.text.actionSet.presentation">
+         <part
+         		id="org.jboss.ide.eclipse.freemarker.editor.FreemarkerEditor"/>
+      </actionSetPartAssociation>
+   </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
