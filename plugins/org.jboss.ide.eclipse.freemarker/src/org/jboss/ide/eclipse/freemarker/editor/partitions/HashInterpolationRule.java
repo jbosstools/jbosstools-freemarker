@@ -16,7 +16,7 @@ import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 public class HashInterpolationRule extends GenericInterpolationRule {
 
-	private static final Token SUCCESS_TOKEN = new Token(PartitionType.HASH_INTERPOLATION.name());
+	private static final Token SUCCESS_TOKEN = new Token(PartitionType.HASH_INTERPOLATION.getContentType());
 
 	@Override
 	public IToken getSuccessToken() {

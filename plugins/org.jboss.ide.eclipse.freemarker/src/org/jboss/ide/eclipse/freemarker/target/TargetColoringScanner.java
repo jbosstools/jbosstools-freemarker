@@ -76,15 +76,15 @@ public class TargetColoringScanner implements ITokenScanner {
 	 * Returns a coloring scanner responsible for the given
 	 * {@code partitionType} of the target language.
 	 *
-	 * @param partitionType the target language partition type
+	 * @param partitionContentType the target language partition type
 	 * @return see above
 	 */
-	private ITokenScanner getColoringScanner(String partitionType) {
-		ITokenScanner result = coloringScanners.get(partitionType);
+	private ITokenScanner getColoringScanner(String partitionContentType) {
+		ITokenScanner result = coloringScanners.get(partitionContentType);
 		if (result == null) {
 			ensureInitialized();
-			result = targetLanguageSupport.createColoringScanner(partitionType);
-			coloringScanners.put(partitionType, result);
+			result = targetLanguageSupport.createColoringScanner(partitionContentType);
+			coloringScanners.put(partitionContentType, result);
 		}
 		return result;
 	}

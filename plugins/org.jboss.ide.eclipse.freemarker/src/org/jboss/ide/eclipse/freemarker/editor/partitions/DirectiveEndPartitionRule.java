@@ -32,7 +32,7 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 public class DirectiveEndPartitionRule extends GenericDirectiveEndPartitionRule {
 
 	public DirectiveEndPartitionRule() {
-		super(SyntaxMode.getDefault().getDirectiveEnd(), new Token(PartitionType.DIRECTIVE_END.name()));
+		super(SyntaxMode.getDefault().getDirectiveEnd(), new Token(PartitionType.DIRECTIVE_END.getContentType()));
 	}
 
 	@Override

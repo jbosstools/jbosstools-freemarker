@@ -45,22 +45,22 @@ import org.jboss.ide.eclipse.freemarker.target.TargetMultiLineRule;
  * @since 1.4.0
  */
 public enum XmlPartitionType {
-	COMMENT(PreferenceKey.COLOR_XML_COMMENT) {
+	COMMENT("xml.comment", PreferenceKey.COLOR_XML_COMMENT) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			return new TargetMultiLineRule(
 					XmlLexicalConstants.XML_COMMENT_START,
 					XmlLexicalConstants.XML_COMMENT_END,
-					new Token(this.name()), (char) 0, true);
+					new Token(this.getContentType()), (char) 0, true);
 		}
 	},
-	TAG(PreferenceKey.COLOR_XML_TAG) {
+	TAG("xml.tag", PreferenceKey.COLOR_XML_TAG) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
-			return new XmlTagRule(new Token(this.name()));
+			return new XmlTagRule(new Token(getContentType()));
 		}
 	},
-	OTHER(PreferenceKey.COLOR_TEXT) {
+	OTHER("xml.text", PreferenceKey.COLOR_TEXT) { //$NON-NLS-1$
 		@Override
 		public IPredicateRule createPartitioningRule() {
 			/* no explicit rule for OTHER */
@@ -68,22 +68,25 @@ public enum XmlPartitionType {
 		}
 	};
 
+	private final String contentType;
+	
 	/** The preference key for syntax coloring. */
-	final PreferenceKey foregroundPreferenceKey;
+	private final PreferenceKey foregroundPreferenceKey;
 
-	/** See {@link #fastValueOf(String)} */
-	private static final Map<String, XmlPartitionType> FAST_LOOKUP;
+	/** See {@link #getByContentType(String)} */
+	private static final Map<String, XmlPartitionType> LOOKUP_BY_CONTENT_TYPE;
 
 	static {
 		XmlPartitionType[] partitionTypes = XmlPartitionType.values();
-		Map<String, XmlPartitionType> fastLookUp = new HashMap<String, XmlPartitionType>();
+		Map<String, XmlPartitionType> lookupByContentType = new HashMap<String, XmlPartitionType>();
 		for (XmlPartitionType partitionType : partitionTypes) {
-			fastLookUp.put(partitionType.name(), partitionType);
+			lookupByContentType.put(partitionType.getContentType(), partitionType);
 		}
-		FAST_LOOKUP = Collections.unmodifiableMap(fastLookUp);
+		LOOKUP_BY_CONTENT_TYPE = Collections.unmodifiableMap(lookupByContentType);
 	}
 
-	private XmlPartitionType(PreferenceKey foregroundPreferenceKey) {
+	private XmlPartitionType(String contentType, PreferenceKey foregroundPreferenceKey) {
+		this.contentType = contentType;
 		this.foregroundPreferenceKey = foregroundPreferenceKey;
 	}
 
@@ -114,7 +117,17 @@ public enum XmlPartitionType {
 	 * @return the {@link XmlPartitionType} that corresponds to the given
 	 *         {@code name} or {@code null} of there is no such.
 	 */
-	public static XmlPartitionType fastValueOf(String name) {
-		return FAST_LOOKUP.get(name);
+	public static XmlPartitionType getByContentType(String name) {
+		return LOOKUP_BY_CONTENT_TYPE.get(name);
 	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public PreferenceKey getForegroundPreferenceKey() {
+		return foregroundPreferenceKey;
+	}
+	
+	
 }

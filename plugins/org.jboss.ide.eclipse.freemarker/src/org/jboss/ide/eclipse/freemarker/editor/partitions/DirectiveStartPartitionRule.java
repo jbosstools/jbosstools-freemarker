@@ -31,7 +31,7 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
  */
 public class DirectiveStartPartitionRule extends GenericDirectiveStartPartitionRule {
 	
-	private static final Token SUCCESS_TOKEN = new Token(PartitionType.DIRECTIVE_START.name());
+	private static final Token SUCCESS_TOKEN = new Token(PartitionType.DIRECTIVE_START.getContentType());
 
 	public DirectiveStartPartitionRule() {
 		super(getStartSequence(SyntaxMode.getDefault()));

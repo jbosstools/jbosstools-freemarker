@@ -37,13 +37,13 @@ public class ItemFactory {
 		}
 		else {
 			Item directive = null;
-			String type = region.getType();
-			Directive directiveType = Directive.fastValueOf(type);
+			String contentType = region.getType();
+			Directive directiveType = Directive.fastValueOf(contentType);
 			if (directiveType != null) {
 				directive = directiveType.createModelItem(itemSet);
 			}
 			else {
-				PartitionType partitionType = PartitionType.fastValueOf(type);
+				PartitionType partitionType = PartitionType.getByContentType(contentType);
 				switch (partitionType) {
 				case DOLLAR_INTERPOLATION:
 				case HASH_INTERPOLATION:

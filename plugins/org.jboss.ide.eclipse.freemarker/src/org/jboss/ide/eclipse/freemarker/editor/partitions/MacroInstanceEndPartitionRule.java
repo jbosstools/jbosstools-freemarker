@@ -36,7 +36,8 @@ import org.jboss.ide.eclipse.freemarker.lang.SyntaxMode;
 public class MacroInstanceEndPartitionRule extends MultiLineRule implements SyntaxModeListener {
 
 	public MacroInstanceEndPartitionRule() {
-		super(SyntaxMode.getDefault().getMacroInstanceEnd(), SyntaxMode.getDefault().getTagEnd(), new Token(PartitionType.MACRO_INSTANCE_END.name()));
+		super(SyntaxMode.getDefault().getMacroInstanceEnd(), SyntaxMode.getDefault().getTagEnd(),
+				new Token(PartitionType.MACRO_INSTANCE_END.getContentType()));
 	}
 
 	@Override

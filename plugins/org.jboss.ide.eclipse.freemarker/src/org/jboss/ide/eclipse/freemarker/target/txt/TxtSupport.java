@@ -42,7 +42,7 @@ public class TxtSupport implements TargetLanguageSupport {
 	@Override
 	public TargetPartitionScanner createPartitionScanner() {
 		RuleBasedTargetPartitionScanner result = new RuleBasedTargetPartitionScanner();
-		result.setDefaultReturnToken(new Token(PartitionType.TEXT.name()));
+		result.setDefaultReturnToken(new Token(PartitionType.TEXT.getContentType()));
 		return result;
 	}
 

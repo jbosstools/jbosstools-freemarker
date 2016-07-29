@@ -16,7 +16,7 @@ import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 
 public class DollarInterpolationRule extends GenericInterpolationRule {
 
-	private static final Token SUCCESS_TOKEN = new Token(PartitionType.DOLLAR_INTERPOLATION.name());
+	private static final Token SUCCESS_TOKEN = new Token(PartitionType.DOLLAR_INTERPOLATION.getContentType());
 
 	@Override
 	public IToken getSuccessToken() {
