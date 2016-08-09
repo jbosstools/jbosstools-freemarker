@@ -43,7 +43,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -61,7 +60,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.jboss.ide.eclipse.freemarker.Plugin;
 import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
-import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 import org.jboss.ide.eclipse.freemarker.model.Item;
 import org.jboss.ide.eclipse.freemarker.model.ItemSet;
 import org.jboss.ide.eclipse.freemarker.outline.OutlinePage;
@@ -86,7 +84,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 	private boolean readOnly = false;
 
 	private boolean mouseDown = false;
-	private boolean shiftDown = false;
 
 	public Editor() {
 		super();
@@ -177,6 +174,18 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
+		// Nothing to do
+	}
+	
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// Nothing to do
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// Nothing to do
 	}
 
 	@Override
@@ -427,88 +436,6 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		return fOutlinePage;
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.keyCode == SWT.SHIFT) {
-			shiftDown = true;
-		}
-		// this feature is for avoiding double closing brackets 
-		if (e.character == LexicalConstants.RIGHT_SQUARE_BRACKET 
-						|| e.character == LexicalConstants.RIGHT_BRACE ) {
-			try {
-				int offset = getCaretOffset();
-				if (offset < getDocument().getLength()) {
-					char c = getDocument().getChar(offset);
-					if (c == e.character) {
-						// remove this
-						getDocument().replace(getCaretOffset(), 1, ""); //$NON-NLS-1$
-					}
-				}
-			} catch (BadLocationException e1) {
-				Plugin.log(e1);
-			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if (e.keyCode == SWT.SHIFT) {
-			shiftDown = false;
-		}
-		try {
-			IDocument document = getSourceViewer().getDocument();
-			if (shiftDown && (e.keyCode == '3' || e.keyCode == '2')) {
-				int offset = getCaretOffset();
-				char c = document.getChar(offset - 2);
-				if (c == LexicalConstants.LEFT_SQUARE_BRACKET
-						|| c == LexicalConstants.LEFT_ANGLE_BRACKET) {
-					// directive
-					char endChar = ParserUtils.getMatchingRightBracket(c);
-					if (document.getLength() > offset) {
-						if (offset > 0) {
-							for (int i = offset + 1; i < document.getLength(); i++) {
-								char c2 = document.getChar(i);
-								if (c2 == endChar) {
-									return;
-								} else if (c2 == LexicalConstants.LF) {
-									break;
-								}
-							}
-							document.replace(offset, 0, String.valueOf(endChar));
-						}
-					} else {
-						document.replace(offset, 0, String.valueOf(endChar));
-					}
-				}
-			} else if (shiftDown && e.keyCode == LexicalConstants.LEFT_BRACE) {
-				int offset = getCaretOffset();
-				char c = document.getChar(offset - 2);
-				if (c == LexicalConstants.DOLLAR) {
-					// interpolation
-					if (document.getLength() > offset) {
-						if (offset > 0) {
-							for (int i = offset + 1; i < document.getLength(); i++) {
-								char c2 = document.getChar(i);
-								if (c2 == LexicalConstants.RIGHT_BRACE) {
-									return;
-								} else if (c2 == LexicalConstants.LF) {
-									break;
-								}
-							}
-							document.replace(offset, 0, String
-									.valueOf(LexicalConstants.RIGHT_BRACE));
-						}
-					} else {
-						document.replace(offset, 0,
-								String.valueOf(LexicalConstants.RIGHT_BRACE));
-					}
-				}
-			}
-		} catch (BadLocationException exc) {
-			Plugin.log(exc);
-		}
-	}
-
 	public IProject getProject() {
 		return ((IFileEditorInput) getEditorInput()).getFile().getProject();
 	}
@@ -618,4 +545,5 @@ public class Editor extends TextEditor implements KeyListener, MouseListener {
 		}
 		return targetLanguageSupport;
 	}
+	
 }
