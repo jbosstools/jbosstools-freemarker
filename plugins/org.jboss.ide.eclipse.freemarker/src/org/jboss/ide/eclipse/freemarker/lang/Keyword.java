@@ -77,6 +77,9 @@ public enum Keyword {
 	T,
 	LT_DIRECTIVE("lt"), //$NON-NLS-1$
 	RT,
+	NT,
+	SETTING,
+	COMPRESS,
 	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;

@@ -380,6 +380,30 @@ public enum Directive {
             return new GenericDirective(itemSet);
         }
     },
+    NT(Keyword.NT, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericDirective(itemSet);
+        }
+    },
+    SETTING(Keyword.SETTING, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericDirective(itemSet);
+        }
+    },
+    COMPRESS(Keyword.COMPRESS, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableDirective(itemSet, getKeyword().toString());
+        }
+    },
+    COMPRESS_END(Keyword.COMPRESS, true) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableEndDirective(itemSet, getKeyword().toString());
+        }
+    },
 	; //
     
 	private static final Map<String, Directive> FAST_LOOKUP;
