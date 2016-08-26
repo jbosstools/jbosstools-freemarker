@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 
@@ -18,6 +19,8 @@ import freemarker.template.TemplateException;
 
 public class FreemarkerTestUtils {
 
+	private static final Pattern ANY_EOL = Pattern.compile("\\r\\n?");
+	
 	public static String readFile(File f) throws IOException {
 		StringBuilder result = new StringBuilder();
 		Reader in = null;
@@ -48,11 +51,15 @@ public class FreemarkerTestUtils {
 		File expectedFile = new File(templateDirectory, fileNameExpected);
 		if (expectedFile.exists()) {
 			String expected = readFile(expectedFile);
-			Assert.assertEquals(expected, found.toString());
+			Assert.assertEquals(normalizeEOL(expected), normalizeEOL(found.toString()));
 		}
 		else {
 			Assert.fail("You may want to create "+ expectedFile.getAbsolutePath() +":\n"+ found.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+
+	private static String normalizeEOL(String s) {
+		return ANY_EOL.matcher(s).replaceAll("\n");
 	}
 
 	public static Properties loadModel(File propertiesFile) throws IOException {

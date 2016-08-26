@@ -78,18 +78,6 @@ public abstract class AbstractDirectiveTest extends TestCase {
 		return editor.getItemSet().getDirectiveRegions().values();
 	}
 
-	protected void validateColoring(StyleRange[] expected) {
-		StyledText st = editor.getTextViewer().getTextWidget();
-		StyleRange[] actual = st.getStyleRanges();
-		if (!Arrays.equals(expected, actual)) {
-			System.out.println(StyleRangeArrayBuilder.propose(actual, editor.getDocument()));
-		}
-		assertEquals(expected.length, actual.length);
-		for (int i = 0; i < actual.length; i++) {
-			assertEquals("Mismatch at index "+ i, expected[i], actual[i]); //$NON-NLS-1$
-		}
-	}
-
 	protected void assertAssignment(Iterator<Item> i) {
 		assertDirective(i, AssignmentDirective.class);
 	}
