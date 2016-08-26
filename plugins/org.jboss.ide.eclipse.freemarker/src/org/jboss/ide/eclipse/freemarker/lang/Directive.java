@@ -404,6 +404,48 @@ public enum Directive {
             return new GenericNestableEndDirective(itemSet, getKeyword().toString());
         }
     },
+    OUTPUTFORMAT(Keyword.OUTPUTFORMAT, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableDirective(itemSet, getKeyword().toString());
+        }
+    },
+    OUTPUTFORMAT_END(Keyword.OUTPUTFORMAT, true) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableEndDirective(itemSet, getKeyword().toString());
+        }
+    },
+    TRANSFORM(Keyword.TRANSFORM, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableDirective(itemSet, getKeyword().toString());
+        }
+    },
+    TRANSFORM_END(Keyword.TRANSFORM, true) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableEndDirective(itemSet, getKeyword().toString());
+        }
+    },
+    CALL(Keyword.CALL, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericDirective(itemSet);
+        }
+    },
+    COMMENT(Keyword.COMMENT, false) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableDirective(itemSet, getKeyword().toString());
+        }
+    },
+    COMMENT_END(Keyword.COMMENT, true) {
+        @Override
+        public Item createModelItem(ItemSet itemSet) {
+            return new GenericNestableEndDirective(itemSet, getKeyword().toString());
+        }
+    },
 	; //
     
 	private static final Map<String, Directive> FAST_LOOKUP;

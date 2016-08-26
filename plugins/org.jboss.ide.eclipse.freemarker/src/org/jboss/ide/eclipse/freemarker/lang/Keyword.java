@@ -71,6 +71,7 @@ public enum Keyword {
 	ESCAPE,
 	NOESCAPE,
 	NOPARSE,
+	OUTPUTFORMAT,
 	ITEMS,
 	SEP,
     FLUSH,
@@ -80,6 +81,9 @@ public enum Keyword {
 	NT,
 	SETTING,
 	COMPRESS,
+	TRANSFORM,
+	CALL,
+	COMMENT,
 	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;
