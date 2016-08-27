@@ -161,8 +161,6 @@ public abstract class AbstractColoringTest extends TestCase {
 			indexMapping[i] = dstIdx;
 			if (!(text.charAt(i) == '\r' && i + 1 < len && text.charAt(i + 1) == '\n')) {
 				dstIdx++;
-			} else {
-				System.out.println("foo"); //!!T
 			}
 		}
 		return indexMapping;
