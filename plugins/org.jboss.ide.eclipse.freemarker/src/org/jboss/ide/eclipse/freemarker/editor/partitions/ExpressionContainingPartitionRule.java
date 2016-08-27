@@ -20,6 +20,8 @@ import org.eclipse.jface.text.rules.Token;
 import org.jboss.ide.eclipse.freemarker.lang.LexicalConstants;
 import org.jboss.ide.eclipse.freemarker.lang.ParserUtils;
 
+import freemarker.template.utility.StringUtil;
+
 /**
  * Superclass for partitions that has a start- and an end-sequence, but between them there's an FTL expression that
  * can contain the end-sequence without ending the partition (for example inside a string literal). 
@@ -188,8 +190,9 @@ public abstract class ExpressionContainingPartitionRule extends NonResumablePred
 	private boolean readSequence(
 			ICharacterScanner scanner, char[] sequence, boolean firstCharAlreadyMatched) {
 		int i = firstCharAlreadyMatched ? 1 : 0;
+		int c = firstCharAlreadyMatched ? sequence[0] : ICharacterScanner.EOF;
 		while (i < sequence.length) {
-			int c = scanner.read();
+			c = scanner.read();
 			if (c != sequence[i]) {
 				for (int j = firstCharAlreadyMatched ? 1 : 0; j <= i; j++) {
 					scanner.unread();
@@ -198,6 +201,20 @@ public abstract class ExpressionContainingPartitionRule extends NonResumablePred
 			}
 			i++;
 		}
+
+		// If the sequence ends with and identifier char, it must be followed by a non-identifier char. This is to
+		// prevent things like when "#t" matches "#transform". Except, we don't require that after "<@" and "</@", etc.
+		if (StringUtil.isFTLIdentifierPart((char) c) && c != '@' && c != '$') {
+			c = scanner.read();
+			scanner.unread();
+			if (ParserUtils.isLetter((char) c)) {
+				for (int j = firstCharAlreadyMatched ? 1 : 0; j < sequence.length; j++) {
+					scanner.unread();
+				}
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
