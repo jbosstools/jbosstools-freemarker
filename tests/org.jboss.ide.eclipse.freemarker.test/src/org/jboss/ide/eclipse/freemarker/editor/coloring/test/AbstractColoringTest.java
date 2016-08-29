@@ -103,7 +103,10 @@ public abstract class AbstractColoringTest extends TestCase {
 
 	protected void validateColoring(StyleRange[] expected) {
 		StyledText st = editor.getTextViewer().getTextWidget();
+		
 		StyleRange[] actual = st.getStyleRanges();
+		mapStyleRangePositions(actual, getEOLNormalizationIndexMapping(st.getText()));
+		
 		if (!Arrays.equals(expected, actual)) {
 			System.out.println();
 			System.out.println(this.getClass() + " expected coloring:");
@@ -114,6 +117,53 @@ public abstract class AbstractColoringTest extends TestCase {
 		for (int i = 0; i < actual.length; i++) {
 			assertEquals("Mismatch at index " + i, expected[i], actual[i]); //$NON-NLS-1$
 		}
+	}
+
+	private void mapStyleRangePositions(StyleRange[] actual, int[] indexMapping) {
+		for (int i = 0; i < actual.length; i++) {
+			StyleRange origRange = actual[i];
+			int origFirst = origRange.start;
+			int origLast = origRange.start + origRange.length - 1; // inclusive end
+			int mappedFirst = mapIndex(origFirst, indexMapping);
+			int mappedLast = mapIndex(origLast, indexMapping);
+			if (mappedFirst != origFirst || mappedLast != origLast) {
+				StyleRange mappedRange = (StyleRange) origRange.clone();
+				mappedRange.start = mappedFirst;
+				mappedRange.length = mappedLast - mappedFirst + 1;
+				actual[i] = mappedRange;
+			}
+		}
+	}
+	
+	private int mapIndex(int index, int[] indexMapping) {
+		if (index < 0) {
+			return index;
+		}
+		if (index >= indexMapping.length) {
+			if (indexMapping.length == 0) {
+				return index;
+			}
+			return indexMapping[indexMapping.length - 1] + (index - indexMapping.length + 1);
+		}
+		return indexMapping[index];
+	}
+
+	/**
+	 * Returns an index mapping the maps character indexes of the argument text to the indexes we had if the text uses
+	 * LF for line breaks (rather than CR LF). Thus the test tolerates if the sample templates are converted to use
+	 * CRLF.
+	 */
+	private int[] getEOLNormalizationIndexMapping(String text) {
+		int len = text.length();
+		int[] indexMapping = new int[len];
+		int dstIdx = 0;
+		for (int i = 0; i < len; i++) {
+			indexMapping[i] = dstIdx;
+			if (!(text.charAt(i) == '\r' && i + 1 < len && text.charAt(i + 1) == '\n')) {
+				dstIdx++;
+			}
+		}
+		return indexMapping;
 	}
 
 }

@@ -71,12 +71,19 @@ public enum Keyword {
 	ESCAPE,
 	NOESCAPE,
 	NOPARSE,
+	OUTPUTFORMAT,
 	ITEMS,
 	SEP,
     FLUSH,
 	T,
 	LT_DIRECTIVE("lt"), //$NON-NLS-1$
 	RT,
+	NT,
+	SETTING,
+	COMPRESS,
+	TRANSFORM,
+	CALL,
+	COMMENT,
 	UNKNOWN(""); //$NON-NLS-1$
 
 	private final String keyword;

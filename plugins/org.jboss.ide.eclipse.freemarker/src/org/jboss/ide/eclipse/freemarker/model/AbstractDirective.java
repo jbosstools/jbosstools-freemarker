@@ -30,6 +30,7 @@ import java.util.Map;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.jboss.ide.eclipse.freemarker.lang.Directive;
+import org.jboss.ide.eclipse.freemarker.lang.Keyword;
 
 
 public abstract class AbstractDirective extends AbstractItem {
@@ -80,7 +81,7 @@ public abstract class AbstractDirective extends AbstractItem {
 			String prefix = contentWithOffsetContents[index].substring(0, subOffset);
 			List<ICompletionProposal> l = new ArrayList<ICompletionProposal>();
 			for (Directive tag : Directive.values()) {
-			    if (!tag.isEndDirective()) {
+			    if (!tag.isEndDirective() && !veryOldLegacyDirective(tag)) {
     				String name = tag.getKeyword().toString();
     				if (name.startsWith(prefix)) {
     					l.add(getCompletionProposal(offset, subOffset,
@@ -98,6 +99,11 @@ public abstract class AbstractDirective extends AbstractItem {
 			return completionInterpolation.getCompletionProposals(offset, context);
 		}
 		return null;
+	}
+
+	private boolean veryOldLegacyDirective(Directive directive) {
+		Keyword keyword = directive.getKeyword();
+		return keyword == Keyword.COMMENT || keyword == Keyword.CALL || keyword == Keyword.TRANSFORM;
 	}
 
 	public ICompletionProposal[] completionProposals (List<ICompletionProposal> l) {
