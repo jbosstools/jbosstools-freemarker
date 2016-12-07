@@ -74,6 +74,11 @@ public class Configuration extends TextSourceViewerConfiguration {
 	}
 
 	@Override
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return DocumentProvider.FTL_PARTITIONING;
+	}
+
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(DocumentProvider.FTL_PARTITIONING);
