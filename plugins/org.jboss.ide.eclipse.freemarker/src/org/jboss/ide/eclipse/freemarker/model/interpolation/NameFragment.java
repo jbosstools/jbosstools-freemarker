@@ -27,6 +27,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -160,48 +161,28 @@ public class NameFragment extends AbstractFragment {
 		String prefix = getContent().substring(1, subOffset);
 		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
 		String pUpper = prefix.toUpperCase();
-		try {
-			BeanInfo bi = Introspector.getBeanInfo(parentClass);
-			PropertyDescriptor[] pds = bi.getPropertyDescriptors();
-			for (int i=0; i<pds.length; i++) {
-				PropertyDescriptor pd = pds[i];
-				String propertyName = pd.getName();
-				if (!propertyName.equals("class") && propertyName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
-					proposals.add(new CompletionProposal(
-							propertyName,
-							offset - subOffset + 1,
-							getContent().length()-1,
-							propertyName.length(),
-							null, propertyName + " - " + pd.getReadMethod().getReturnType().getName(), null, null)); //$NON-NLS-1$
-				}
+		for (int i=0; i<parentClass.getMethods().length; i++) {
+			Method m = parentClass.getMethods()[i];
+			if (!Modifier.isPublic(m.getModifiers())) continue;
+			if (m.isSynthetic()) continue;
+			if (m.getParameterTypes().length != 0) continue;
+			String mName = m.getName();
+			if (mName.startsWith("get") || mName.startsWith("is")) { //$NON-NLS-1$ //$NON-NLS-2$
+			        String propertyName = mName.startsWith("get") ? mName.substring(3) : mName.substring(2); //$NON-NLS-1$
+			        propertyName = Character.toLowerCase(propertyName.charAt(0)) + propertyName.substring(1);
+			        if (propertyName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
+        				StringBuilder display = new StringBuilder();
+        				display.append(propertyName);
+        				display.append(" - "); //$NON-NLS-1$
+        				display.append(m.getReturnType().getName()); //$NON-NLS-1$
+        				proposals.add(new CompletionProposal(propertyName,
+        						offset - subOffset + 1, 
+        						getContent().length()-1, 
+        						propertyName.length(),
+        						null, display.toString(), null, null));
+        			}
 			}
-			for (int i=0; i<parentClass.getMethods().length; i++) {
-				Method m = parentClass.getMethods()[i];
-				String mName = m.getName();
-				if (m.getParameterTypes().length > 0 && mName.startsWith("get") && mName.toUpperCase().startsWith(pUpper)) { //$NON-NLS-1$
-					StringBuilder display = new StringBuilder();
-					display.append(mName);
-					display.append(LexicalConstants.LEFT_PARENTHESIS);
-					for (int j=0; j<m.getParameterTypes().length; j++) {
-						if (j > 0) display.append(", "); //$NON-NLS-1$
-						display.append(m.getParameterTypes()[j].getName());
-					}
-					display.append(") - ").append(m.getReturnType().getName()); //$NON-NLS-1$
-					String actual = mName + "()"; //$NON-NLS-1$
-					int tLength = actual.length();
-					if (m.getParameterTypes().length > 0) {
-						tLength--;
-					}
-					proposals.add(new CompletionProposal(actual,
-							offset - subOffset + 1, getContent().length()-1, tLength,
-							null, display.toString(), null, null));
-				}
-			}
-			return completionProposals(proposals);
 		}
-		catch (IntrospectionException e) {
-			Plugin.log(e);
-			return null;
-		}
+		return completionProposals(proposals);
 	}
 }
