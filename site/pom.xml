@@ -10,4 +10,7 @@
 	<artifactId>freemarker.site</artifactId> 
 	
 	<packaging>eclipse-repository</packaging>
+	<properties>
+		<skipDeployToJBossOrg>false</skipDeployToJBossOrg>
+	</properties>
 </project>
