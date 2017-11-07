@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.ui,
  org.jboss.tools.usage;bundle-version="1.0.0";resolution:=optional;x-installation:=greedy
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- lib/freemarker-2.3.25-incubating.jar
+ lib/freemarker-2.3.27-incubating.jar
 Bundle-Vendor: %providerName
 Export-Package: freemarker.core,
  freemarker.template,
