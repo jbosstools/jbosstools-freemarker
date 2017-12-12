@@ -12,7 +12,7 @@
 
 	<packaging>eclipse-plugin</packaging>
 	<properties>
-		<freemarkerVersion>2.3.25-incubating</freemarkerVersion>
+		<freemarkerVersion>2.3.27-incubating</freemarkerVersion>
 	</properties>
 	<build>
 		<plugins>
