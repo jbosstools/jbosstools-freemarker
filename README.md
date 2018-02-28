@@ -4,6 +4,8 @@
 
 FreeMarker Tools provide an editor for FreeMarker .ftl files with code completion and syntax highlighting.
 
+NOTE: This project is deprecated, and has been removed from JBoss Tools as of 4.5.3.
+
 ## Install
 
 _FreeMarker Tools_ is part of [JBoss Tools](http://jboss.org/tools) from
